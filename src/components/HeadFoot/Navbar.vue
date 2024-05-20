@@ -30,7 +30,7 @@
           <RouterLink to="/">
             <img class="relative h-12 hover:scale-105 lg:bg-transparent lg:flex hidden" src="/public/Logo.png" alt="">
           </RouterLink>
-          <RouterLink to="/">
+          <RouterLink to="/profil">
             <span class=" hover:font-semibold lg:my-0">
               Wishlist <img class="my-3 w-4 inline" src="/public/lop.png" alt="">
             </span>
@@ -57,7 +57,7 @@
           <RouterLink to="/">
             <img class="relative h-12 hover:scale-105 lg:bg-transparent lg:flex hidden" src="/public/Logo.png" alt="">
           </RouterLink>
-          <RouterLink to="/">
+          <RouterLink to="/profil">
             <span class="my-3 hover:font-semibold lg:my-0">
               Wishlist <img class="w-4 inline" src="/public/lop.png" alt="">
             </span>

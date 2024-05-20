@@ -2,7 +2,7 @@
     <div  class="my-10 ">
         <div class="font-[Poppins]">
             <div class="text-left ml-10 md:ml-[80px]">
-                <h1 class="font-bold text-3xl ">For You <span class=" text-[#997380]">Recommendation</span></h1>
+                <h1 class="font-bold text-3xl ">Hasil dari Kami <span class=" text-[#9CA69C]">untukmu</span></h1>
             </div>
             <div>
                 <div class="lg:flex flex  lg:grid-cols-none lg:flex-row flex-col sm:grid-cols-2 sm:grid sm:gap-4  md:justify-between mx-10 md:mx-20">
@@ -50,9 +50,7 @@
                     </div>
                 </div>
                 <div class="text-right md:mr-20 mr-10 mt-4 font-light">
-                    <RouterLink to="/terserah">
-                        <p class="italic text-[13px] cursor-pointer hover:font-medium">>Lihat Selengkapnya</p>
-                    </RouterLink>
+                    <p class="italic text-[13px] cursor-pointer hover:font-medium">>Lihat Selengkapnya</p>
                 </div>
             </div>
         </div>
