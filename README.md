@@ -1,29 +1,18 @@
-# vue-pplTerserah
+<p align="center">
+  <h2 align="center">
+    Website Terserah (Food Recommender)<strong>"
+  </h2>
+</p>
 
-This template should help get you started developing with Vue 3 in Vite.
+<br><br>
 
-## Recommended IDE Setup
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+<!-- Anggota Tim -->
+## Anggota Tim
+| NPM           | Name                      | Role          |
+| ------------- |-------------------------  | ------------- |
+| 140810210012  | Aryan Dafi Maulana        | Front-End     |
+| 140810210018  | Luthfi Ramadhan Yudiansyah| Back-End      |
+| 140810210019  | Raditya Muhamad Lacavi    | PM & UI/UX    |
+| 140810210021  | Mohammad Zidan Yohanza    | Front-End     |
+| 140810210033  | Mohammad Sulaeman         | Back-End      |
