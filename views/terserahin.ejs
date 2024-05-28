@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Rated Restaurants</title>
+</head>
+<body>
+    <h1>Terserahin aja</h1>
+    <form id="searchForm2" class="d-flex">
+        <input id="searchInput2" class="form-control me-3" type="search" placeholder="Kamu Domisili mana?" aria-label="Search">
+        <button id="searchButton" class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchForm = document.getElementById('searchForm2');
+    
+            searchForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent default form submission behavior
+    
+                // Get the value from the search input
+                const searchQuery = document.getElementById('searchInput2').value.trim();
+    
+                if (searchQuery !== '') {
+                    // Navigate to ./restaurant
+                    window.location.href = `/terserahinAja?address=${encodeURIComponent(searchQuery)}`;
+                }
+            });
+        });
+      </script>
+</body>
+</html>

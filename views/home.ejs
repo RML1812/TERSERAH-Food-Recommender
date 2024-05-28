@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Rated Restaurants</title>
+</head>
+<body>
+    <a class="nav-link" href="/user/<%= userLogin._id %>">Profile</a>
+    <h1>Top Rated Restaurants</h1>
+    <h1>Hello <%= userLogin.name %>!</h1>
+    <ul id="restaurantList"></ul>
+
+    <form id="searchForm" class="d-flex">
+        <input id="searchInput" class="form-control me-3" type="search" placeholder="Restaurant Name" aria-label="Search">
+        <button id="searchButton" class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+    <br>
+
+    <div class="dropdown-container" style="display: flex; justify-content: space-around;">
+        <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownCulinary" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Culinary Type
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownCulinary">
+                <% culinaryTypes.forEach(culinary => { %>
+                    <div>
+                        <input type="checkbox" id="<%= culinary._id %>" name="culinaryType" value="<%= culinary.name %>">
+                        <label for="<%= culinary._id %>"><%= culinary.name %></label>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    
+        <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPayment" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Payment Methods
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownPayment">
+                <% paymentMethods.forEach(payment => { %>
+                    <div>
+                        <input type="checkbox" id="<%= payment._id %>" name="paymentMethod" value="<%= payment.name %>">
+                        <label for="<%= payment._id %>"><%= payment.name %></label>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    
+        <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownFacilities" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Available Facilities
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownFacilities">
+                <% availableFacilities.forEach(facility => { %>
+                    <div>
+                        <input type="checkbox" id="<%= facility._id %>" name="availableFacility" value="<%= facility.name %>">
+                        <label for="<%= facility._id %>"><%= facility.name %></label>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    </div>
+    
+    <br>
+
+    <% topRestaurants.forEach(restaurant => { %>
+        <ul>
+            <li><strong>Nama:</strong> <%= restaurant.name %></li>
+            <li><strong>Jenis Kuliner:</strong> <%= restaurant.culinary_type %></li>
+            <li><strong>Alamat:</strong> <%= restaurant.address %></li>
+            <li><strong>Rating:</strong> <%= restaurant.overall_rating %></li>    
+            <li><strong>ID:</strong> <%= restaurant._id %></li> 
+            <a href="/restaurants/<%= restaurant._id %>">Detail</a>
+        </ul>
+    <% }) %>
+    <a href="/rekomendasi/">Lihat lebih banyak</a>
+
+</body>
+</html>
+
+<!-- <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchForm = document.getElementById('searchForm');
+
+        searchForm.addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent default form submission behavior
+
+            // Get the value from the search input
+            const searchQuery = document.getElementById('searchInput').value.trim();
+            let queryParams = `name=${encodeURIComponent(searchQuery)}`;
+
+            // Collect values from checkboxes
+            const culinaryTypeCheckboxes = document.querySelectorAll('input[name="culinaryType"]:checked');
+            const paymentMethodCheckboxes = document.querySelectorAll('input[name="paymentMethod"]:checked');
+            const availableFacilityCheckboxes = document.querySelectorAll('input[name="availableFacility"]:checked');
+
+            // Append selected culinary types to queryParams
+            culinaryTypeCheckboxes.forEach(checkbox => {
+                queryParams += `&culinary_type=${encodeURIComponent(checkbox.value)}`;
+            });
+
+            // Append selected payment methods to queryParams
+            paymentMethodCheckboxes.forEach(checkbox => {
+                queryParams += `&payment_methods=${encodeURIComponent(checkbox.value)}`;
+            });
+
+            // Append selected available facilities to queryParams
+            availableFacilityCheckboxes.forEach(checkbox => {
+                queryParams += `&available_facilities=${encodeURIComponent(checkbox.value)}`;
+            });
+
+            // Navigate to /search with all query parameters
+            if (searchQuery !== '') {
+                window.location.href = `/search?${queryParams}`;
+            }
+        });
+    });
+</script> -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const searchForm = document.getElementById('searchForm');
+
+    searchForm.addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent default form submission behavior
+
+        // Initialize queryParams with an empty string
+        let queryParams = '';
+
+        // Get the value from the search input if it exists
+        const searchQuery = document.getElementById('searchInput').value.trim();
+        if (searchQuery !== '') {
+            queryParams = `name=${encodeURIComponent(searchQuery)}`;
+        }
+
+        // Collect values from checkboxes
+        const culinaryTypeCheckboxes = document.querySelectorAll('input[name="culinaryType"]:checked');
+        const paymentMethodCheckboxes = document.querySelectorAll('input[name="paymentMethod"]:checked');
+        const availableFacilityCheckboxes = document.querySelectorAll('input[name="availableFacility"]:checked');
+
+        // Function to append parameters to queryParams
+        const appendParams = (checkboxes, paramName) => {
+            checkboxes.forEach(checkbox => {
+                queryParams += `${queryParams ? '&' : ''}${paramName}=${encodeURIComponent(checkbox.value)}`;
+            });
+        };
+
+        // Append selected culinary types, payment methods, and available facilities to queryParams
+        appendParams(culinaryTypeCheckboxes, 'culinary_type');
+        appendParams(paymentMethodCheckboxes, 'payment_methods');
+        appendParams(availableFacilityCheckboxes, 'available_facilities');
+
+        // Navigate to /search with all query parameters
+        window.location.href = `/search?${queryParams}`;
+    });
+});
+
+</script>

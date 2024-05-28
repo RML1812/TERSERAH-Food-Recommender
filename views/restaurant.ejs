@@ -1,0 +1,47 @@
+    <h1>Detail Restoran <%= restaurant.name %></h1>
+    <ul>
+        <li><strong>ID:</strong> <%= restaurant._id %></li>
+        <li><strong>Nama:</strong> <%= restaurant.name %></li>
+        <li><strong>Jenis Kuliner:</strong> <%= restaurant.culinary_type %></li>
+        <li><strong>Alamat:</strong> <%= restaurant.address %></li>
+        <br>
+        <li><strong>Rating:</strong> <%= restaurant.overall_rating %></li>
+        <li><strong>Combined Rating</strong> <%= rating.combined_rating %></li>
+        <li><strong>Ambience Rating</strong> <%= rating.ambience_rating %></li>
+        <li><strong>Taste to price Rating</strong> <%= rating.taste_to_price_rating %></li>
+        <li><strong>Service Rating</strong> <%= rating.service_rating %></li>
+        <li><strong>Cleanliness Rating</strong> <%= rating.cleanliness_rating %></li>
+        <!-- Tambahkan informasi restoran lainnya sesuai kebutuhan -->
+    </ul>
+    <a href="/review/<%= restaurant._id %>">Liat Review</a>
+    <a href="/">Kembali ke Halaman Utama</a>
+    <form form action="/wishlist" method="POST">
+        <input type="hidden" id="restaurantId" name="restaurantId" value="<%= restaurant._id %>">
+        <button type="submit">Tambahkan ke Wishlist</button>
+    </form>
+    
+    <!-- <script>
+        document.getElementById("addToWishlistForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const restaurantId = document.getElementById("restaurantId").value;
+
+            try {
+                const response = await fetch('/wishlist', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        restaurantId: restaurantId
+                    })
+                });
+                const data = await response.json();
+                alert(data.message);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error occurred while adding to wishlist.');
+            }
+        });
+    </script> -->
+</body>
+</html>
