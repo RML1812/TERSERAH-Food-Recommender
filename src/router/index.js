@@ -5,6 +5,7 @@ import Searching from '../views/Searching.vue'
 import Recommendation from '../views/Recommendation.vue'
 import Terserahin from '../views/Terserahin.vue'
 import Profil from '../views/Profil.vue'
+import Restaurant from '../views/Restaurant.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +39,11 @@ const router = createRouter({
       path: '/profil',
       name: 'profil',
       component: Profil
+    },
+    {
+      path: '/restaurant',
+      name: 'restaurant',
+      component: Restaurant
     },
   ]
 })

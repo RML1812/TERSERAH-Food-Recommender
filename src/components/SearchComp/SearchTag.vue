@@ -3,7 +3,7 @@
         <div class=" bg-[url('/public/Background.png')] text-white  h-[320px]  md:mx-20 mx-10 lg:w-auto text-center bg-cover rounded-2xl ">
             <p class="text-center text-[15px]  pt-6 md:pt-8">Sumedang, Jawa Barat | ✓ 2 Filter</p>
             <div class="mx-10 my-2">
-                <h1 class="font-bold text-[44px] mx:10 mx:10 md:text-[46px] lg:text-[48px]">Hasil <span class="text-[#C2CFC2] italic">Pencarian-</span> mu</h1>
+                <h1 class="font-bold text-[40px] mx:10 mx:10 md:text-[46px] lg:text-[48px]">Hasil <span class="text-[#C2CFC2] italic">Pencarian-</span>mu</h1>
             </div>
             <form action="">
                 <div class="opacity-50 mt-10 md:mt-14">

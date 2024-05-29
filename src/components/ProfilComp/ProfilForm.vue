@@ -90,7 +90,7 @@
                       </div>
                       <div class="text-center mt-16 lg:mt-[60px]">
                           <button class="w-auto h-10 px-10 bg-[#1E1E1E] text-white rounded-2xl hover:bg-[#5F685F]">
-                          Sign-Up
+                          Simpan Perubahan
                       </button>
                       </div>
                   </form>

@@ -7,7 +7,7 @@
                     <h1 class="font-bold tracking-wide mt-4 ml-12 md:text-[26px] lg:text-[28px] hidden md:flex"> Bingung Mau Makan Apa?</h1>
                     <div class="flex mr-[70px]">
                         <img src="/public/Logo-White.png" class="hover:opacity-90 hover:scale-110" alt="">
-                        <RouterLink to="/recom">
+                        <RouterLink to="/terserah">
                             <img src="/public/Arrow.png" class="hover:opacity-90 hover:scale-110 h-6 mt-5 ml-2" alt="">
                         </RouterLink>
                     </div>
