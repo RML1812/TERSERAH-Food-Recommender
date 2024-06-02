@@ -22,15 +22,15 @@
             <RouterLink to="/terserah">Terserahin!(?)</RouterLink>
           </span>
           <span class="hover:font-semibold my-2 lg:my-0 ">
-            <RouterLink to="/">Blog</RouterLink>
+            <RouterLink to="/blog">Blog</RouterLink>
           </span>
           <span class="hover:font-semibold my-2 lg:my-0">
-            <RouterLink to="/">Reservasi</RouterLink>
+            <RouterLink to="/reservasi">Reservasi</RouterLink>
           </span>
           <RouterLink to="/">
             <img class="relative h-12 hover:scale-105 lg:bg-transparent lg:flex hidden" src="/public/Logo.png" alt="">
           </RouterLink>
-          <RouterLink to="/profil">
+          <RouterLink to="/wishlist">
             <span class=" hover:font-semibold lg:my-0">
               Wishlist <img class="my-3 w-4 inline" src="/public/lop.png" alt="">
             </span>
@@ -49,15 +49,15 @@
             <RouterLink to="/terserah">Terserahin!(?)</RouterLink>
           </span>
           <span class="hover:font-semibold my-2 lg:my-0 ">
-            <RouterLink to="/">Blog</RouterLink>
+            <RouterLink to="/blog">Blog</RouterLink>
           </span>
           <span class="hover:font-semibold my-2 lg:my-0">
-            <RouterLink to="/">Reservasi</RouterLink>
+            <RouterLink to="/reservasi">Reservasi</RouterLink>
           </span>
           <RouterLink to="/">
             <img class="relative h-12 hover:scale-105 lg:bg-transparent lg:flex hidden" src="/public/Logo.png" alt="">
           </RouterLink>
-          <RouterLink to="/profil">
+          <RouterLink to="/wishlist">
             <span class="my-3 hover:font-semibold lg:my-0">
               Wishlist <img class="w-4 inline" src="/public/lop.png" alt="">
             </span>

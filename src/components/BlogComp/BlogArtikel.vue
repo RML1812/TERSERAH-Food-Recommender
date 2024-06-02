@@ -36,6 +36,7 @@
                 </div>
             </div>
         </div>
+        <hr class="border-black mx-20 mt-5">
 
         
     </div>

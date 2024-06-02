@@ -1,18 +1,28 @@
 <template>
     <div class="mb-16 font-[Poppins] my-16">
       <div class="flex justify-center ml-6">
-        <div class="h-[150px] w-40 bg-[#F2F2F2] rounded-2xl shadow-lg border mr-3 flex flex-col">
-          <div v-on:click="menuProf" class="h-[50px] w-auto lg:text-[16px] md:text-[15px] text-[14px] rounded-2xl text-center pt-3 hover:bg-slate-300 cursor-pointer ">
-            <p>Profil</p>
-          </div>
-          <div v-on:click="menuRev" class="h-[50px] w-auto lg:text-[16px] md:text-[15px] text-[14px] rounded-2xl text-center pt-3 hover:bg-slate-300 cursor-pointer ">
-            <p>Reservasi-mu</p>
-          </div>
-          <div v-on:click="menuWish" class="h-[50px] w-auto lg:text-[16px] md:text-[15px] text-[14px] rounded-2xl text-center pt-3 hover:bg-slate-300 cursor-pointer ">
-            <p>Wishlist</p>
-          </div>
+        <div class="h-[200px] w-40 bg-[#F2F2F2] rounded-2xl shadow-lg border mr-3 flex flex-col">
+          <RouterLink to="/profil">
+            <div class="h-[50px] w-auto lg:text-[16px] md:text-[15px] bg-[#DBDBDB] text-[14px] rounded-t-2xl text-center pt-3 cursor-pointer ">
+              <p>Profil</p>
+            </div>
+          </RouterLink>
+          <RouterLink to="/reservasimu">
+            <div class="h-[50px] w-auto lg:text-[16px] md:text-[15px] text-[14px] text-center pt-3 hover:bg-[#DBDBDB] cursor-pointer ">
+              <p>Reservasi-mu</p>
+            </div>
+          </RouterLink>
+          <RouterLink to="/wishlist">
+            <div class="h-[50px] w-auto lg:text-[16px] md:text-[15px] text-[14px]  text-center pt-3 hover:bg-[#DBDBDB] cursor-pointer ">
+              <p>Wishlist</p>
+            </div>
+          </RouterLink>
+          <RouterLink to="/review">
+            <div class="h-[50px] w-auto lg:text-[16px] md:text-[15px] text-[14px] rounded-b-2xl text-center pt-3 hover:bg-[#DBDBDB] cursor-pointer ">
+              <p>Review-mu</p>
+            </div>
+          </RouterLink>
         </div>
-        <div v-if="prof">
           <div class="h-[1120px] w-auto md:mr-32 mr-10  bg-[#F2F2F2] rounded-xl lg:h-[660px]  md:h-[660px] items-center  shadow-lg border">
               <div class="pt-5">
                   <form action="">
@@ -89,25 +99,19 @@
                           </div>
                       </div>
                       <div class="text-center mt-16 lg:mt-[60px]">
-                          <button class="w-auto h-10 px-10 bg-[#1E1E1E] text-white rounded-2xl hover:bg-[#5F685F]">
+                        <button class="w-auto h-10 px-10 bg-[#1E1E1E] text-white rounded-2xl hover:bg-[#5F685F]">
                           Simpan Perubahan
-                      </button>
+                        </button>
                       </div>
                   </form>
               </div>
           </div>
         </div>
-        <div v-if="rev">
-          <div class="h-[1120px] w-auto md:mr-32 mr-10  bg-[#F2F2F2] rounded-xl lg:h-[660px]  md:h-[660px] items-center  shadow-lg border">
-
-          </div>
+        <div class="text-center">
+          <button class="w-auto h-10 px-10 ml-16 mt-14 bg-[#997380] text-white rounded-2xl hover:bg-[#5F685F]">
+              Log Out
+          </button>
         </div>
-        <div v-if="wish">
-          <div class="h-[1120px] w-auto md:mr-32 mr-10  bg-[#F2F2F2] rounded-xl lg:h-[660px]  md:h-[660px] items-center  shadow-lg border">
-            
-          </div>
-        </div>
-      </div>
     </div>
 </template>
 
@@ -134,9 +138,6 @@ export default {
       user2: "",
       user3: "",
       user4: "",
-      prof: true,
-      wish: false,
-      rev: false
     }
   },
 
@@ -211,24 +212,6 @@ export default {
         this.userPwRetype = false
       }
        
-    }
-  },
-
-  methods: {
-    menuProf() {
-      this.prof = true,
-      this.rev = false,
-      this.wish = false
-    },
-    menuWish() {
-      this.prof = false,
-      this.rev = false,
-      this.wish = true
-    },
-    menuRev() {
-      this.prof = false,
-      this.rev = true,
-      this.wish = false
     }
   },
 }
