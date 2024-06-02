@@ -1,0 +1,81 @@
+<template>
+    <div class="font-[Poppins]">
+        <div class="my-8 lg:mx-32 md:mx-20 sm:mx-10">
+            <div class="sm:flex">
+                <div>
+                    <div class="bg-[url('/public/download.jpg')] bg-no-repeat bg-cover md:w-[300px] md:h-[230px] lg:w-[400px] lg:h-[270px] sm:w-[250px] sm:h-[215px] mx-10 sm:mx-0 h-[250px]  shadow-2xl border rounded-xl ">
+                        <div class="">
+                            <div class="bg-[#C2CFC2] lg:w-36 lg:h-8 md:w-32 md:h-7 lg:mx-32 md:mx-20 sm:mx-16 mx-24 h-7 mt-6 rounded-3xl flex shadow-xl border">
+                                <div class="bg-[#C2CFC2] lg:w-[72px] lg:h-[30px] md:w-[64px] md:h-[26px] sm:w-[64px] sm:h-[26px] w-full h-[26px] text-center rounded-3xl lg:pt-[6px] md:pt-[4px] sm:pt-[3px] pt-[2px] text-[14px] font-medium hover:text-white hover:bg-[#636963] cursor-pointer">
+                                    <p>Galeri</p>
+                                </div>
+                                <div class="bg-[#C2CFC2] lg:w-[72px] lg:h-[30px] md:w-[64px] md:h-[26px] sm:w-[64px] sm:h-[26px] w-full h-[26px] text-center rounded-3xl lg:pt-[6px] md:pt-[4px] sm:pt-[3px] pt-[2px] text-[14px] font-medium hover:text-white hover:bg-[#636963] cursor-pointer">
+                                    <p>Menu</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col ml-10 text-justify mt-6 sm:mt-0">
+                    <div class="flex md:mt-4 sm:mt-2">
+                        <img class="lg:h-6 md:h-5 h-4 sm:h-4  mt-3 mr-4" src="/public/Map.png" alt="">
+                        <p class="lg:text-[16px] md:text-[14px] sm:text-[13px] text-[14px] mr-11 sm:mr-0 font-medium">Jalan Bendi Besar Ujung No.19B, Tanah Kusir, Kebayoran Lama, Jakarta Selatan </p>
+                    </div> 
+                    <div class="flex">
+                        <div class="flex mt-4">
+                            <img class="lg:h-6 md:h-5 h-4 sm:h-4 mt-1 mr-4" src="/public/Clock.png" alt="">
+                            <p class="lg:text-[16px] md:text-[14px] sm:text-[13px] text-[14px] font-medium">10:00 - 22:00</p>
+                        </div>
+                        <div class="flex mt-4">
+                            <img class="ml-7 lg:h-5 md:h-4 h-4 sm:h-4 mt-1 mr-4" src="/public/Phone.png" alt="">
+                            <p class="lg:text-[16px] md:text-[14px] sm:text-[13px] text-[14px] mr-11 sm:mr-0 font-medium">021 7290576</p>
+                        </div>
+                    </div> 
+                    <div class="flex">
+                        <div class="flex mt-4">
+                            <img class="ml-1 lg:h-5 md:h-4 h-4 sm:h-4 mt-1 mr-4" src="/public/Check.png" alt="">
+                            <p class="lg:text-[16px] md:text-[14px] sm:text-[13px] text-[14px] font-medium">Cabang</p>
+                        </div>
+                        <div class="flex mt-4">
+                            <img class="ml-7 lg:h-5 md:h-4 h-4 sm:h-4 mt-1 mr-4" src="/public/Money.png" alt="">
+                            <p class="lg:text-[16px] md:text-[14px] sm:text-[13px] text-[14px] mr-11 sm:mr-0 font-medium">Rp. 100.000 - Rp. 200.000</p>
+                        </div>
+                    </div> 
+                    <div class="flex mt-4">
+                        <img class="lg:h-6 md:h-5 h-4 sm:h-4 mt-1 mr-4" src="/public/Cashier.png" alt="">
+                        <p class="lg:text-[16px] md:text-[14px] sm:text-[13px] text-[14px] mr-11 sm:mr-0 font-medium">Tunai, Visa, Master, Debet, Gopay, Ovo</p>
+                    </div> 
+                    <div class="flex mt-4">
+                        <img class="lg:h-6 md:h-5 h-4 sm:h-4  mt-3 mr-4" src="/public/Hand.png" alt="">
+                        <p class="lg:text-[16px] md:text-[14px] sm:text-[13px] text-[14px] mr-11 sm:mr-0 font-medium">Wifi, Area merokok, Area outdoor, Ruang VIP, Bisa reservasi, Area parkir</p>
+                    </div> 
+                </div>
+            </div>
+            <div class="flex justify-between mt-5 mx-10 sm:mx-0">
+                <div class="bg-[#997380] lg:w-[400px] md:w-[300px] sm:w-[250px] md:h-[35px] h-[32px] shadow-xl border rounded-lg mt-6 sm:mt-0">
+                    <div class="flex justify-between">
+                        <div class="">
+                            <h1 class="sm:pl-5 pl-2 pt-1 text-white font-semibold md:text-[18px] sm:text-[16px] text-[14px]">Total Rating</h1>
+                        </div>
+                        <div class="flex sm:mr-6 mr-2">
+                            <img src="/public/Star.png" class="mt-2 lg:h-5 lg:w-5 md:h-[16px] sm:h-[15px] sm:w-[15px] h-[14px] w-[14px] ml-2" alt="">
+                            <select name="Kec." id="Kec." class=" mt-1 text-white bg-[#997380] outline-none text-[14px]">
+                                <option value="1" >1 </option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex flex-col sm:flex-row">
+                        <p class="sm:pt-1 lg:text-[16px]  md:text-[14px] sm:text-[13px] text-[13px] font-bold sm:mr-5 mx-5 sm:mx-0 mb-1 sm:mb-1 ">Slot: 5 Orang </p>
+                        <a href="" class="h-auto w-auto rounded-lg bg-black text-white text-center py-1 md:px-8 sm:px-6 hover:bg-slate-500 sm:text-[15px] lg:text-[17px]">Reservasi</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

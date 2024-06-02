@@ -19,7 +19,7 @@
       <div v-if="open">
         <div class="container flex lg:flex-row flex-col lg:items-center lg:justify-between lg:static mx-auto">
           <span class=" hover:font-semibold lg:my-0 lg:ml-[60px] mb-2 mt-6">
-            <RouterLink to="/">Terserahin!(?)</RouterLink>
+            <RouterLink to="/terserah">Terserahin!(?)</RouterLink>
           </span>
           <span class="hover:font-semibold my-2 lg:my-0 ">
             <RouterLink to="/">Blog</RouterLink>
@@ -30,7 +30,7 @@
           <RouterLink to="/">
             <img class="relative h-12 hover:scale-105 lg:bg-transparent lg:flex hidden" src="/public/Logo.png" alt="">
           </RouterLink>
-          <RouterLink to="/">
+          <RouterLink to="/profil">
             <span class=" hover:font-semibold lg:my-0">
               Wishlist <img class="my-3 w-4 inline" src="/public/lop.png" alt="">
             </span>
@@ -39,14 +39,14 @@
             <p @click="menuPopup()" class="hover:font-semibold cursor-pointer">Login</p>
           </span>
           <span class="hover:font-semibold lg:flex lg:mr-[75px] lg:my-0 my-2 hidden">
-            <RouterLink to="/">Sign Up</RouterLink>
+            <RouterLink to="/regis">Sign Up</RouterLink>
           </span>
         </div>
       </div>
       <div v-else>
         <div class="container lg:flex lg:flex-row flex-col lg:items-center lg:justify-between absolute lg:static mx-auto hidden">
           <span class=" hover:font-semibold lg:my-0 lg:ml-[60px] mb-2 mt-6">
-            <RouterLink to="/">Terserahin!(?)</RouterLink>
+            <RouterLink to="/terserah">Terserahin!(?)</RouterLink>
           </span>
           <span class="hover:font-semibold my-2 lg:my-0 ">
             <RouterLink to="/">Blog</RouterLink>
@@ -57,7 +57,7 @@
           <RouterLink to="/">
             <img class="relative h-12 hover:scale-105 lg:bg-transparent lg:flex hidden" src="/public/Logo.png" alt="">
           </RouterLink>
-          <RouterLink to="/">
+          <RouterLink to="/profil">
             <span class="my-3 hover:font-semibold lg:my-0">
               Wishlist <img class="w-4 inline" src="/public/lop.png" alt="">
             </span>
@@ -87,8 +87,8 @@
               <label for="" class="absolute font-bold text-red-500 text-[11px] ml-13" v-if="userEmail">Masukkan {{ simbol }} digit karakter (Minimal 12 Karakter)</label>
               <div class="flex">
                 <img class="inline h-5 md:h-7 ml-1 mt-6 md:mt-7" src="/public/Password.png" alt="">
-                <input v-if="hidePw" type="text" v-model="pw" class="pl-4 text-black md:h-7 h-6 mt-6 md:w-[220px] w-[230px] md:ml-7 ml-6 bg-[#D3D3D3] rounded-2xl shadow-sm border-black" placeholder="Password">
-                <input v-else type="password" v-model="pw" class="pl-4 text-black md:h-7 h-6 mt-6 md:w-[220px] w-[230px] md:ml-7 ml-6 bg-[#D3D3D3] rounded-2xl shadow-sm border-black" placeholder="Password">
+                <input v-if="hidePw" type="text" v-model="pw" class="pl-4 text-black md:h-7 h-6 mt-6 md:w-[220px] w-[230px] ml-6 bg-[#D3D3D3] rounded-2xl shadow-sm border-black" placeholder="Password">
+                <input v-else type="password" v-model="pw" class="pl-4 text-black md:h-7 h-6 mt-6 md:w-[220px] w-[230px] ml-6 bg-[#D3D3D3] rounded-2xl shadow-sm border-black" placeholder="Password">
                 <div @click="menuEye"> 
                   <ion-icon class="hover:scale-110 text-2xl mt-6 ml-5 h-7 w-7 cursor-pointer bg-black rounded-xl" onclick="onToggleMenus(this)" name= "eye"></ion-icon>
                 </div>  
