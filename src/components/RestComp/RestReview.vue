@@ -1,65 +1,50 @@
 <template>
-    <div class=" my-9 font-[Poppins]">
+    <div class=" mb-9 mt-24 font-[Poppins]">
         <div class="lg:mx-32 md:mx-24 sm:mx-14 mx-10">
-            <div class="ml-4">
-                <h1 class=" text-2xl text-[#9CA69C] font-bold">Review</h1>
+            <div class="ml-4 mb-5">
+                <h1 class=" text-3xl text-[#9CA69C] font-bold">Review</h1>
             </div>
             <div class="flex flex-col text-justify">
-                <div class="bg-[#ffffff] h-auto mt-5 w-auto rounded-t-xl shadow-xl border-b-2">
-                    <div class="flex justify-between mt-8">
-                        <div class="flex flex-col text-center">
-                            <h1 class="font-bold md:mx-10 mx-5">Username</h1>
-                            <p class="italic text-[13px] text-[#777777]">21/05/2024</p>
-                        </div>
-                        <div class="md:mr-10 mr-5 text-[14px]">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dapibus turpis eget quam luctus, in tristique sapien bibendum. Fusce eget tortor mauris. Nulla condimentum lacus ut consequat ultricies. Donec nec egestas libero. In interdum nibh quis felis molestie feugiat. Cras ac nisi sit amet nisl dapibus pulvinar nec a sapien. Sed tempus ligula in enim vehicula, ut fermentum erat ornare. Donec fermentum interdum turpis, eu facilisis risus consectetur id. Suspendisse consequat posuere neque a pulvinar. Curabitur eget ultrices ante, ac fringilla odio. In magna ligula, lobortis ac congue nec, sagittis ut magna.</p>
-                        </div>
-                    </div>
-                    <div class="float-right mx-10 mt-5 mb-8">
-                        <div class="bg-[#997380] w-full h-[35px] border rounded-lg object-right">
-                            <div class="flex justify-between">
-                                <div class="">
-                                    <h1 class="pl-5 pt-1 text-white font-semibold mr-3 ">Total Rating</h1>
-                                </div>
-                                <div class="flex mr-3">
-                                    <img src="/public/Star.png" class="mt-2 h-4 w-4" alt="">
-                                    <select name="Kec." id="Kec." class=" mt-1 text-white bg-[#997380] oufullone text-[14px]">
-                                        <option value="1" >1 </option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                    </select>
-                                </div>
+                <div class="bg-white h-3 w-full shadow-xl rounded-t-xl font-light"></div>
+                <div v-for="rev in reviews">
+                    <div class="bg-[#FFFFFF] h-auto w-auto shadow-xl border-b-2">
+                        <div class="flex justify-between mb-20 pt-7 ">
+                            <div class="flex flex-col text-center">
+                                <h1 class="font-bold md:mx-10 mx-5">{{ rev.name }}</h1>
+                                <p class="italic text-[13px] text-[#777777]">{{ rev.date }}</p>
+                            </div>
+                            <div class="md:mr-10 mr-5 text-[14px]">
+                                <p>{{ rev.review }}</p>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="bg-[#FFFFFF] h-auto w-auto shadow-xl border-b-2">
-                    <div class="flex justify-between mt-8">
-                        <div class="flex flex-col text-center">
-                            <h1 class="font-bold md:mx-10 mx-5">Username</h1>
-                            <p class="italic text-[13px] text-[#777777]">21/05/2024</p>
-                        </div>
-                        <div class="md:mr-10 mr-5 text-[14px]">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dapibus turpis eget quam luctus, in tristique sapien bibendum. Fusce eget tortor mauris. Nulla condimentum lacus ut consequat ultricies. Donec nec egestas libero. In interdum nibh quis felis molestie feugiat. Cras ac nisi sit amet nisl dapibus pulvinar nec a sapien. Sed tempus ligula in enim vehicula, ut fermentum erat ornare. Donec fermentum interdum turpis, eu facilisis risus consectetur id. Suspendisse consequat posuere neque a pulvinar. Curabitur eget ultrices ante, ac fringilla odio. In magna ligula, lobortis ac congue nec, sagittis ut magna.</p>
-                        </div>
-                    </div>
-                    <div class="float-right mx-10 mt-5 mb-8">
-                        <div class="bg-[#997380] w-full h-[35px] shadow-xl border rounded-lg object-right">
-                            <div class="flex justify-between">
+                        <div class="float-right mr-[260px] -mt-14">
+                            <div v-if="revs">
                                 <div class="">
-                                    <h1 class="pl-5 pt-1 text-white font-semibold mr-3 ">Total Rating</h1>
+                                    <div class="absolute bg-[#C28C9E] h-60 w-56 rounded-lg ">
+                                        <div class="mt-11 lg:mx-5 md:mx-2 mx-3">
+                                            <div v-for="rat in rating">
+                                                <div class="flex mb-2 text-white justify-between">
+                                                    <p class="lg:text-[17px] md:text-[15px] ">{{rat.name}}</p>
+                                                    <div class="flex">
+                                                        <img src="/public/Star.png" class="mt-1 h-4 w-4 ml-2" alt="">
+                                                        <p class="text-white mt-0.5 lg:text-[15px] md:text-[14px] ml-2 mr-1">{{rat.rate}}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="flex mr-3">
-                                    <img src="/public/Star.png" class="mt-2 h-4 w-4" alt="">
-                                    <select name="Kec." id="Kec." class=" mt-1 text-white bg-[#997380] oufullone text-[14px]">
-                                        <option value="1" >1 </option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                    </select>
+                            </div>
+                            <div class="bg-[#997380] absolute  w-56 h-[35px] shadow-xl border rounded-lg object-right">
+                                <div class="flex justify-between">
+                                    <div class="">
+                                        <h1 class="pl-5 pt-1 text-white font-semibold mr-3 ">Total Rating</h1>
+                                    </div>
+                                    <div class="flex mr-3">
+                                        <img src="/public/Star.png" class="mt-2 h-4 w-4" alt="">
+                                        <p class="text-white mt-1.5 lg:text-[15px] md:text-[14px] ml-2 mr-1">{{rev.rate}}</p>
+                                        <img @click="menuRev()" src="/public/Down.png" class="hover:scale-125 cursor-pointer mt-3 h-2 w-3 ml-2" alt="">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -201,7 +186,20 @@
         },
         data(){
             return {
+                reviews: [
+                    {name : "Radit", date : "21/05/2024", review : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dapibus turpis eget quam luctus, in tristique sapien bibendum. Fusce eget tortor mauris. Nulla condimentum lacus ut consequat ultricies. Donec nec egestas libero. In interdum nibh quis felis molestie feugiat. Cras ac nisi sit amet nisl dapibus pulvinar nec a sapien. Sed tempus ligula in enim vehicula, ut fermentum erat ornare. Donec fermentum interdum turpis, eu facilisis risus consectetur id. Suspendisse consequat posuere neque a pulvinar. Curabitur eget ultrices ante, ac fringilla odio. In magna ligula, lobortis ac congue nec, sagittis ut magna.", rate : "4.5"},
+                    {name : "Lacavi", date : "21/05/2024", review : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dapibus turpis eget quam luctus, in tristique sapien bibendum. Fusce eget tortor mauris. Nulla condimentum lacus ut consequat ultricies. Donec nec egestas libero. In interdum nibh quis felis molestie feugiat. Cras ac nisi sit amet nisl dapibus pulvinar nec a sapien. Sed tempus ligula in enim vehicula, ut fermentum erat ornare. Donec fermentum interdum turpis, eu facilisis risus consectetur id. Suspendisse consequat posuere neque a pulvinar. Curabitur eget ultrices ante, ac fringilla odio. In magna ligula, lobortis ac congue nec, sagittis ut magna.", rate : "4.5"},
+                ],
+                rating: [
+                    {name : "Rasa", rate : "4.5"},
+                    {name : "Harga:Rasa", rate : "4.6"},
+                    {name : "Kebersihan", rate : "4.3"},
+                    {name : "Suasana", rate : "4.5"},
+                    {name : "Pelayanan", rate : "4.2"},
+                    {name : "Aroma", rate : "4.9"},
+                ],
                 value : 1,
+                revs : false,
                 open : false,
                 nilai1 : "",
                 nilai2 : "",
@@ -234,6 +232,9 @@
             },
             menuOpen() {
                 this.open = !this.open
+            },
+            menuRev() {
+                this.revs = !this.revs
             }
         },
 

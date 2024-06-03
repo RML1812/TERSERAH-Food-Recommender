@@ -51,26 +51,38 @@
                     </div> 
                 </div>
             </div>
-            <div class="flex justify-between mt-5 mx-10 sm:mx-0">
-                <div class="bg-[#997380] lg:w-[400px] md:w-[300px] sm:w-[250px] md:h-[35px] h-[32px] shadow-xl border rounded-lg mt-6 sm:mt-0">
-                    <div class="flex justify-between">
-                        <div class="">
-                            <h1 class="sm:pl-5 pl-2 pt-1 text-white font-semibold md:text-[18px] sm:text-[16px] text-[14px]">Total Rating</h1>
+            <div class="mt-5 mx-10 sm:mx-0">
+                <div>
+                    <div v-if="open">
+                        <div class="absolute mt-6 sm:mt-0 bg-[#C28C9E] lg:h-40 lg:w-[400px] md:w-[300px] sm:w-[250px] md:h-36 h-64 rounded-lg ">
+                            <div class="md:columns-2 mt-12 lg:mx-5 md:mx-2 mx-3">
+                                <div v-for="rat in rating">
+                                    <div class="flex mb-2 text-white justify-between">
+                                        <p class="lg:text-[17px] md:text-[15px] ">{{rat.name}}</p>
+                                        <div class="flex">
+                                            <img src="/public/Star.png" class="mt-1 h-4 w-4 ml-2" alt="">
+                                            <p class="text-white mt-0.5 lg:text-[15px] md:text-[14px] ml-2 mr-1">{{rat.rate}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="flex sm:mr-6 mr-2">
-                            <img src="/public/Star.png" class="mt-2 lg:h-5 lg:w-5 md:h-[16px] sm:h-[15px] sm:w-[15px] h-[14px] w-[14px] ml-2" alt="">
-                            <select name="Kec." id="Kec." class=" mt-1 text-white bg-[#997380] outline-none text-[14px]">
-                                <option value="1" >1 </option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
+                    </div>
+                    <div class="absolute bg-[#997380] lg:w-[400px] md:w-[300px] sm:w-[250px] md:h-[35px] h-[32px] shadow-xl border rounded-lg mt-6 sm:mt-0">
+                        <div class="flex justify-between">
+                            <div class="">
+                                <h1 class="sm:pl-5 pl-2 pt-1 text-white font-semibold md:text-[18px] sm:text-[16px] text-[14px]">Total Rating</h1>
+                            </div>
+                            <div class="flex sm:mr-6 mr-2">
+                                <img src="/public/Star.png" class="mt-2 lg:h-5 lg:w-5 md:h-[16px] sm:h-[15px] sm:w-[15px] h-[14px] w-[14px] ml-2" alt="">
+                                <p class="font-bold text-white mt-1 lg:text-[18px] md:text-[17px] text-[15px] ml-2 mr-1">4.5</p>
+                                <img @click="menuOpen()" src="/public/Down.png" class="hover:scale-125 cursor-pointer lg:mt-4 mt-3 h-2 w-3 ml-2" alt="">
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div>
-                    <div class="flex flex-col sm:flex-row">
+                    <div class="flex flex-col sm:flex-row float-right">
                         <p class="sm:pt-1 lg:text-[16px]  md:text-[14px] sm:text-[13px] text-[13px] font-bold sm:mr-5 mx-5 sm:mx-0 mb-1 sm:mb-1 ">Slot: 5 Orang </p>
                         <a href="" class="h-auto w-auto rounded-lg bg-black text-white text-center py-1 md:px-8 sm:px-6 hover:bg-slate-500 sm:text-[15px] lg:text-[17px]">Reservasi</a>
                     </div>
@@ -79,3 +91,32 @@
         </div>
     </div>
 </template>
+
+<script>
+    export default {
+        components : {
+
+        },
+        data(){
+            return {
+                rating: [
+                {name : "Rasa", rate : "4.5"},
+                {name : "Harga:Rasa", rate : "4.6"},
+                {name : "Kebersihan", rate : "4.3"},
+                {name : "Suasana", rate : "4.5"},
+                {name : "Pelayanan", rate : "4.2"},
+                {name : "Aroma", rate : "4.9"},
+                ],
+                open : false,
+
+            }
+        },
+        methods: {
+            menuOpen() {
+                this.open = !this.open
+            }
+        },
+
+       
+    }
+</script>
