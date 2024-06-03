@@ -1,0 +1,9 @@
+
+    <h1>Your Reservations</h1>
+    <% reservations.forEach(function(reservation) { %>
+        <div>
+            <p>Reservation for <%= reservation.name %></p>
+            <p>Date: <%= reservation.tanggalReservation %></p>
+            <a href="/reservation/detail/<%= reservation._id %>">View Details</a>
+        </div>
+    <% }); %>

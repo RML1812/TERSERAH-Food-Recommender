@@ -59,6 +59,20 @@
                 <% }) %>
             </div>
         </div>
+
+        <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPrice" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Price Range
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownPrice">
+                <% priceRange.forEach(price => { %>
+                    <div>
+                        <input type="checkbox" id="<%= price._id %>" name="priceRange" value="<%= price.name %>">
+                        <label for="<%= price._id %>"><%= price.name %></label>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
     </div>
     
     <br>
@@ -137,6 +151,8 @@
         const culinaryTypeCheckboxes = document.querySelectorAll('input[name="culinaryType"]:checked');
         const paymentMethodCheckboxes = document.querySelectorAll('input[name="paymentMethod"]:checked');
         const availableFacilityCheckboxes = document.querySelectorAll('input[name="availableFacility"]:checked');
+        const priceRangeCheckboxes = document.querySelectorAll('input[name="priceRange"]:checked');
+                
 
         // Function to append parameters to queryParams
         const appendParams = (checkboxes, paramName) => {
@@ -149,6 +165,7 @@
         appendParams(culinaryTypeCheckboxes, 'culinary_type');
         appendParams(paymentMethodCheckboxes, 'payment_methods');
         appendParams(availableFacilityCheckboxes, 'available_facilities');
+        appendParams(priceRangeCheckboxes, 'price_range');
 
         // Navigate to /search with all query parameters
         window.location.href = `/search?${queryParams}`;

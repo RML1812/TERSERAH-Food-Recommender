@@ -5,6 +5,8 @@ const path = require("path")
 const session = require('express-session');
 const bcrypt = require('bcrypt');
 const app = express()
+const brain = require('brain.js');
+const tf = require('@tensorflow/tfjs');
 require("./mongo")
 
 //model dari db
@@ -13,9 +15,13 @@ const {Rating} = require("./model/rating")
 const {Restaurant,
     CulinaryTypeView,
     PaymentMethodView,
-    AvailableFacilityView} = require("./model/restaurant")
+    AvailableFacilityView,
+    PriceRangeView} = require("./model/restaurant")
 const {Review} = require("./model/review")
 const Wishlist = require("./model/wishlist")
+const {Menu} = require("./model/menu.js")
+const {Transaction} = require("./model/transaction.js")
+const {Reservation} = require("./model/reservation.js")
 
 const {getRandomRestaurants} = require("./function.js")
 
@@ -49,97 +55,213 @@ const checkAuth = (req, res, next) => {
         next();
     } else {
         // Jika pengguna belum masuk, alihkan ke halaman login atau beri respon lainnya
-        req.session.userLogin = { _id: 1, name: 'dummy' }; // Akun dummy
+        req.session.userLogin = { _id: 1, name: 'dummy'}; // Akun dummy
         next();
     }
 };
 
-// async function migrateRatings() {
-//     try {
-//         const restaurants = await Restaurant.find();
+const createMLModel = async () => {
+    const users = await User.find().populate('restaurants');
+    const restaurants = await Restaurant.find();
 
-//         for (const restaurant of restaurants) {
-//             const individualRatings = restaurant.individual_rating.split(',').map(parseFloat);
+    const dataset = users.map(user => {
+        const restaurantCounts = restaurants.reduce((acc, restaurant) => {
+            acc[restaurant.culinary_type] = 0;
+            return acc;
+        }, {});
 
-//             // Asumsi bahwa urutan rating adalah sesuai dengan skema baru
-//             const rating = new Rating({
-//                 restaurant_id: restaurant._id,
-//                 combined_rating: restaurant.overall_rating,
-//                 ambience_rating: individualRatings[0],
-//                 taste_to_price_rating: individualRatings[1],
-//                 service_rating: individualRatings[2],
-//                 cleanliness_rating: individualRatings[3]
-//             });
-//             restaurant.rating_id = rating._id;
-//             await restaurant.save();
+        user.restaurants.forEach(restaurantId => {
+            const restaurant = restaurants.find(rest => rest._id.equals(restaurantId));
+            if (restaurant) {
+                restaurantCounts[restaurant.culinary_type]++;
+            }
+        });
 
-//             await rating.save();
-//         }
+        return {
+            input: Object.values(restaurantCounts),
+            output: user.preferredCulinaryType // Assuming this is a field in user schema
+        };
+    });
 
-//         console.log('Ratings migration completed');
-//     } catch (error) {
-//         console.error('Error migrating ratings', error);
-//     } 
-// }
+    // Membuat dan melatih model
+    // Memuat model pretrained, misalnya MobileNet
+    const baseModel = await tf.loadLayersModel('https://storage.googleapis.com/tfjs-models/tfjs/mobilenet_v1_0.25_224/model.json');
 
+    // Membekukan lapisan model dasar
+    baseModel.layers.forEach(layer => layer.trainable = false);
 
-// async function updateRestaurantReferences() {
-//     try {
-//         const restaurants = await Restaurant.find();
+     // Get unique culinary types from the restaurants
+    const uniqueCulinaryTypes = [...new Set(restaurants.map(restaurant => restaurant.culinary_type))];
+    const numCategories = uniqueCulinaryTypes.length;
 
-//         for (const restaurant of restaurants) {
-//             if (restaurant.rating_id) {
-//                 await Restaurant.findByIdAndUpdate(restaurant._id, {
-//                     $unset: { individual_rating: "" } // Remove the individual_rating field
-//                 });
-//             }
-//         }
+    // const numCategories = new Set(users.map(user => user.preferredCulinaryType)).size;
+    if (numCategories !== restaurants.length) {
+        throw new Error('Number of categories does not match number of restaurants.');
+    }
 
-//         console.log('Updated restaurant references and removed individual_rating');
-//     } catch (error) {
-//         console.error('Error updating restaurant references', error);
-//     }
-// }
+    // Create the model
+    const model = tf.sequential();
+    model.add(tf.layers.dense({ inputShape: [dataset[0].input.length], units: 64, activation: 'relu' }));
+    model.add(tf.layers.dropout({ rate: 0.5 })); // Add dropout for regularization
+    model.add(tf.layers.dense({ units: 32, activation: 'relu' }));
+    model.add(tf.layers.dense({ units: numCategories, activation: 'softmax' }));
+
+    // Compile the model
+    model.compile({
+        loss: 'categoricalCrossentropy',
+        optimizer: tf.train.adam(0.001), // Adjust learning rate
+        metrics: ['accuracy']
+    });
+
+    
+
+    // Prepare the data
+    const inputs = dataset.map(data => data.input);
+    // Map each user's preferred culinary type to an index
+    const outputs = dataset.map(data => {
+        const index = uniqueCulinaryTypes.indexOf(data.output);
+        return Array(numCategories).fill(0).map((_, i) => i === index ? 1 : 0);
+    });
+
+    // Train the model with added callbacks
+    await model.fit(tf.tensor2d(inputs), outputs, {
+        epochs: 10,
+        callbacks: [
+            tf.callbacks.earlyStopping({ monitor: 'loss' }),
+            {
+                onEpochEnd: (epoch, logs) => {
+                    console.log(`Epoch ${epoch + 1}: Loss = ${logs.loss}, Accuracy = ${logs.acc}`);
+                }
+            }
+        ]
+    });
+
+    return model;
+};
+
+const getTopCulinaryTypes = async (user, net) => {
+    const restaurants = await Restaurant.find();
+
+    const restaurantCounts = restaurants.reduce((acc, restaurant) => {
+        acc[restaurant.culinary_type] = 0;
+        return acc;
+    }, {});
+
+    if (user.restaurants && user.restaurants.length > 0) {
+        user.restaurants.forEach(restaurantId => {
+            const restaurant = restaurants.find(rest => rest._id.equals(restaurantId));
+            if (restaurant) {
+                restaurantCounts[restaurant.culinary_type]++;
+            }
+        });
+    }
+
+    const prediction = net.predict(tf.tensor2d([Object.values(restaurantCounts)]));
+    const topCulinaryTypes = await prediction.data();
+    const topIndexes = Array.from(topCulinaryTypes)
+        .map((prob, index) => ({ probability: prob, index }))
+        .sort((a, b) => b.probability - a.probability)
+        .slice(0, 4)
+        .map(item => restaurants[item.index].culinary_type);
+
+    return topIndexes;
+};
+
+async function migrateRatings() {
+    try {
+        const restaurants = await Restaurant.find();
+
+        for (const restaurant of restaurants) {
+            const individualRatings = restaurant.individual_rating.split(',').map(parseFloat);
+
+            // Asumsi bahwa urutan rating adalah sesuai dengan skema baru
+            const rating = new Rating({
+                restaurant_id: restaurant._id,
+                combined_rating: restaurant.overall_rating,
+                ambience_rating: individualRatings[0],
+                taste_to_price_rating: individualRatings[1],
+                service_rating: individualRatings[2],
+                cleanliness_rating: individualRatings[3]
+            });
+            restaurant.rating_id = rating._id;
+            await restaurant.save();
+
+            await rating.save();
+        }
+
+        console.log('Ratings migration completed');
+    } catch (error) {
+        console.error('Error migrating ratings', error);
+    } 
+}
+
+async function updateRestaurantReferences() {
+    try {
+        const restaurants = await Restaurant.find();
+
+        for (const restaurant of restaurants) {
+            if (restaurant.rating_id) {
+                await Restaurant.findByIdAndUpdate(restaurant._id, {
+                    $unset: { individual_rating: "" } // Remove the individual_rating field
+                });
+            }
+        }
+
+        console.log('Updated restaurant references and removed individual_rating');
+    } catch (error) {
+        console.error('Error updating restaurant references', error);
+    }
+}
 
 // migrateRatings().then(updateRestaurantReferences);
-
-// Halaman logout
 
 
 //point home (belum beres, belum menampilkan machine learningnya) 
 app.get('/', checkAuth, async (req, res) => {
     try {
-        const userLogin = req.session.userLogin; 
+        const userLogin = req.session.userLogin;
         const culinaryTypes = await CulinaryTypeView.find();
         const paymentMethods = await PaymentMethodView.find();
         const availableFacilities = await AvailableFacilityView.find();
-        // menampilkan top 4 restaurant
+        const priceRange = await PriceRangeView.find();
+
         const topRestaurants = await Restaurant.aggregate([
             { $match: { overall_rating: { $gte: 4.5, $lte: 5.0 } } },
-            { $sample: { size: 4 } }, 
-            { $sort: { overall_rating: -1 } }, 
+            { $sample: { size: 4 } },
+            { $sort: { overall_rating: -1 } },
         ]);
-        // res.status(200).json(topRestaurants);
+
+        // const net = await createMLModel();
+        // const topCulinaryTypes = await getTopCulinaryTypes(userLogin, net);
+
+        // const dominantRestaurants = await Restaurant.find({ culinary_type: { $in: topCulinaryTypes } }).limit(4);
 
         res.render('home', {
-            layout : "./layouts/main_layouts",
-            title : "Home",
+            layout: "./layouts/main_layouts",
+            title: "Home",
             topRestaurants,
             userLogin,
             culinaryTypes,
             paymentMethods,
-            availableFacilities
-        })
+            availableFacilities,
+            priceRange,
+            // dominantRestaurants
+        });
     } catch (error) {
+        console.error("Error on GET /:", error);
         res.status(500).json({ error: "Internal server error" });
     }
-})
+});
 
 //pilihan lebih banyak (belum beres, belum menampilkan machine learningnya) ---(blm)---
 app.get('/rekomendasi',  async (req, res) => {
     try {
         //menampilkan top 12 restaurant
-        const userLogin = req.session.userLogin; 
+        const userLogin = req.session.userLogin;
+        const culinaryTypes = await CulinaryTypeView.find();
+        const paymentMethods = await PaymentMethodView.find();
+        const availableFacilities = await AvailableFacilityView.find();
+        const priceRange = await PriceRangeView.find();
         const topRestaurants = await Restaurant.aggregate([
             { $match: { overall_rating: { $gte: 4.5, $lte: 5.0 } } },
             { $sample: { size: 20 } }, 
@@ -147,11 +269,15 @@ app.get('/rekomendasi',  async (req, res) => {
         ]);
 
         res.render('home', {
-            layout : "./layouts/main_layouts",
-            title : "Home",
+            layout: "./layouts/main_layouts",
+            title: "Home",
             topRestaurants,
-            userLogin
-        })
+            userLogin,
+            culinaryTypes,
+            paymentMethods,
+            availableFacilities,
+            priceRange
+        });
     } catch (error) {
         res.status(500).json({ error: "Internal server error" });
     }
@@ -248,7 +374,7 @@ app.post('/signup', async (req, res) => {
     if (existingUser) {
         res.send('User already exists. Please choose a different username.');
         return;
-    } else if(password != repeatPassword){
+    } else if(data.password != data.repeatPassword){
         res.send('Password tidak sama');
         return;
     }else {
@@ -358,31 +484,46 @@ app.get('/search', async (req, res) => {
 });
 
 //mengambil detail dari restaurant berdasarkan id (id diambil oleh front end)
-app.get('/restaurants/:id', async (req, res) => {
-    const { id } = req.params;
+app.get('/restaurants/:restaurantId', async (req, res) => {
+    const { restaurantId } = req.params;
+    const userLogin = req.session.userLogin;
 
     try {
         // Cari restoran berdasarkan ID
-        const restaurant = await Restaurant.findById(id);
+        const restaurant = await Restaurant.findById(restaurantId);
+        // Cari menu yang memiliki link yang sama dengan restaurant
+        const menu = await Menu.findOne({ link : restaurant.link });
 
-        if (!restaurant) {
-            return res.status(404).json({ error: "Restoran tidak ditemukan" });
+        if (!(userLogin._id.toString() === "1")) {    
+            // Masukin ke ML
+            const user = await User.findById(userLogin._id);
+            if (!restaurant) {
+                return res.status(404).json({ error: "Restaurant tidak ditemukan" });
+            }
+    
+            if (!user.restaurants.includes(restaurantId)) {
+                user.restaurants.push(restaurantId);
+                await user.save();
+            }
+            // Masukin ke ML
         }
         
         const rating = await Rating.findById(restaurant.rating_id);
 
-        // res.json(restaurant);
+        // Render halaman dengan data restaurant dan menu
         res.render('restaurant', {
             layout : "./layouts/main_layouts",
             title : 'Restaurant',
             restaurant,
             rating,
+            menu 
         })
         
     } catch (error) {
         res.status(500).json({ error: "Terjadi kesalahan server" });
     }
 });
+
 
 // Rute untuk menambahkan restoran baru ---(blm)--- implementasi
 app.post('/restaurants', async (req, res) => {
@@ -520,6 +661,19 @@ app.post('/wishlist', async (req, res) => {
                 await wishlist.save();
             }
         }
+
+        //masukin ke ml
+        const user = await User.findById(userLogin._id);
+        const restaurant = await Restaurant.findById(restaurantId);
+        if (!restaurant) {
+            return res.status(404).json({ error: "Restaurant tidak ditemukan" });
+        }
+
+        if (!user.restaurants.includes(restaurantId)) {
+            user.restaurants.push(restaurantId);
+            await user.save();
+        }
+        //masukin ke ml
 
         res.status(200).json({ message: "Wishlist berhasil diunggah" });
     } catch (error) {
@@ -788,6 +942,121 @@ app.get('/review/user/:userId', async (req, res) => {
     } catch (error) {
         console.error("Error fetching user reviews:", error);
         res.status(500).json({ error: "Kesalahan server internal" });
+    }
+});
+
+app.post('/reservation/:restaurantId', async (req, res) => {
+    const { restaurantId } = req.params;
+    const userLogin = req.session.userLogin;
+    const { tanggalReservation, name, jumlahOrang, noHP, waktuMulai, waktuSelesai } = req.body;
+
+    // Calculate the total price
+    const hargaPerOrang = 5000;
+    const durasiReservasi = new Date(`1970-01-01T${waktuSelesai}`) - new Date(`1970-01-01T${waktuMulai}`);
+    const durasiMenit = durasiReservasi / 60000; 
+    const totalHarga = jumlahOrang * hargaPerOrang + Math.ceil(durasiMenit / 60) * 20000;
+
+    try {
+        const newReservation = new Reservation({
+            user_id: userLogin._id,
+            restaurant_id: restaurantId,
+            tanggalReservation,
+            name,
+            jumlahOrang,
+            noHP,
+            totalHarga,
+            waktuMulai,
+            waktuSelesai
+        });
+        await newReservation.save();
+
+        const newTransaction = new Transaction({
+            user_id: userLogin._id,
+            restaurant_id: restaurantId,
+            reservation_id: newReservation._id, // Link the transaction to the reservation
+            status: 'Pending' // Default status is 'Pending'
+        });
+        await newTransaction.save();
+        res.redirect('/');
+        // res.redirect('/transaction midtransnya');
+    } catch (error) {
+        res.status(400).send(error);
+    }
+
+        
+});
+
+// POST endpoint to delete a reservation
+app.post('/delete-reservation', async (req, res) => {
+    try {
+        const reservation = await Reservation.findByIdAndDelete(req.body.id_reservation);
+        if (!reservation) {
+            return res.status(404).send();
+        }
+        res.send(reservation);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+// GET endpoint to retrieve reservations by user ID
+app.get('/reservation/:user_id', async (req, res) => {
+    const userLogin = req.session.userLogin;
+    try {
+        const reservations = await Reservation.find({ user_id: req.params.user_id });
+        res.render('yourReservation', {
+            layout: "./layouts/main_layouts",
+            title: "Your Reservations",
+            reservations, // Pass the reservations data to the frontend
+            userLogin // Assuming req.user contains the logged-in user's data
+        });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+// GET endpoint to retrieve a single reservation by reservation ID
+app.get('/reservation/detail/:id_reservation', async (req, res) => {
+    const userLogin = req.session.userLogin;
+    try {
+        const reservation = await Reservation.findById(req.params.id_reservation);
+        if (!reservation) {
+            return res.status(404).send();
+        }
+        res.render('detailReservation', {
+            layout: "./layouts/main_layouts",
+            title: "Reservation Details",
+            reservation, // Pass the single reservation data to the frontend
+            userLogin // Assuming req.user contains the logged-in user's data
+        });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+app.get('/getReservation/:restaurantId', async (req, res) => {
+
+    const userLogin = req.session.userLogin;
+    const { restaurantId } = req.params;
+
+    if (!userLogin) {
+        return res.status(401).json({ error: "Akses tidak sah" });
+    }
+
+    if (userLogin._id.toString() === "1") {
+        // Jika ID pengguna adalah "1", redirect ke halaman utama
+        return res.redirect('/login');
+    }
+
+    try {
+        res.render('reservation', {
+            layout: "./layouts/main_layouts",
+            title: "Reservation",
+            userLogin,
+            restaurantId
+        });
+    } catch (error) {
+        res.status(500).send(error);
     }
 });
 
