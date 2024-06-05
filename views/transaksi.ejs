@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><%= title %></title>
+    <script type="text/javascript"
+            src="https://app.sandbox.midtrans.com/snap/snap.js"
+            data-client-key="SB-Mid-client-JJl5Mc6jLmJCyn-q"></script>
+</head>
+<body>
+    <h1>Transaction Review</h1>
+    <!-- Additional content and transaction details -->
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            window.snap.pay('<%= transactionToken %>', {
+                onSuccess: function(result) { /* Handle success */ },
+                onPending: function(result) { /* Handle pending */ },
+                onError: function(result) { /* Handle error */ },
+                onClose: function() { /* Handle close */ }
+            });
+        });
+    </script>
+</body>
+</html>

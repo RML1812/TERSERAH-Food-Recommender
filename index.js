@@ -37,7 +37,13 @@ const publicPath = path.join(__dirname, '../public')
 app.use(express.static(publicPath))
 console.log(publicPath);
 
-
+const midtransClient = require('midtrans-client');
+// Create Snap API instance
+let snap = new midtransClient.Snap({
+        // Set to true if you want Production Environment (accept real transaction).
+    isProduction : false,
+    serverKey : 'SB-Mid-server--fNgfFtFVee5pZFvJljO0e_m'
+});
 //view engine menggunakan ejs
 app.set('view engine', 'ejs')
 
@@ -977,8 +983,33 @@ app.post('/reservation/:restaurantId', async (req, res) => {
             status: 'Pending' // Default status is 'Pending'
         });
         await newTransaction.save();
-        res.redirect('/');
-        // res.redirect('/transaction midtransnya');
+
+        let parameter = {
+            "transaction_details": {
+                "order_id": newReservation._id.toString(),
+                "gross_amount": totalHarga
+            },
+            "credit_card":{
+                "secure" : true
+            }
+        };
+
+        snap.createTransaction(parameter)
+        .then((transaction)=>{
+            // Redirect to Midtrans payment page
+            let transactionToken = transaction.token;
+            console.log(transaction)
+            res.redirect(transaction.redirect_url)
+            // res.render('transaksi', {d
+            //     layout : "./layouts/main_layouts",
+            //     title : 'Review',
+            //     transactionToken,
+            // })
+        })
+        .catch((error)=>{
+            console.error(error);
+            res.status(500).send(error);
+        });
     } catch (error) {
         res.status(400).send(error);
     }

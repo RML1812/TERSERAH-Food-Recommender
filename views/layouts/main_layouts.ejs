@@ -10,44 +10,42 @@
 
     <link rel="stylesheet" href="./css/main.css">
     <style>
-      #menu-gallery-container {
+      #gallery-container, #menu-container {
           position: relative;
           width: 100%;
-          height: 300px; /* Sesuaikan dengan kebutuhan */
+          height: 300px; /* Adjust as needed */
           overflow: hidden;
       }
-
-      .menu-gallery-slide {
+  
+      .gallery-slide, .menu-slide {
           position: absolute;
           width: 100%;
           height: 100%;
-          background-size: cover; /* Ini akan menutupi area tanpa memotong gambar */
-          background-position: center; /* Ini akan menempatkan gambar di tengah */
+          background-size: cover;
+          background-position: center;
           transition: opacity 0.5s ease;
           opacity: 0;
-          object-fit: contain; /* Ini akan memastikan gambar fit dan tidak terdistorsi */
+          object-fit: contain;
       }
-
-      .menu-gallery-slide.active {
+  
+      .gallery-slide.active, .menu-slide.active {
           opacity: 1;
       }
-
-      /* .menu-btn-prev, .menu-btn-next {
+  
+      /* .gallery-btn-prev, .menu-btn-prev {
           position: absolute;
+          left: 10px;
           top: 50%;
           transform: translateY(-50%);
-          background-color: rgba(0, 0, 0, 0.5);
-          color: white;
-          border: none;
-          cursor: pointer;
-          padding: 10px;
-          z-index: 100;
+      }
+  
+      .gallery-btn-next, .menu-btn-next {
+          position: absolute;
+          right: 10px;
+          top: 50%;
+          transform: translateY(-50%);
       } */
-
-      .menu-btn-prev { left: 10px; }
-      .menu-btn-next { right: 10px; }
-
-    </style>
+  </style>  
     <title><%= title %></title>
   </head>
   <body>

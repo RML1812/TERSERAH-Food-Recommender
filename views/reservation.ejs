@@ -1,4 +1,10 @@
-
+<head>
+    <meta charset="UTF-8">
+    <title><%= title %></title>
+    <script type="text/javascript"
+            src="https://app.sandbox.midtrans.com/snap/snap.js"
+            data-client-key="SB-Mid-client-JJl5Mc6jLmJCyn-q"></script>
+</head>
     <h1>Form Reservasi</h1>
     <form action="/reservation/<%= restaurantId %>" method="POST">
         <label for="tanggalReservation">Tanggal Reservasi:</label>
@@ -21,3 +27,30 @@
 
         <button type="submit">Submit Reservasi</button>
     </form>
+
+<script>
+    document.getElementById('reservasi-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        // Collect form data
+        let formData = new FormData(this);
+
+        // Send AJAX request to your backend
+        fetch(this.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Open Midtrans popup
+            window.snap.pay(data.token, {
+                // Optional
+                onSuccess: function(result){ /* Handle success */ },
+                onPending: function(result){ /* Handle pending */ },
+                onError: function(result){ /* Handle error */ }
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+</script>

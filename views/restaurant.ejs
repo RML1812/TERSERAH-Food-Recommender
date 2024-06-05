@@ -14,26 +14,34 @@
         <!-- Tambahkan informasi restoran lainnya sesuai kebutuhan -->
     </ul>
 
-    <!-- Galeri Gambar Menu -->
-    <h1>Gallery Pict</h1>
-    <div id="menu-gallery-container">
+    <% if (menu.gallery_link) { %>
         <% const galleryImages = menu.gallery_link.split(';'); %>
-        <% galleryImages.forEach((image, index) => { %>
-            <div class="menu-gallery-slide <%= index === 0 ? 'active' : '' %>" style="background-image: url('<%= image %>');"></div>
-        <% }); %>
-    </div>
-    <button class="menu-btn-prev">❮</button>
-    <button class="menu-btn-next">❯</button>
-
-    <!-- <h1>Menu Pict</h1>
-    <div id="menu-gallery-container">
+        <% if (galleryImages.length > 0 && galleryImages[0] !== '') { %>
+            <h1>Gallery Pict</h1>
+            <div id="gallery-container">
+                <% galleryImages.forEach((image, index) => { %>
+                    <div class="gallery-slide <%= index === 0 ? 'active' : '' %>" style="background-image: url('<%= image %>');"></div>
+                <% }); %>
+            </div>
+            <button class="gallery-btn-prev">❮</button>
+            <button class="gallery-btn-next">❯</button>
+        <% } %>
+    <% } %>
+    
+    <% if (menu.menu_link) { %>
         <% const menuImages = menu.menu_link.split(';'); %>
-        <% menuImages.forEach((image, index) => { %>
-            <div class="menu-gallery-slide <%= index === 0 ? 'active' : '' %>" style="background-image: url('<%= image %>');"></div>
-        <% }); %>
-    </div>
-    <button class="menu-btn-prev2">❮</button>
-    <button class="menu-btn-next2">❯</button> -->
+        <% if (menuImages.length > 0 && menuImages[0] !== '') { %>
+            <h1>Menu Pict</h1>
+            <div id="menu-container">
+                <% menuImages.forEach((image, index) => { %>
+                    <div class="menu-slide <%= index === 0 ? 'active' : '' %>" style="background-image: url('<%= image %>');"></div>
+                <% }); %>
+            </div>
+            <button class="menu-btn-prev">❮</button>
+            <button class="menu-btn-next">❯</button>
+        <% } %>
+    <% } %>
+    
 
     <a href="/review/<%= restaurant._id %>">Liat Review</a>
     <a href="/">Kembali ke Halaman Utama</a>
@@ -69,20 +77,34 @@
     </script> -->
 
     <script>
-        const menuSlides = document.querySelectorAll('.menu-gallery-slide');
-        let currentMenuSlide = 0;
+        // Gallery slideshow
+        const gallerySlides = document.querySelectorAll('.gallery-slide');
+        let currentGallerySlide = 0;
+        document.querySelector('.gallery-btn-prev').addEventListener('click', () => {
+            gallerySlides[currentGallerySlide].classList.remove('active');
+            currentGallerySlide = (currentGallerySlide - 1 + gallerySlides.length) % gallerySlides.length;
+            gallerySlides[currentGallerySlide].classList.add('active');
+        });
+        document.querySelector('.gallery-btn-next').addEventListener('click', () => {
+            gallerySlides[currentGallerySlide].classList.remove('active');
+            currentGallerySlide = (currentGallerySlide + 1) % gallerySlides.length;
+            gallerySlides[currentGallerySlide].classList.add('active');
+        });
     
+        // Menu slideshow
+        const menuSlides = document.querySelectorAll('.menu-slide');
+        let currentMenuSlide = 0;
         document.querySelector('.menu-btn-prev').addEventListener('click', () => {
             menuSlides[currentMenuSlide].classList.remove('active');
             currentMenuSlide = (currentMenuSlide - 1 + menuSlides.length) % menuSlides.length;
             menuSlides[currentMenuSlide].classList.add('active');
         });
-    
         document.querySelector('.menu-btn-next').addEventListener('click', () => {
             menuSlides[currentMenuSlide].classList.remove('active');
             currentMenuSlide = (currentMenuSlide + 1) % menuSlides.length;
             menuSlides[currentMenuSlide].classList.add('active');
         });
     </script>
+    
 </body>
 </html>
