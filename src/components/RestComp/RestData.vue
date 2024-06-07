@@ -3,16 +3,21 @@
         <div class="my-8 lg:mx-32 md:mx-20 sm:mx-10">
             <div class="sm:flex">
                 <div>
-                    <div class="bg-[url('/public/download.jpg')] bg-no-repeat bg-cover md:w-[300px] md:h-[230px] lg:w-[400px] lg:h-[270px] sm:w-[250px] sm:h-[215px] mx-10 sm:mx-0 h-[250px]  shadow-2xl border rounded-xl ">
+                    <div :class="backgroundClass"  class=" bg-no-repeat bg-cover md:w-[300px] md:h-[230px] lg:w-[400px] lg:h-[270px] sm:w-[250px] sm:h-[215px] mx-10 sm:mx-0 h-[250px]  shadow-2xl border rounded-xl ">
                         <div class="">
                             <div class="bg-[#C2CFC2] lg:w-36 lg:h-8 md:w-32 md:h-7 lg:mx-32 md:mx-20 sm:mx-16 mx-24 h-7 mt-6 rounded-3xl flex shadow-xl border">
-                                <div class="bg-[#C2CFC2] lg:w-[72px] lg:h-[30px] md:w-[64px] md:h-[26px] sm:w-[64px] sm:h-[26px] w-full h-[26px] text-center rounded-3xl lg:pt-[6px] md:pt-[4px] sm:pt-[3px] pt-[2px] text-[14px] font-medium hover:text-white hover:bg-[#636963] cursor-pointer">
+                                <div class="bg-[#C2CFC2] lg:w-[72px] lg:h-[30px] md:w-[64px] md:h-[26px] sm:w-[64px] sm:h-[26px] w-full h-[26px] text-center rounded-l-3xl lg:pt-[6px] md:pt-[4px] sm:pt-[3px] pt-[2px] text-[14px] font-medium hover:text-white hover:bg-[#636963] cursor-pointer">
                                     <p>Galeri</p>
                                 </div>
-                                <div class="bg-[#C2CFC2] lg:w-[72px] lg:h-[30px] md:w-[64px] md:h-[26px] sm:w-[64px] sm:h-[26px] w-full h-[26px] text-center rounded-3xl lg:pt-[6px] md:pt-[4px] sm:pt-[3px] pt-[2px] text-[14px] font-medium hover:text-white hover:bg-[#636963] cursor-pointer">
+                                <div class="bg-[#636963] lg:w-[72px] lg:h-[30px] md:w-[64px] md:h-[26px] sm:w-[64px] sm:h-[26px] w-full h-[26px] text-center rounded-r-3xl lg:pt-[6px] md:pt-[4px] sm:pt-[3px] pt-[2px] text-[14px] font-medium text-white">
                                     <p>Menu</p>
                                 </div>
                             </div>
+                        </div>
+                        <div class="flex mx-4 center items-center">
+                            <ion-icon @click="prevImages" class="lg:mt-36 mt-28 mr-2 hover:scale-110 text-2xl h-6 w-7 bg-white rounded-2xl cursor-pointer" name="arrow-dropleft"></ion-icon>
+                            <img v-for="(img, index) in visibleImages" :src="img" :key="index" @click="changeBackground(img)" class="lg:mt-36 mt-28 mr-2 hover:scale-105 cursor-pointer bg-no-repeat shadow-3xl border-white bg-cover w-[105px] md:h-14 sm:h-10 h-14 rounded-xl">
+                            <ion-icon @click="nextImages" class="lg:mt-36 mt-28 hover:scale-110 text-2xl bg-white rounded-2xl h-6 w-7 cursor-pointer" name="arrow-dropright"></ion-icon>
                         </div>
                     </div>
                 </div>
@@ -108,12 +113,44 @@
                 {name : "Aroma", rate : "4.9"},
                 ],
                 open : false,
-
+                currentImage: '/public/download.jpg',
+                images: [
+                '/public/download.jpg',
+                '/public/gambar.png',
+                '/public/Image(1).png',
+                '/public/Image(1).png',
+                '/public/gambar.png',
+                '/public/download.jpg',
+                ],
+                startIndex: 0
             }
         },
+
+        computed: {
+            backgroundClass() {
+                return `bg-[url('${this.currentImage}')]`;
+            },
+            visibleImages() {
+                return this.images.slice(this.startIndex, this.startIndex + 3);
+            }
+        },
+        
         methods: {
             menuOpen() {
                 this.open = !this.open
+            },
+            changeBackground(image) {
+                this.currentImage = image;
+            },
+            nextImages() {
+                if (this.startIndex + 3 < this.images.length) {
+                this.startIndex += 3;
+                }
+            },
+            prevImages() {
+                if (this.startIndex - 3 >= 0) {
+                    this.startIndex -= 3;
+                }
             }
         },
 

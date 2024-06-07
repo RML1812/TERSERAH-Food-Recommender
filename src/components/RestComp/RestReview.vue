@@ -6,7 +6,7 @@
             </div>
             <div class="flex flex-col text-justify">
                 <div class="bg-white h-3 w-full shadow-xl rounded-t-xl font-light"></div>
-                <div v-for="rev in reviews">
+                <div v-for="(rev, index) in visibleReviews " :key="index">
                     <div class="bg-[#FFFFFF] h-auto w-auto shadow-xl border-b-2">
                         <div class="flex justify-between mb-20 pt-7 ">
                             <div class="flex flex-col text-center">
@@ -57,7 +57,7 @@
                             <ion-icon @click="menuLeft()" class="hover:scale-110 text-2xl h-6 w-6 cursor-pointer " name= "arrow-dropleft"></ion-icon>
                         </div>
                         <div>
-                            <p class="font-bold text-[16px] mx-14">{{ value }} dari 10</p>
+                            <p class="font-bold text-[16px] mx-14">{{ startIndex+1 }} dari {{ reviews.length }}</p>
                         </div>
                         <div>
                             <ion-icon @click="menuRight()" class="hover:scale-110 text-2xl h-6 w-6 cursor-pointer " name= "arrow-dropright"></ion-icon>
@@ -189,6 +189,9 @@
                 reviews: [
                     {name : "Radit", date : "21/05/2024", review : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dapibus turpis eget quam luctus, in tristique sapien bibendum. Fusce eget tortor mauris. Nulla condimentum lacus ut consequat ultricies. Donec nec egestas libero. In interdum nibh quis felis molestie feugiat. Cras ac nisi sit amet nisl dapibus pulvinar nec a sapien. Sed tempus ligula in enim vehicula, ut fermentum erat ornare. Donec fermentum interdum turpis, eu facilisis risus consectetur id. Suspendisse consequat posuere neque a pulvinar. Curabitur eget ultrices ante, ac fringilla odio. In magna ligula, lobortis ac congue nec, sagittis ut magna.", rate : "4.5"},
                     {name : "Lacavi", date : "21/05/2024", review : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dapibus turpis eget quam luctus, in tristique sapien bibendum. Fusce eget tortor mauris. Nulla condimentum lacus ut consequat ultricies. Donec nec egestas libero. In interdum nibh quis felis molestie feugiat. Cras ac nisi sit amet nisl dapibus pulvinar nec a sapien. Sed tempus ligula in enim vehicula, ut fermentum erat ornare. Donec fermentum interdum turpis, eu facilisis risus consectetur id. Suspendisse consequat posuere neque a pulvinar. Curabitur eget ultrices ante, ac fringilla odio. In magna ligula, lobortis ac congue nec, sagittis ut magna.", rate : "4.5"},
+                    {name : "Hamudi", date : "21/05/2024", review : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dapibus turpis eget quam luctus, in tristique sapien bibendum. Fusce eget tortor mauris. Nulla condimentum lacus ut consequat ultricies. Donec nec egestas libero. In interdum nibh quis felis molestie feugiat. Cras ac nisi sit amet nisl dapibus pulvinar nec a sapien. Sed tempus ligula in enim vehicula, ut fermentum erat ornare. Donec fermentum interdum turpis, eu facilisis risus consectetur id. Suspendisse consequat posuere neque a pulvinar. Curabitur eget ultrices ante, ac fringilla odio. In magna ligula, lobortis ac congue nec, sagittis ut magna.", rate : "4.5"},
+                    {name : "Lutpay", date : "21/05/2024", review : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dapibus turpis eget quam luctus, in tristique sapien bibendum. Fusce eget tortor mauris. Nulla condimentum lacus ut consequat ultricies. Donec nec egestas libero. In interdum nibh quis felis molestie feugiat. Cras ac nisi sit amet nisl dapibus pulvinar nec a sapien. Sed tempus ligula in enim vehicula, ut fermentum erat ornare. Donec fermentum interdum turpis, eu facilisis risus consectetur id. Suspendisse consequat posuere neque a pulvinar. Curabitur eget ultrices ante, ac fringilla odio. In magna ligula, lobortis ac congue nec, sagittis ut magna.", rate : "4.5"},
+                    {name : "Dafi", date : "21/05/2024", review : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dapibus turpis eget quam luctus, in tristique sapien bibendum. Fusce eget tortor mauris. Nulla condimentum lacus ut consequat ultricies. Donec nec egestas libero. In interdum nibh quis felis molestie feugiat. Cras ac nisi sit amet nisl dapibus pulvinar nec a sapien. Sed tempus ligula in enim vehicula, ut fermentum erat ornare. Donec fermentum interdum turpis, eu facilisis risus consectetur id. Suspendisse consequat posuere neque a pulvinar. Curabitur eget ultrices ante, ac fringilla odio. In magna ligula, lobortis ac congue nec, sagittis ut magna.", rate : "4.5"},
                 ],
                 rating: [
                     {name : "Rasa", rate : "4.5"},
@@ -207,27 +210,30 @@
                 nilai4 : "",
                 nilai5 : "",
                 nilai6 : "",
+                startIndex: 0
+            }
+        },
+        computed : {
+            visibleReviews() {
+                return this.reviews.slice(this.startIndex, this.startIndex + 2);
             }
         },
         methods: {
             menuLefts(){
-                if(this.value >=1 && this.value <=10) {
-                    this.value = 1
-                }
+                this.startIndex = 0
+
             },
             menuLeft(){
-                if(this.value >1 && this.value <=10) {
-                    this.value-=1
+                if(this.startIndex - 2 >= 0 && this.reviews.length) {
+                    this.startIndex -= 2
                 }
             },
             menuRights(){
-                if(this.value >=1 && this.value <=10) {
-                    this.value = 10
-                }
+                this.startIndex = this.reviews.length-1
             },
             menuRight(){
-                if(this.value >=1 && this.value <10) {
-                    this.value += 1
+                if(this.startIndex + 2 <= this.reviews.length) {
+                    this.startIndex += 2;
                 }
             },
             menuOpen() {
