@@ -6,22 +6,33 @@
                     <div :class="backgroundClass"  class=" bg-no-repeat bg-cover md:w-[300px] md:h-[230px] lg:w-[400px] lg:h-[270px] sm:w-[250px] sm:h-[215px] mx-10 sm:mx-0 h-[250px]  shadow-2xl border rounded-xl ">
                         <div class="">
                             <div class="bg-[#C2CFC2] lg:w-36 lg:h-8 md:w-32 md:h-7 lg:mx-32 md:mx-20 sm:mx-16 mx-24 h-7 mt-6 rounded-3xl flex shadow-xl border">
-                                <div class="bg-[#C2CFC2] lg:w-[72px] lg:h-[30px] md:w-[64px] md:h-[26px] sm:w-[64px] sm:h-[26px] w-full h-[26px] text-center rounded-l-3xl lg:pt-[6px] md:pt-[4px] sm:pt-[3px] pt-[2px] text-[14px] font-medium hover:text-white hover:bg-[#636963] cursor-pointer">
+                                <div v-if="menu" @click="galeri()"  class="bg-[#C2CFC2] lg:w-[72px] lg:h-[30px] md:w-[64px] md:h-[26px] sm:w-[64px] sm:h-[26px] w-full h-[26px] text-center rounded-l-3xl lg:pt-[6px] md:pt-[4px] sm:pt-[3px] pt-[2px] text-[14px] font-medium hover:text-white  cursor-pointer">
                                     <p>Galeri</p>
                                 </div>
-                                <div class="bg-[#636963] lg:w-[72px] lg:h-[30px] md:w-[64px] md:h-[26px] sm:w-[64px] sm:h-[26px] w-full h-[26px] text-center rounded-r-3xl lg:pt-[6px] md:pt-[4px] sm:pt-[3px] pt-[2px] text-[14px] font-medium text-white">
+                                <div v-if="menu" class="bg-[#636963] lg:w-[72px] lg:h-[30px] md:w-[64px] md:h-[26px] sm:w-[64px] sm:h-[26px] w-full h-[26px] text-center rounded-r-3xl lg:pt-[6px] md:pt-[4px] sm:pt-[3px] pt-[2px] text-[14px] font-medium text-white cursor-pointer">
+                                    <p>Menu</p>
+                                </div>
+                                <div v-if="!menu" class="bg-[#636963]  lg:w-[72px] lg:h-[30px] md:w-[64px] md:h-[26px] sm:w-[64px] sm:h-[26px] w-full h-[26px] text-center rounded-l-3xl lg:pt-[6px] md:pt-[4px] sm:pt-[3px] pt-[2px] text-[14px] font-medium text-white hover:bg-[#636963] cursor-pointer">
+                                    <p>Galeri</p>
+                                </div>
+                                <div v-if="!menu" @click="galeri()" class="bg-[#C2CFC2] lg:w-[72px] lg:h-[30px] md:w-[64px] md:h-[26px] sm:w-[64px] sm:h-[26px] w-full h-[26px] text-center rounded-r-3xl lg:pt-[6px] md:pt-[4px] sm:pt-[3px] pt-[2px] text-[14px] font-medium text-black  hover:text-white cursor-pointer">
                                     <p>Menu</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="flex mx-4 center items-center">
+                        <div v-if="menu" class="flex mx-4 center items-center">
+                            <ion-icon @click="prevHidang" class="lg:mt-36 mt-28 mr-2 hover:scale-110 text-2xl h-6 w-7 bg-white rounded-2xl cursor-pointer" name="arrow-dropleft"></ion-icon>
+                            <img v-for="(img, index) in visibleHidangan" :src="img" :key="index" @click="changeBackground(img)" class="lg:mt-36 mt-28 mr-2 hover:scale-105 cursor-pointer bg-no-repeat shadow-3xl border-2 bg-cover w-[105px] md:h-14 sm:h-10 h-14 rounded-xl">
+                            <ion-icon @click="nextHidang" class="lg:mt-36 mt-28 hover:scale-110 text-2xl bg-white rounded-2xl h-6 w-7 cursor-pointer" name="arrow-dropright"></ion-icon>
+                        </div>
+                        <div v-if="!menu" class="flex mx-4 center items-center">
                             <ion-icon @click="prevImages" class="lg:mt-36 mt-28 mr-2 hover:scale-110 text-2xl h-6 w-7 bg-white rounded-2xl cursor-pointer" name="arrow-dropleft"></ion-icon>
-                            <img v-for="(img, index) in visibleImages" :src="img" :key="index" @click="changeBackground(img)" class="lg:mt-36 mt-28 mr-2 hover:scale-105 cursor-pointer bg-no-repeat shadow-3xl border-white bg-cover w-[105px] md:h-14 sm:h-10 h-14 rounded-xl">
+                            <img v-for="(img, index) in visibleImages" :src="img" :key="index" @click="changeBackground(img)" class="lg:mt-36 mt-28 mr-2 hover:scale-105 cursor-pointer bg-no-repeat shadow-3xl border-2 bg-cover w-[105px] md:h-14 sm:h-10 h-14 rounded-xl">
                             <ion-icon @click="nextImages" class="lg:mt-36 mt-28 hover:scale-110 text-2xl bg-white rounded-2xl h-6 w-7 cursor-pointer" name="arrow-dropright"></ion-icon>
                         </div>
                     </div>
                 </div>
-                <div class="flex flex-col ml-10 text-justify mt-6 sm:mt-0">
+                <div  class="flex flex-col ml-10 text-justify mt-6 sm:mt-0">
                     <div class="flex md:mt-4 sm:mt-2">
                         <img class="lg:h-6 md:h-5 h-4 sm:h-4  mt-3 mr-4" src="/public/Map.png" alt="">
                         <p class="lg:text-[16px] md:text-[14px] sm:text-[13px] text-[14px] mr-11 sm:mr-0 font-medium">Jalan Bendi Besar Ujung No.19B, Tanah Kusir, Kebayoran Lama, Jakarta Selatan </p>
@@ -113,7 +124,7 @@
                 {name : "Aroma", rate : "4.9"},
                 ],
                 open : false,
-                currentImage: '/public/download.jpg',
+                currentImage: '/public/batagor.jpg',
                 images: [
                 '/public/download.jpg',
                 '/public/gambar.png',
@@ -121,8 +132,23 @@
                 '/public/Image(1).png',
                 '/public/gambar.png',
                 '/public/download.jpg',
+                '/public/download.jpg',
+                '/public/gambar.png',
+                '/public/Image(1).png',
                 ],
-                startIndex: 0
+                hidangan: [
+                '/public/ayam.jpeg',
+                '/public/sate.jpeg',
+                '/public/gacoan.jpeg',
+                '/public/soto.jpg',
+                '/public/kwetiaw.jpg',
+                '/public/batagor.jpg',
+                '/public/bakso.jpg',
+                '/public/bubur.jpg',
+                '/public/karedok.jpg',
+                ],
+                startIndex: 0,
+                menu : true
             }
         },
 
@@ -132,6 +158,9 @@
             },
             visibleImages() {
                 return this.images.slice(this.startIndex, this.startIndex + 3);
+            },
+            visibleHidangan() {
+                return this.hidangan.slice(this.startIndex, this.startIndex + 3);
             }
         },
         
@@ -139,17 +168,38 @@
             menuOpen() {
                 this.open = !this.open
             },
+            galeri() {
+                this.menu = !this.menu
+            },
             changeBackground(image) {
                 this.currentImage = image;
             },
             nextImages() {
                 if (this.startIndex + 3 < this.images.length) {
-                this.startIndex += 3;
+                    this.startIndex += 3;
+                } else{
+                    this.startIndex = 0;
                 }
             },
             prevImages() {
                 if (this.startIndex - 3 >= 0) {
                     this.startIndex -= 3;
+                } else{
+                    this.startIndex = this.images.length-3;
+                }
+            },
+            nextHidang() {
+                if (this.startIndex + 3 < this.hidangan.length) {
+                this.startIndex += 3;
+                } else{
+                    this.startIndex = 0;
+                }
+            },
+            prevHidang() {
+                if (this.startIndex - 3 >= 0) {
+                    this.startIndex -= 3;
+                } else{
+                    this.startIndex = this.hidangan.length-3;
                 }
             }
         },
