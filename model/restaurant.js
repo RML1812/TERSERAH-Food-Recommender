@@ -14,6 +14,7 @@ const restaurantSchema = new mongoose.Schema({
     overall_rating: Number,
     individual_rating: String,
     rating_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Rating', required: true },
+    slot: { type: Number, default: 30 }
 });
 
 const Restaurant = mongoose.model('Restaurant', restaurantSchema);

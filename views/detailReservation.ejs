@@ -1,11 +1,55 @@
+<head>
+    <script type="text/javascript"
+    src="https://app.sandbox.midtrans.com/snap/snap.js"
+    data-client-key="SB-Mid-client-JJl5Mc6jLmJCyn-q"></script>
+</head>
 <h1>Reservation Details</h1>
     <div>
-        <p>Name: <%= reservation.name %></p>
-        <p>Date: <%= reservation.tanggalReservation %></p>
-        <p>No HP: <%= reservation.noHP %></p>
-        <p>Waktu Mulai: <%= reservation.waktuMulai %></p>
-        <p>wWaktu Selesai: <%= reservation.waktuSelesai %></p>
-        <p>Total Harga: <%= reservation.totalHarga %></p>
-        <p>Jumlah Orang: <%= reservation.jumlahOrang %></p>
+        <p>Name: <%= reservations.name %></p>
+        <p>Restauran Name: <%= restaurants.name %></p>
+        <p>Date: <%= reservations.tanggalReservation %></p>
+        <p>No HP: <%= reservations.noHP %></p>
+        <p>Waktu Mulai: <%= reservations.waktuMulai %></p>
+        <p>wWaktu Selesai: <%= reservations.waktuSelesai %></p>
+        <p>Total Harga: <%= reservations.totalHarga %></p>
+        <p>Jumlah Orang: <%= reservations.jumlahOrang %></p>
+        <p>Status <%= transactions.status %></p>
         <!-- Add more details as needed -->
     </div>
+    <button id="pay-button">Bayar Sekarang</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const reservationId = '<%= reservations._id %>';
+                const token = '<%= transactions.transactionToken %>'
+                console.log(token)
+    
+                if ('<%= transactions.status %>' == 'In Progress') {
+                    document.getElementById('pay-button').disabled = false;
+                    document.getElementById('pay-button').addEventListener('click', () => {
+                        window.snap.pay(token, {
+                            onSuccess: function(result) {
+                                window.location.href = `/payment/finish?reservation_id=${reservationId}`;
+                            },
+                            onPending: function(result) {
+                                // Handle pending transaction
+                            },
+                            onError: function(result) {
+                                // Handle error
+                            },
+                            onClose: function() {
+                                // Handle the popup being closed
+                            }
+                        });
+                    });
+                } else if (data.status === 'Success') {
+                    document.getElementById('pay-button').disabled = true;
+                } else {
+                    console.error('Unknown transaction status:', data.status);
+                }
+            } catch (error) {
+                console.error('Error fetching reservation details:', error);
+            }
+        });
+    </script>

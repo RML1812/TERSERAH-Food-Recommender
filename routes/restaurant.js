@@ -52,6 +52,7 @@ router.get('/search', async (req, res) => {
     }
 });
 
+
 //mengambil detail dari restaurant berdasarkan id (id diambil oleh front end)
 router.get('/restaurants/:restaurantId', async (req, res) => {
     const { restaurantId } = req.params;
@@ -59,6 +60,7 @@ router.get('/restaurants/:restaurantId', async (req, res) => {
 
     try {
         // Cari restoran berdasarkan ID
+        // await Restaurant.updateMany({}, { $set: { slot: 30 } });
         const restaurant = await Restaurant.findById(restaurantId);
         // Cari menu yang memiliki link yang sama dengan restaurant
         const menu = await Menu.findOne({ link : restaurant.link });
