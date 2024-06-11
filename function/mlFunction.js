@@ -12,7 +12,7 @@ const session = require('express-session');
 const bcrypt = require('bcrypt');
 const app = express()
 const brain = require('brain.js');
-const tf = require('@tensorflow/tfjs');
+const tf = require('@tensorflow/tfjs-node');
 // const fetch = require('node-fetch');
 
 
@@ -128,36 +128,52 @@ let culinaryTypeMap = {};
 let priceRangeMap = {};
 
 async function testModel(user_id, nilai) {
-    const modelPath = path.join(__dirname, 'restaurant-recommendation-model.json');
-    const model = await tf.loadLayersModel(`file://restaurant-recommendation-model.json`);
-    console.log("berhasil");
-    const restaurantData = await Restaurant.find({});
-    const user = await User.findById(user_id);
-    const inputIds = user.restaurants;
-    const inputFeatures = inputIds.map(id => {
-        const restaurant = restaurantData.find(row => row._id === id);
-        return [
-            restaurant.culinary_type ? restaurant.culinary_type.split(',').map(type => culinaryTypeMap[type.trim()]).reduce((acc, val) => acc + val, 0) / restaurant.culinary_type.split(',').length : 0,
-            priceRangeMap[restaurant.price_range] !== undefined ? priceRangeMap[restaurant.price_range] : 0
-        ];
-    });
+    const tf = require('@tensorflow/tfjs-node'); // Ensure TensorFlow is required
+    const culinaryTypeMap = { 'Kafe': 1, 'China': 2 }; // Example mapping
+    const priceRangeMap = { 'Di bawah Rp. 50.000 /orang': 1, 'Di atas Rp. 200.000 /orang': 5 }; // Example mapping
 
-    const allFeatures = restaurantData.map(row => [
-        row.culinary_type ? row.culinary_type.split(',').map(type => culinaryTypeMap[type.trim()]).reduce((acc, val) => acc + val, 0) / row.culinary_type.split(',').length : 0,
-        priceRangeMap[row.price_range] !== undefined ? priceRangeMap[row.price_range] : 0
-    ]);
+    try {
+        const model = await tf.loadLayersModel('file://function/restaurant-recommendation-model/model.json');
+        console.log("Model loaded successfully");
 
-    const inputTensor = tf.tensor2d(inputFeatures, [inputFeatures.length, 2]);
-    const allFeaturesTensor = tf.tensor2d(allFeatures, [allFeatures.length, 2]);
+        const restaurantData = await Restaurant.find({});
+        const user = await User.findById(user_id);
+        const inputIds = user.restaurants;
 
-    const inputEmbeddings = model.predict(inputTensor);
-    const allEmbeddings = model.predict(allFeaturesTensor);
+        const inputFeatures = inputIds.map(id => {
+            const restaurant = restaurantData.find(row => row._id.equals(id));
+            if (!restaurant) {
+                console.error(`Restaurant with ID ${id} not found`);
+                return [0, 0];
+            }
 
-    const recommendations = getTopRecommendations(inputEmbeddings, allEmbeddings, nilai);
-    return recommendations
+            return [
+                restaurant.culinary_type ? restaurant.culinary_type.split(',').map(type => culinaryTypeMap[type.trim()] || 0).reduce((acc, val) => acc + val, 0) / restaurant.culinary_type.split(',').length : 0,
+                priceRangeMap[restaurant.price_range.trim()] !== undefined ? priceRangeMap[restaurant.price_range.trim()] : 0
+            ];
+        });
+
+        const allFeatures = restaurantData.map(row => [
+            row.culinary_type ? row.culinary_type.split(',').map(type => culinaryTypeMap[type.trim()] || 0).reduce((acc, val) => acc + val, 0) / row.culinary_type.split(',').length : 0,
+            priceRangeMap[row.price_range.trim()] !== undefined ? priceRangeMap[row.price_range.trim()] : 0
+        ]);
+
+        const inputTensor = tf.tensor2d(inputFeatures, [inputFeatures.length, 2]);
+        const allFeaturesTensor = tf.tensor2d(allFeatures, [allFeatures.length, 2]);
+
+        const inputEmbeddings = model.predict(inputTensor);
+        const allEmbeddings = model.predict(allFeaturesTensor);
+
+        const recommendations = getTopRecommendations(inputEmbeddings, allEmbeddings, nilai, restaurantData);
+        return recommendations;
+
+    } catch (error) {
+        console.error("Error in testModel:", error);
+        throw error;
+    }
 }
 
-function getTopRecommendations(inputEmbeddings, allEmbeddings, n) {
+function getTopRecommendations(inputEmbeddings, allEmbeddings, n, restaurantData) {
     const similarities = tf.matMul(inputEmbeddings, allEmbeddings, false, true);
     const topK = similarities.topk(n);
 
@@ -166,6 +182,7 @@ function getTopRecommendations(inputEmbeddings, allEmbeddings, n) {
 
     return recommendationIds;
 }
+
 
 module.exports={
     createMLModel,
