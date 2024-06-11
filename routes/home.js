@@ -16,6 +16,7 @@ const {Menu} = require("../model/menu.js")
 const {Transaction} = require("../model/transaction.js")
 const {Reservation} = require("../model/reservation.js")
 const {migrateRatings, updateRestaurantReferences, checkAuth, snap} = require("../function/function")
+const {createMLModel, getTopCulinaryTypes, testModel} = require("../function/mlFunction")
 const router = express.Router();
 
 //point home
@@ -26,6 +27,11 @@ router.get('/', checkAuth, async (req, res) => {
         const paymentMethods = await PaymentMethodView.find();
         const availableFacilities = await AvailableFacilityView.find();
         const priceRange = await PriceRangeView.find();
+        // / Dapatkan 30 ID restoran yang direkomendasikan dari model
+        const recommendedRestaurantIds = await testModel(userLogin._id, 4);
+
+        // Ambil data restoran berdasarkan ID yang direkomendasikan
+        const recommendedRestaurants = await Restaurant.find({ _id: { $in: recommendedRestaurantIds } });
 
         const topRestaurants = await Restaurant.aggregate([
             { $match: { overall_rating: { $gte: 4.5, $lte: 5.0 } } },
@@ -47,6 +53,7 @@ router.get('/', checkAuth, async (req, res) => {
             paymentMethods,
             availableFacilities,
             priceRange,
+            recommendedRestaurants,
             // dominantRestaurants
         });
     } catch (error) {

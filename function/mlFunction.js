@@ -13,6 +13,8 @@ const bcrypt = require('bcrypt');
 const app = express()
 const brain = require('brain.js');
 const tf = require('@tensorflow/tfjs');
+// const fetch = require('node-fetch');
+
 
 const createMLModel = async () => {
     const users = await User.find().populate('restaurants');
@@ -121,8 +123,52 @@ const getTopCulinaryTypes = async (user, net) => {
     return topIndexes;
 };
 
+let restaurantData = [];
+let culinaryTypeMap = {};
+let priceRangeMap = {};
+
+async function testModel(user_id, nilai) {
+    const modelPath = path.join(__dirname, 'restaurant-recommendation-model.json');
+    const model = await tf.loadLayersModel(`file://restaurant-recommendation-model.json`);
+    console.log("berhasil");
+    const restaurantData = await Restaurant.find({});
+    const user = await User.findById(user_id);
+    const inputIds = user.restaurants;
+    const inputFeatures = inputIds.map(id => {
+        const restaurant = restaurantData.find(row => row._id === id);
+        return [
+            restaurant.culinary_type ? restaurant.culinary_type.split(',').map(type => culinaryTypeMap[type.trim()]).reduce((acc, val) => acc + val, 0) / restaurant.culinary_type.split(',').length : 0,
+            priceRangeMap[restaurant.price_range] !== undefined ? priceRangeMap[restaurant.price_range] : 0
+        ];
+    });
+
+    const allFeatures = restaurantData.map(row => [
+        row.culinary_type ? row.culinary_type.split(',').map(type => culinaryTypeMap[type.trim()]).reduce((acc, val) => acc + val, 0) / row.culinary_type.split(',').length : 0,
+        priceRangeMap[row.price_range] !== undefined ? priceRangeMap[row.price_range] : 0
+    ]);
+
+    const inputTensor = tf.tensor2d(inputFeatures, [inputFeatures.length, 2]);
+    const allFeaturesTensor = tf.tensor2d(allFeatures, [allFeatures.length, 2]);
+
+    const inputEmbeddings = model.predict(inputTensor);
+    const allEmbeddings = model.predict(allFeaturesTensor);
+
+    const recommendations = getTopRecommendations(inputEmbeddings, allEmbeddings, nilai);
+    return recommendations
+}
+
+function getTopRecommendations(inputEmbeddings, allEmbeddings, n) {
+    const similarities = tf.matMul(inputEmbeddings, allEmbeddings, false, true);
+    const topK = similarities.topk(n);
+
+    const topKIndices = topK.indices.dataSync();
+    const recommendationIds = Array.from(topKIndices).map(index => restaurantData[index]._id);
+
+    return recommendationIds;
+}
 
 module.exports={
     createMLModel,
-    getTopCulinaryTypes
+    getTopCulinaryTypes,
+    testModel,
 }

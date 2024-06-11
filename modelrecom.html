@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Recommendation Model</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
+</head>
+<body>
+    <input type="file" id="file-input">
+    <button onclick="trainModel()">Train Model</button>
+    <button onclick="testModel()">Test Model</button>
+    <button onclick="exportModel()">Export Model</button>
+
+    <script>
+        let restaurantData = [];
+        let culinaryTypeMap = {};
+        let priceRangeMap = {};
+
+        document.getElementById('file-input').addEventListener('change', handleFileSelect, false);
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            Papa.parse(file, {
+                header: true,
+                dynamicTyping: true,
+                complete: function(results) {
+                    restaurantData = results.data;
+                    console.log('Parsed CSV Data:', restaurantData);
+                }
+            });
+        }
+
+        async function trainModel() {
+            const culinaryTypes = [...new Set(restaurantData.flatMap(row => row.culinary_type ? row.culinary_type.split(',').map(type => type.trim()) : []))];
+            const priceRanges = [...new Set(restaurantData.map(row => row.price_range).filter(Boolean))];
+
+            culinaryTypes.forEach((type, index) => culinaryTypeMap[type] = index);
+            priceRanges.forEach((range, index) => priceRangeMap[range] = index);
+
+            const trainingData = restaurantData.map(row => [
+                row.culinary_type ? row.culinary_type.split(',').map(type => culinaryTypeMap[type.trim()]).reduce((acc, val) => acc + val, 0) / row.culinary_type.split(',').length : 0,
+                priceRangeMap[row.price_range] !== undefined ? priceRangeMap[row.price_range] : 0
+            ]);
+
+            const model = tf.sequential();
+            model.add(tf.layers.dense({ units: 64, inputShape: [2], activation: 'relu' }));
+            model.add(tf.layers.dense({ units: 32, activation: 'relu' }));
+            model.add(tf.layers.dense({ units: 16, activation: 'relu' }));
+            model.add(tf.layers.dense({ units: 8, activation: 'relu' }));
+            model.add(tf.layers.dense({ units: 2 }));  // Output embedding of size 2
+
+            model.compile({ optimizer: 'adam', loss: 'meanSquaredError' });
+
+            const inputTensor = tf.tensor2d(trainingData, [trainingData.length, 2]);
+
+            const history = await model.fit(inputTensor, inputTensor, { epochs: 10, verbose: 1, callbacks: {
+                onEpochEnd: (epoch, logs) => {
+                    console.log(`Epoch ${epoch + 1} - loss: ${logs.loss}`);
+                    // Since we're in unsupervised learning, we can't calculate accuracy or precision.
+                    // We'll only log the loss value.
+                }
+            }});
+
+            console.log('Model trained successfully');
+            return model;
+    }
+
+
+        async function testModel() {
+            const model = await trainModel();
+            const inputIds = ["6637acdc81c630a3b10959b1", "6637acdc81c630a3b10959b5"];
+            const inputFeatures = inputIds.map(id => {
+                const restaurant = restaurantData.find(row => row._id === id);
+                return [
+                    restaurant.culinary_type ? restaurant.culinary_type.split(',').map(type => culinaryTypeMap[type.trim()]).reduce((acc, val) => acc + val, 0) / restaurant.culinary_type.split(',').length : 0,
+                    priceRangeMap[restaurant.price_range] !== undefined ? priceRangeMap[restaurant.price_range] : 0
+                ];
+            });
+
+            const allFeatures = restaurantData.map(row => [
+                row.culinary_type ? row.culinary_type.split(',').map(type => culinaryTypeMap[type.trim()]).reduce((acc, val) => acc + val, 0) / row.culinary_type.split(',').length : 0,
+                priceRangeMap[row.price_range] !== undefined ? priceRangeMap[row.price_range] : 0
+            ]);
+
+            const inputTensor = tf.tensor2d(inputFeatures, [inputFeatures.length, 2]);
+            const allFeaturesTensor = tf.tensor2d(allFeatures, [allFeatures.length, 2]);
+
+            const inputEmbeddings = model.predict(inputTensor);
+            const allEmbeddings = model.predict(allFeaturesTensor);
+
+            const recommendations = getTopRecommendations(inputEmbeddings, allEmbeddings, 30);
+            console.log('Top 30 recommendation IDs:', recommendations);
+        }
+
+        function getTopRecommendations(inputEmbeddings, allEmbeddings, n) {
+            const similarities = tf.matMul(inputEmbeddings, allEmbeddings, false, true);
+            const topK = similarities.topk(n);
+
+            const topKIndices = topK.indices.dataSync();
+            const recommendationIds = Array.from(topKIndices).map(index => restaurantData[index]._id);
+
+            return recommendationIds;
+        }
+
+        async function exportModel() {
+            const model = await trainModel();
+            await model.save('downloads://restaurant-recommendation-model');
+            console.log('Model exported successfully');
+        }
+    </script>
+</body>
+</html>
