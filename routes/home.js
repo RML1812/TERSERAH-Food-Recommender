@@ -27,39 +27,35 @@ router.get('/', checkAuth, async (req, res) => {
         const paymentMethods = await PaymentMethodView.find();
         const availableFacilities = await AvailableFacilityView.find();
         const priceRange = await PriceRangeView.find();
-        // / Dapatkan 30 ID restoran yang direkomendasikan dari model
-        const recommendedRestaurantIds = await testModel(userLogin._id, 4);
+        let recommendedRestaurants = [];
 
-        // Ambil data restoran berdasarkan ID yang direkomendasikan
-        const recommendedRestaurants = await Restaurant.find({ _id: { $in: recommendedRestaurantIds } });
-
-        const topRestaurants = await Restaurant.aggregate([
-            { $match: { overall_rating: { $gte: 4.5, $lte: 5.0 } } },
-            { $sample: { size: 4 } },
-            { $sort: { overall_rating: -1 } },
-        ]);
-
-        // const net = await createMLModel();
-        // const topCulinaryTypes = await getTopCulinaryTypes(userLogin, net);
-
-        // const dominantRestaurants = await Restaurant.find({ culinary_type: { $in: topCulinaryTypes } }).limit(4);
+        if (!userLogin || userLogin._id === 1 || userLogin.restaurants.length === 0) {
+            recommendedRestaurants = await Restaurant.aggregate([
+                { $match: { overall_rating: { $gte: 4.5, $lte: 5.0 } } },
+                { $sample: { size: 4 } },
+                { $sort: { overall_rating: -1 } },
+            ]);
+        }
+        else {
+            console.log("disni")
+            const recommendedRestaurantIds = await testModel(userLogin._id, 4);
+            recommendedRestaurants = await Restaurant.find({ _id: { $in: recommendedRestaurantIds } });
+        }
 
         res.render('home', {
             layout: "./layouts/main_layouts",
             title: "Home",
-            topRestaurants,
             userLogin,
             culinaryTypes,
             paymentMethods,
             availableFacilities,
             priceRange,
             recommendedRestaurants,
-            // dominantRestaurants
         });
     } catch (error) {
         console.error("Error on GET /:", error);
-        res.status(500).json({ error: "Internal server error" });
-    }
+        res.status(500).json({ error: "Internal server error" });
+    }
 });
 
 //pilihan lebih banyak (belum beres, belum menampilkan machine learningnya) ---(blm)---
@@ -71,16 +67,23 @@ router.get('/rekomendasi',  async (req, res) => {
         const paymentMethods = await PaymentMethodView.find();
         const availableFacilities = await AvailableFacilityView.find();
         const priceRange = await PriceRangeView.find();
-        const topRestaurants = await Restaurant.aggregate([
-            { $match: { overall_rating: { $gte: 4.5, $lte: 5.0 } } },
-            { $sample: { size: 20 } }, 
-            { $sort: { overall_rating: -1 } }
-        ]);
+        let recommendedRestaurants = [];
+        if (!userLogin || userLogin._id === 1 || userLogin.restaurants.length === 0) {
+            recommendedRestaurants = await Restaurant.aggregate([
+                { $match: { overall_rating: { $gte: 4.5, $lte: 5.0 } } },
+                { $sample: { size: 4 } },
+                { $sort: { overall_rating: -1 } },
+            ]);
+        }
+        else {
+            const recommendedRestaurantIds = await testModel(userLogin._id, 20);
+            recommendedRestaurants = await Restaurant.find({ _id: { $in: recommendedRestaurantIds } });
+        }
 
         res.render('home', {
             layout: "./layouts/main_layouts",
             title: "Home",
-            topRestaurants,
+            recommendedRestaurants,
             userLogin,
             culinaryTypes,
             paymentMethods,

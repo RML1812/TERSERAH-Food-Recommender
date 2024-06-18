@@ -123,39 +123,39 @@ const getTopCulinaryTypes = async (user, net) => {
     return topIndexes;
 };
 
-let restaurantData = [];
-let culinaryTypeMap = {};
-let priceRangeMap = {};
-
 async function testModel(user_id, nilai) {
-    const tf = require('@tensorflow/tfjs-node'); // Ensure TensorFlow is required
-    const culinaryTypeMap = { 'Kafe': 1, 'China': 2 }; // Example mapping
-    const priceRangeMap = { 'Di bawah Rp. 50.000 /orang': 1, 'Di atas Rp. 200.000 /orang': 5 }; // Example mapping
+    const culinaryTypes = await CulinaryTypeView.find({}).exec();
+    const priceRanges = await PriceRangeView.find({}).exec();
+    let culinaryTypeMap = {};
+
+    culinaryTypes.forEach((type, index) => {
+        culinaryTypeMap[type.name] = index + 1; // Menggunakan index + 1 untuk ID unik yang dimulai dari 1
+    });
+    let priceRangeMap = {};
+
+    priceRanges.forEach((type, index) => {
+        priceRangeMap[type.name] = index + 1; // Menggunakan index + 1 untuk ID unik yang dimulai dari 1
+    });
 
     try {
         const model = await tf.loadLayersModel('file://function/restaurant-recommendation-model/model.json');
         console.log("Model loaded successfully");
 
-        const restaurantData = await Restaurant.find({});
+        let restaurantData = await Restaurant.find({});
         const user = await User.findById(user_id);
         const inputIds = user.restaurants;
 
         const inputFeatures = inputIds.map(id => {
             const restaurant = restaurantData.find(row => row._id.equals(id));
-            if (!restaurant) {
-                console.error(`Restaurant with ID ${id} not found`);
-                return [0, 0];
-            }
-
             return [
                 restaurant.culinary_type ? restaurant.culinary_type.split(',').map(type => culinaryTypeMap[type.trim()] || 0).reduce((acc, val) => acc + val, 0) / restaurant.culinary_type.split(',').length : 0,
-                priceRangeMap[restaurant.price_range.trim()] !== undefined ? priceRangeMap[restaurant.price_range.trim()] : 0
+                priceRangeMap[restaurant.price_range] !== undefined ? priceRangeMap[restaurant.price_range] : 0
             ];
         });
 
         const allFeatures = restaurantData.map(row => [
             row.culinary_type ? row.culinary_type.split(',').map(type => culinaryTypeMap[type.trim()] || 0).reduce((acc, val) => acc + val, 0) / row.culinary_type.split(',').length : 0,
-            priceRangeMap[row.price_range.trim()] !== undefined ? priceRangeMap[row.price_range.trim()] : 0
+            priceRangeMap[row.price_range] !== undefined ? priceRangeMap[row.price_range] : 0
         ]);
 
         const inputTensor = tf.tensor2d(inputFeatures, [inputFeatures.length, 2]);

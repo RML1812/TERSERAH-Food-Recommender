@@ -1,6 +1,7 @@
 const express = require('express');
 const User = require("../model/user")
 const router = express.Router();
+const bcrypt = require('bcrypt');
 
 // Render signup page
 router.get('/signup', (req, res) => {
