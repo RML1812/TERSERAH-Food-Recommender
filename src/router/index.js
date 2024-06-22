@@ -14,6 +14,7 @@ import Blog from '../views/Blog.vue'
 import Artikel from '../views/Artikel.vue'
 import Eror from '../views/Error.vue'
 import NoLog from '../views/NoLogin.vue'
+import Verif from '../views/Verifikasi.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -90,8 +91,13 @@ const router = createRouter({
     },
     {
       path: '/nolog',
-      name: 'nonog',
+      name: 'nolog',
       component: NoLog
+    },
+    {
+      path: '/verif',
+      name: 'verif',
+      component: Verif
     },
   ]
 })
