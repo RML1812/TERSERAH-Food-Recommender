@@ -10,7 +10,6 @@ const tempUserSchema = new mongoose.Schema({
     isConfirmed: { type: Boolean, default: false },
     confirmationToken: { type: String, required: true },
     restaurants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' }],
-
 }, { timestamps: true });
 
 const TempUser=new mongoose.model('tempUser',tempUserSchema)
