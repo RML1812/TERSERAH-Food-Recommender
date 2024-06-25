@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Found</title>
+</head>
+<body>
+    <h1><%= title %></h1>
+    <ul id="restaurantList"></ul>
+
+    <% restaurants.forEach(restaurant => { %>
+        <ul>
+            <li><strong>Nama:</strong> <%= restaurant.name %></li>
+            <li><strong>Jenis Kuliner:</strong> <%= restaurant.culinary_type %></li>
+            <li><strong>Alamat:</strong> <%= restaurant.address %></li>
+            <li><strong>Rating:</strong> <%= restaurant.overall_rating %></li> 
+            <li><strong>ID:</strong> <%= restaurant._id %></li>    
+            <a href="/restaurants/<%= restaurant._id %>">Detail</a>
+        </ul>
+    <% }) %>
+    <a href="/">Kembali ke Halaman Utama</a>
+</body>
+</html>

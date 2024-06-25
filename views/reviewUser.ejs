@@ -1,0 +1,23 @@
+<% reviews.forEach(review => { %>
+    <div>
+        <p><strong>Nama Pengguna:</strong> <%= review.user_id.name %></p>
+        <p><strong>Restaurant :</strong> <%= review.restaurant_id.name %></p>
+        <p><strong>Judul Ulasan:</strong> <%= review.title %></p>
+        <p><strong>Ulasan:</strong> <%= review.review %></p>
+        <p><strong>Tanggal Ulasan:</strong> <%= review.review_date %></p>
+        <li><strong>Combined Rating</strong> <%= review.rating_id.combined_rating %></li>
+        <li><strong>Ambience Rating</strong> <%= review.rating_id.ambience_rating %></li>
+        <li><strong>Taste to price Rating</strong> <%= review.rating_id.taste_to_price_rating %></li>
+        <li><strong>Service Rating</strong> <%= review.rating_id.service_rating %></li>
+        <li><strong>Cleanliness Rating</strong> <%= review.rating_id.cleanliness_rating %></li>
+        <form form action="/delete-review" method="POST">
+            <input type="hidden" id="reviewId" name="reviewId" value="<%= review._id %>">
+            <button type="submit">Hapus Review</button>
+        </form>
+        <form form action="/edit-review/<%= review._id %>" method="GET">
+            <input type="hidden" id="reviewId" name="reviewId" value="<%= review._id %>">
+            <button type="submit">Edit Review</button>
+        </form>
+    </div>
+<% }) %>
+

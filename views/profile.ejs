@@ -1,0 +1,15 @@
+<h1>Detail User <%= userLogin.name %></h1>
+<ul>
+    <li><strong>Nama:</strong> <%= userLogin.name %></li>
+    <li><strong>Email:</strong> <%= userLogin.email %></li>
+    <!-- Tambahkan informasi restoran lainnya sesuai kebutuhan -->
+</ul>
+<a href="/">Kembali ke Halaman Utama</a>
+<br>
+<a href="/logout">Logout</a>
+<br>
+<a href="/review/user/<%= userLogin._id %>">Review yang pernah dilakukan</a>
+<br>
+<a href="/reservation/<%= userLogin._id %>">Reservasimu</a>
+
+

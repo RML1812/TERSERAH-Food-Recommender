@@ -1,0 +1,20 @@
+
+    <h1>Your Reservations</h1>
+    <% reservations.forEach(function(reservation) { %>
+        <% transactions.forEach(function(transaction) { %>
+            <% if(transaction.reservation_id.toString() === reservation._id.toString()) { %>
+                <% restaurants.forEach(function(restaurant) { %>
+                    <% if(restaurant._id.toString() === transaction.restaurant_id.toString()) { %>
+                        <div>
+                            <p>Reservation for <%= reservation.name %></p>
+                            <p>Restaurant Name: <%= restaurant.name %></p>
+                            <p>Date: <%= reservation.tanggalReservation %></p>
+                            <p>Status: <%= transaction.status %></p>
+                            <a href="/reservation/detail/<%= reservation._id %>">View Details</a>
+                        </div>
+                    <% } %>
+                <% }) %>
+            <% } %>
+        <% }) %>
+    <% }) %>
+    

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Transaksi</title>
+    <!-- Pastikan untuk menambahkan stylesheet yang diperlukan di sini -->
+    <script type="text/javascript"
+    src="https://app.sandbox.midtrans.com/snap/snap.js"
+    data-client-key="SB-Mid-client-JJl5Mc6jLmJCyn-q"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="reservation-details">
+            <h2>Detail Reservasi</h2>
+            <p>Nama: <%= newReservation.name %></p>
+            <p>Jumlah Orang: <%= newReservation.jumlahOrang %></p>
+            <p>No HP: <%= newReservation.noHP %></p>
+            <p>Tanggal Reservasi: <%= newReservation.tanggalReservation %></p>
+            <p>Waktu Mulai: <%= newReservation.waktuMulai %></p>
+            <p>Waktu Selesai: <%= newReservation.waktuSelesai %></p>
+            <p>Total Harga: <%= newReservation.totalHarga %></p>
+        </div>
+        <button id="pay-button">Bayar Sekarang</button>
+    </div>
+
+    <script type="text/javascript">
+        var payButton = document.getElementById('pay-button');
+        payButton.addEventListener('click', async function () {
+            var Reservation = {
+                user_id: '<%= newReservation.user_id %>',
+                restaurant_id: '<%= newReservation.restaurant_id %>',
+                name: '<%= newReservation.name %>',
+                jumlahOrang: '<%= newReservation.jumlahOrang %>',
+                noHP: '<%= newReservation.noHP %>',
+                tanggalReservation: '<%= newReservation.tanggalReservation %>',
+                waktuMulai: '<%= newReservation.waktuMulai %>',
+                waktuSelesai: '<%= newReservation.waktuSelesai %>',
+                totalHarga: '<%= newReservation.totalHarga %>'
+            };
+
+            const response = await fetch('/save-reservation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(Reservation)
+            });
+
+            
+            // Retrieve the transaction token from the server-side
+            fetch(`/get-transaction-token?reservation_id=${newReservation._id}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.transactionToken) {
+                    // Trigger snap popup with the transaction token
+                    window.snap.pay(data.transactionToken, {
+                        // Optional callbacks
+                        onSuccess: function(result) {
+                            // Redirect to the finish page on success
+                            window.location.href = `/payment/finish?reservation_id=${newReservation._id}`;
+                        },
+                        onPending: function(result) {
+                            // Handle pending transaction
+                        },
+                        onError: function(result) {
+                            // Handle error
+                        },
+                        onClose: function() {
+                            // Handle the popup being closed
+                        }
+                    });
+                } else {
+                    console.error('Transaction token is missing.');
+                }
+            })
+            .catch(error => console.error('Error fetching transaction token:', error));
+        });
+    </script>
+
+</body>
+</html>

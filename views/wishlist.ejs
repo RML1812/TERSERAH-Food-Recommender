@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wishlist Anda</title>
+</head>
+<body>
+    <h1><%= title %></h1>
+    <ul id="restaurantList"></ul>
+
+    <% restaurants.forEach(restaurant => { %>
+        <ul>
+            <li><strong>Nama:</strong> <%= restaurant.name %></li>
+            <li><strong>Jenis Kuliner:</strong> <%= restaurant.culinary_type %></li>
+            <li><strong>Alamat:</strong> <%= restaurant.address %></li>
+            <li><strong>Rating:</strong> <%= restaurant.overall_rating %></li> 
+            <li><strong>ID:</strong> <%= restaurant._id %></li>    
+            <a href="/restaurants/<%= restaurant._id %>">Detail</a>
+            <form form action="/delete-wishlist" method="POST">
+                <input type="hidden" id="restaurantId" name="restaurantId" value="<%= restaurant._id %>">
+                <button type="submit">Hapus Wishlist</button>
+            </form>
+        </ul>
+    <% }) %>
+    
+
+    <a href="/">Kembali ke Halaman Utama</a>
+</body>
+</html>

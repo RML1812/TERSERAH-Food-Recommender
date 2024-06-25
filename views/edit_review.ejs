@@ -1,0 +1,28 @@
+<form action="/edit-review/<%= review._id %>" method="POST">
+
+    <label for="title">Title:</label>
+    <input placeholder=<%= review.title %>  type="text" id="title" name="title" required><br><br>
+
+    <label for="review">Review:</label><br>
+    <textarea placeholder=<%= review.review %> id="review" name="review" rows="4" cols="50" required></textarea><br><br>
+
+    <label for="reviewDate">Review Date:</label>
+    <input placeholder="<%= review.review_date %>" type="date" id="reviewDate" name="reviewDate" required><br><br>
+
+    <label for="combined_rating">Combined Rating:</label>
+    <input placeholder="<%= rating.combined_rating %>" type="number" id="combined_rating" name="combined_rating" min="0" max="5" step="0.1" required><br><br>
+
+    <label for="ambience_rating">Ambience Rating:</label>
+    <input placeholder="<%= rating.ambience_rating %>" type="number" id="ambience_rating" name="ambience_rating" min="0" max="5" step="0.1" required><br><br>
+
+    <label for="taste_to_price_rating">Taste to Price Rating:</label>
+    <input placeholder="<%= rating.taste_to_price_rating %>" type="number" id="taste_to_price_rating" name="taste_to_price_rating" min="0" max="5" step="0.1" required><br><br>
+
+    <label for="service_rating">Service Rating:</label>
+    <input placeholder="<%= rating.service_rating %>" type="number" id="service_rating" name="service_rating" min="0" max="5" step="0.1" required><br><br>
+
+    <label for="cleanliness_rating">Cleanliness Rating:</label>
+    <input placeholder="<%= rating.cleanliness_rating %>" type="number" id="cleanliness_rating" name="cleanliness_rating" min="0" max="5" step="0.1" required><br><br>
+
+    <button type="submit">Submit Review</button>
+</form>

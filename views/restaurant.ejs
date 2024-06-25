@@ -1,0 +1,110 @@
+    <h1>Detail Restoran <%= restaurant.name %></h1>
+    <ul>
+        <li><strong>ID:</strong> <%= restaurant._id %></li>
+        <li><strong>Nama:</strong> <%= restaurant.name %></li>
+        <li><strong>Jenis Kuliner:</strong> <%= restaurant.culinary_type %></li>
+        <li><strong>Alamat:</strong> <%= restaurant.address %></li>
+        <br>
+        <li><strong>Rating:</strong> <%= restaurant.overall_rating %></li>
+        <li><strong>Combined Rating</strong> <%= rating.combined_rating %></li>
+        <li><strong>Ambience Rating</strong> <%= rating.ambience_rating %></li>
+        <li><strong>Taste to price Rating</strong> <%= rating.taste_to_price_rating %></li>
+        <li><strong>Service Rating</strong> <%= rating.service_rating %></li>
+        <li><strong>Cleanliness Rating</strong> <%= rating.cleanliness_rating %></li>
+        <!-- Tambahkan informasi restoran lainnya sesuai kebutuhan -->
+    </ul>
+
+    <% if (menu.gallery_link) { %>
+        <% const galleryImages = menu.gallery_link.split(';'); %>
+        <% if (galleryImages.length > 0 && galleryImages[0] !== '') { %>
+            <h1>Gallery Pict</h1>
+            <div id="gallery-container">
+                <% galleryImages.forEach((image, index) => { %>
+                    <div class="gallery-slide <%= index === 0 ? 'active' : '' %>" style="background-image: url('<%= image %>');"></div>
+                <% }); %>
+            </div>
+            <button class="gallery-btn-prev">❮</button>
+            <button class="gallery-btn-next">❯</button>
+        <% } %>
+    <% } %>
+    
+    <% if (menu.menu_link) { %>
+        <% const menuImages = menu.menu_link.split(';'); %>
+        <% if (menuImages.length > 0 && menuImages[0] !== '') { %>
+            <h1>Menu Pict</h1>
+            <div id="menu-container">
+                <% menuImages.forEach((image, index) => { %>
+                    <div class="menu-slide <%= index === 0 ? 'active' : '' %>" style="background-image: url('<%= image %>');"></div>
+                <% }); %>
+            </div>
+            <button class="menu-btn-prev">❮</button>
+            <button class="menu-btn-next">❯</button>
+        <% } %>
+    <% } %>
+    
+
+    <a href="/review/<%= restaurant._id %>">Liat Review</a>
+    <a href="/">Kembali ke Halaman Utama</a>
+    <form form action="/wishlist" method="POST">
+        <input type="hidden" id="restaurantId" name="restaurantId" value="<%= restaurant._id %>">
+        <button type="submit">Tambahkan ke Wishlist</button>
+    </form>
+
+    <a href="/getReservation/<%= restaurant._id %>">Cek&Reservasi</a>
+    
+    <!-- <script>
+        document.getElementById("addToWishlistForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const restaurantId = document.getElementById("restaurantId").value;
+
+            try {
+                const response = await fetch('/wishlist', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        restaurantId: restaurantId
+                    })
+                });
+                const data = await response.json();
+                alert(data.message);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error occurred while adding to wishlist.');
+            }
+        });
+    </script> -->
+
+    <script>
+        // Gallery slideshow
+        const gallerySlides = document.querySelectorAll('.gallery-slide');
+        let currentGallerySlide = 0;
+        document.querySelector('.gallery-btn-prev').addEventListener('click', () => {
+            gallerySlides[currentGallerySlide].classList.remove('active');
+            currentGallerySlide = (currentGallerySlide - 1 + gallerySlides.length) % gallerySlides.length;
+            gallerySlides[currentGallerySlide].classList.add('active');
+        });
+        document.querySelector('.gallery-btn-next').addEventListener('click', () => {
+            gallerySlides[currentGallerySlide].classList.remove('active');
+            currentGallerySlide = (currentGallerySlide + 1) % gallerySlides.length;
+            gallerySlides[currentGallerySlide].classList.add('active');
+        });
+    
+        // Menu slideshow
+        const menuSlides = document.querySelectorAll('.menu-slide');
+        let currentMenuSlide = 0;
+        document.querySelector('.menu-btn-prev').addEventListener('click', () => {
+            menuSlides[currentMenuSlide].classList.remove('active');
+            currentMenuSlide = (currentMenuSlide - 1 + menuSlides.length) % menuSlides.length;
+            menuSlides[currentMenuSlide].classList.add('active');
+        });
+        document.querySelector('.menu-btn-next').addEventListener('click', () => {
+            menuSlides[currentMenuSlide].classList.remove('active');
+            currentMenuSlide = (currentMenuSlide + 1) % menuSlides.length;
+            menuSlides[currentMenuSlide].classList.add('active');
+        });
+    </script>
+    
+</body>
+</html>
