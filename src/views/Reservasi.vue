@@ -8,12 +8,22 @@
             ReserName,
             ReserForm,
             ReserTag
+        },
+        data() {
+            return {
+                restaurantId: null
+            };
+        },
+        created() {
+            // Example: Fetching restaurantId from route params
+            this.restaurantId = this.$route.params.restaurantId;
+            console.log('Restaurant ID:', this.restaurantId); // Debugging line
         }
-    }
+    };
 </script>
 
 <template>
-    <ReserName />
+    <ReserName :restaurantId="restaurantId"/>
     <ReserTag />
     <ReserForm />
 </template>
