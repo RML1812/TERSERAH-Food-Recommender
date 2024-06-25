@@ -7,6 +7,8 @@ const userSchema = new mongoose.Schema({
     tanggalLahir: { type: String, required: true },
     noHP: { type: String, required: true },
     domisili: { type: String, required: true },
+    isConfirmed: { type: Boolean, default: false },
+    confirmationToken: { type: String },
     restaurants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' }]
 });
 

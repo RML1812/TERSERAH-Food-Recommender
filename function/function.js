@@ -61,7 +61,7 @@ serverKey : 'SB-Mid-server--fNgfFtFVee5pZFvJljO0e_m'
 });
 
 // Middleware untuk memeriksa apakah pengguna sudah masuk atau belum
-const checkAuth = (req, res ,next) => {
+const checkAuth = (req, res, next) => {
     if (req.session.userLogin) {
         // Jika pengguna sudah masuk, lanjutkan ke rute berikutnya
         next();

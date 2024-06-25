@@ -47,7 +47,7 @@
                 body: JSON.stringify(Reservation)
             });
 
-            const newReservation = await response.json();
+            
             // Retrieve the transaction token from the server-side
             fetch(`/get-transaction-token?reservation_id=${newReservation._id}`)
             .then(response => response.json())
