@@ -3,8 +3,9 @@
         <div class="my-8 lg:mx-32 md:mx-20 sm:mx-10">
             <div class="sm:flex">
                 <div>
-                    <div :style="backgroundStyle" class="bg-no-repeat bg-cover md:w-[300px] md:h-[230px] lg:w-[400px] lg:h-[270px] sm:w-[250px] sm:h-[215px] mx-10 sm:mx-0 h-[250px] shadow-2xl border rounded-xl">
-                        <div>
+                    <div class="relative md:w-[300px] md:h-[230px] lg:w-[400px] lg:h-[270px] sm:w-[250px] sm:h-[215px] mx-10 sm:mx-0 h-[250px] shadow-2xl border rounded-xl overflow-hidden">
+                        <img :src="imageSrc" class="absolute top-0 left-0 w-full h-full object-cover z-0">
+                        <div class="relative z-10">
                             <div class="bg-[#C2CFC2] lg:w-36 lg:h-8 md:w-32 md:h-7 lg:mx-32 md:mx-20 sm:mx-16 mx-24 h-7 mt-6 rounded-3xl flex shadow-xl border">
                                 <div v-if="menu" @click="toggleMenu" class="bg-[#C2CFC2] lg:w-[72px] lg:h-[30px] md:w-[64px] md:h-[26px] sm:w-[64px] sm:h-[26px] w-full h-[26px] text-center rounded-l-3xl lg:pt-[6px] md:pt-[4px] sm:pt-[3px] pt-[2px] text-[14px] font-medium hover:text-white cursor-pointer">
                                     <p>Galeri</p>
@@ -12,22 +13,22 @@
                                 <div v-if="menu" class="bg-[#636963] lg:w-[72px] lg:h-[30px] md:w-[64px] md:h-[26px] sm:w-[64px] sm:h-[26px] w-full h-[26px] text-center rounded-r-3xl lg:pt-[6px] md:pt-[4px] sm:pt-[3px] pt-[2px] text-[14px] font-medium text-white cursor-pointer">
                                     <p>Menu</p>
                                 </div>
-                                <div v-if="!menu" class="bg-[#636963] lg:w-[72px] lg:h-[30px] md:w/[64px] md:h/[26px] sm:w/[64px] sm:h/[26px] w-full h/[26px] text-center rounded-l-3xl lg:pt/[6px] md:pt/[4px] sm:pt/[3px] pt/[2px] text-[14px] font-medium text-white hover:bg-[#636963] cursor-pointer">
+                                <div v-if="!menu" class="bg-[#636963] lg:w-[72px] lg:h-[30px] md:w-[64px] md:h-[26px] sm:w-[64px] sm:h-[26px] w-full h-[26px] text-center rounded-l-3xl lg:pt-[6px] md:pt-[4px] sm:pt-[3px] pt-[2px] text-[14px] font-medium text-white hover:bg-[#636963] cursor-pointer">
                                     <p>Galeri</p>
                                 </div>
-                                <div v-if="!menu" @click="toggleMenu" class="bg-[#C2CFC2] lg:w/[72px] lg:h/[30px] md:w/[64px] md:h/[26px] sm:w/[64px] sm:h/[26px] w-full h/[26px] text-center rounded-r-3xl lg:pt/[6px] md:pt/[4px] sm:pt/[3px] pt/[2px] text-[14px] font-medium text-black hover:text-white cursor-pointer">
+                                <div v-if="!menu" @click="toggleMenu" class="bg-[#C2CFC2] lg:w-[72px] lg:h-[30px] md:w-[64px] md:h-[26px] sm:w-[64px] sm:h-[26px] w-full h-[26px] text-center rounded-r-3xl lg:pt-[6px] md:pt-[4px] sm:pt-[3px] pt-[2px] text-[14px] font-medium text-black hover:text-white cursor-pointer">
                                     <p>Menu</p>
                                 </div>
                             </div>
                         </div>
-                        <div v-if="menu" class="flex mx-4 center items-center">
+                        <div v-if="menu" class="flex mx-4 center items-center relative z-10">
                             <ion-icon @click="prevHidang" class="lg:mt-36 mt-28 mr-2 hover:scale-110 text-2xl h-6 w-7 bg-white rounded-2xl cursor-pointer" name="arrow-dropleft"></ion-icon>
                             <img v-for="(img, index) in visibleHidangan" :src="img" :key="index" @click="changeBackground(img)" class="lg:mt-36 mt-28 mr-2 hover:scale-105 cursor-pointer bg-no-repeat shadow-3xl border-2 bg-cover w-[105px] md:h-14 sm:h-10 h-14 rounded-xl">
                             <ion-icon @click="nextHidang" class="lg:mt-36 mt-28 hover:scale-110 text-2xl bg-white rounded-2xl h-6 w-7 cursor-pointer" name="arrow-dropright"></ion-icon>
                         </div>
-                        <div v-if="!menu" class="flex mx-4 center items-center">
+                        <div v-if="!menu" class="flex mx-4 center items-center relative z-10">
                             <ion-icon @click="prevImages" class="lg:mt-36 mt-28 mr-2 hover:scale-110 text-2xl h-6 w-7 bg-white rounded-2xl cursor-pointer" name="arrow-dropleft"></ion-icon>
-                            <img v-for="(img, index) in visibleImages" :src="img" :key="index" @click="changeBackground(img)" class="lg:mt-36 mt-28 mr-2 hover:scale-105 cursor-pointer bg-no-repeat shadow-3xl border-2 bg-cover w/[105px] md:h-14 sm:h-10 h-14 rounded-xl">
+                            <img v-for="(img, index) in visibleImages" :src="img" :key="index" @click="changeBackground(img)" class="lg:mt-36 mt-28 mr-2 hover:scale-105 cursor-pointer bg-no-repeat shadow-3xl border-2 bg-cover w-[105px] md:h-14 sm:h-10 h-14 rounded-xl">
                             <ion-icon @click="nextImages" class="lg:mt-36 mt-28 hover:scale-110 text-2xl bg-white rounded-2xl h-6 w-7 cursor-pointer" name="arrow-dropright"></ion-icon>
                         </div>
                     </div>
@@ -140,12 +141,8 @@ export default {
         };
     },
     computed: {
-        backgroundStyle() {
-            return {
-                backgroundImage: `url(${this.currentImage})`,
-                backgroundSize: 'cover',
-                backgroundRepeat: 'no-repeat'
-            };
+        imageSrc() {
+            return this.currentImage;
         },
         visibleImages() {
             return this.images.slice(this.startIndex, this.startIndex + 3);
@@ -261,12 +258,3 @@ export default {
     }
 };
 </script>
-
-<style scoped>
-.bg-no-repeat {
-    background-repeat: no-repeat;
-}
-.bg-cover {
-    background-size: cover;
-}
-</style>

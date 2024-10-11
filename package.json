@@ -7,7 +7,8 @@
     "start": "nodemon server.js",
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "all": "concurrently \"npm run dev\" \"npm start\""
   },
   "keywords": [],
   "author": "",
@@ -23,16 +24,14 @@
     "vuex": "^4.1.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.0.4",
-    "autoprefixer": "^10.4.19",
-    "postcss": "^8.4.38",
-    "tailwindcss": "^3.4.3",
-    "vite": "^5.2.12",
     "@tensorflow/tfjs": "^4.19.0",
     "@tensorflow/tfjs-node": "^4.20.0",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "autoprefixer": "^10.4.19",
     "axios": "^1.7.2",
     "bcrypt": "^5.1.1",
     "brain.js": "^2.0.0-beta.23",
+    "concurrently": "^8.2.2",
     "connect-mongo": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -49,6 +48,9 @@
     "nodemon": "^3.1.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.3",
+    "vite": "^5.2.12",
     "vuex": "^4.1.0"
   }
 }

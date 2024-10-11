@@ -1,72 +1,115 @@
 <template>
-    <div class="my-10">
-      <div class="font-[Poppins]">
-        <div class="text-left ml-10 md:ml-[80px]" v-if="restaurants.length > 0">
-          <h1 class="font-bold text-3xl">Hasil dari Kami <span class="text-[#9CA69C]">untukmu</span></h1>
-        </div>
-        <div>
-          <div class="lg:flex lg:grid-cols-none lg:flex-row flex-col sm:grid-cols-2 sm:grid sm:gap-4 md:justify-between mx-10 md:mx-20">
-            <div v-for="resto in visibleRestaurants" :key="resto.id" class="md:mt-5 mt-4">
-              <router-link :to="`/restaurant/${resto._id}`">
-                <div class="restaurant-card cursor-pointer hover:opacity-90 hover:scale-105">
-                  <div class="image-container" :style="{ backgroundImage: 'url(/public/Background.png)' }">
+  <div class="my-10">
+    <div class="font-[Poppins]">
+      <div class="text-left ml-10 md:ml-[80px]" v-if="restaurants.length > 0">
+        <h1 class="font-bold text-3xl">Hasil dari Kami <span class="text-[#9CA69C]">untukmu</span></h1>
+      </div>
+      <div>
+        <div class="lg:flex lg:grid-cols-none lg:flex-row flex-col sm:grid-cols-2 sm:grid sm:gap-4 md:justify-between mx-10 md:mx-20">
+          <div v-for="resto in visibleRestaurants" :key="resto.id" class="md:mt-5 mt-4">
+            <router-link :to="`/restaurant/${resto._id}`">
+              <div class="restaurant-card cursor-pointer hover:opacity-90 hover:scale-105">
+                <div class="image-container" :style="{ backgroundImage: `url(${getFirstGalleryImage(resto)})` }">
+                </div>
+                <div class="info-container">
+                  <div class="info-top">
+                    <h2 class="restaurant-name">{{ resto.name }}</h2>
+                    <p class="restaurant-price">{{ resto.price_range }}</p>
                   </div>
-                  <div class="info-container">
-                    <div class="info-top">
-                      <h2 class="restaurant-name">{{ resto.name }}</h2>
-                      <p class="restaurant-price">{{ resto.price_range }}</p>
-                    </div>
-                    <p class="restaurant-type">{{ resto.culinary_type }}</p>
-                    <p class="restaurant-location">{{ resto.address }}</p>
-                    <div class="rating-container">
-                      <span class="rating-value">{{ resto.overall_rating }}</span>
-                      <span class="rating-star">⭐</span>
-                    </div>
+                  <p class="restaurant-type">{{ resto.culinary_type }}</p>
+                  <p class="restaurant-location">{{ resto.address }}</p>
+                  <div class="rating-container">
+                    <span class="rating-value">{{ resto.overall_rating }}</span>
+                    <span class="rating-star">⭐</span>
                   </div>
                 </div>
-              </router-link>
-            </div>
+              </div>
+            </router-link>
           </div>
-          <div v-if="visibleRestaurants.length < restaurants.length" class="text-right md:mr-20 mr-10 mt-4 font-light">
-            <button @click="showAllRestaurants" class="italic text-[13px] cursor-pointer hover:font-medium">Lihat Selengkapnya</button>
-          </div>
-          <div class="text-left ml-10 md:ml-[80px] mt-4 font-light" v-if="restaurants.length > 0">
-            <p class="italic text-[13px]">Menampilkan {{ visibleRestaurants.length }} dari {{ restaurants.length }}</p>
-          </div>
+        </div>
+        <div v-if="visibleRestaurants.length < restaurants.length" class="text-right md:mr-20 mr-10 mt-4 font-light">
+          <button @click="showAllRestaurants" class="italic text-[13px] cursor-pointer hover:font-medium">Lihat Selengkapnya</button>
+        </div>
+        <div class="text-left ml-10 md:ml-[80px] mt-4 font-light" v-if="restaurants.length > 0">
+          <p class="italic text-[13px]">Menampilkan {{ visibleRestaurants.length }} dari {{ restaurants.length }}</p>
         </div>
       </div>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    props: {
-      restaurants: {
-        type: Array,
-        required: true
-      },
-      totalResults: {
-        type: Number,
-        required: true
-      }
+  </div>
+</template>
+
+<script>
+import { ref, watch, computed } from 'vue';
+import axios from 'axios';
+
+export default {
+  props: {
+    restaurants: {
+      type: Array,
+      required: true
     },
-    data() {
-      return {
-        visibleCount: 4
-      };
-    },
-    computed: {
-      visibleRestaurants() {
-        return this.restaurants.slice(0, this.visibleCount);
-      }
-    },
-    methods: {
-      showAllRestaurants() {
-        this.visibleCount = this.restaurants.length;
-      }
+    totalResults: {
+      type: Number,
+      required: true
     }
+  },
+  setup(props) {
+    const visibleCount = ref(4);
+    const restaurantImages = ref({}); // Reactive object to store gallery images
+
+    const visibleRestaurants = computed(() => {
+      return props.restaurants.slice(0, visibleCount.value);
+    });
+
+    const getFirstGalleryImage = (resto) => {
+      // Check if gallery images have been fetched for this restaurant
+      if (restaurantImages.value[resto._id] && restaurantImages.value[resto._id].length > 0) {
+        return restaurantImages.value[resto._id][0];
+      }
+      return ''; // Return an empty string if no image is found
+    };
+
+    const showAllRestaurants = () => {
+      visibleCount.value = props.restaurants.length;
+    };
+
+    const fetchGalleryImages = async () => {
+      // Fetch gallery images for each restaurant
+      for (const resto of props.restaurants) {
+        try {
+          const response = await axios.get(`http://localhost:3000/restaurant/${resto._id}`);
+          const { menu } = response.data;
+          if (menu && menu.gallery_link) {
+            const images = menu.gallery_link.split(';');
+            restaurantImages.value[resto._id] = images; // Set the images in the reactive object
+          }
+        } catch (error) {
+          console.error(`Error fetching gallery images for restaurant ${resto._id}:`, error);
+        }
+      }
+    };
+
+    // Watch for changes in the restaurants prop and fetch gallery images when it changes
+    watch(
+      () => props.restaurants,
+      async (newVal, oldVal) => {
+        if (newVal !== oldVal) {
+          await fetchGalleryImages();
+        }
+      },
+      { immediate: true }
+    );
+
+    return {
+      visibleCount,
+      restaurantImages,
+      visibleRestaurants,
+      getFirstGalleryImage,
+      showAllRestaurants
+    };
   }
-  </script>
+};
+</script>
   
   <style scoped>
   .restaurant-card {

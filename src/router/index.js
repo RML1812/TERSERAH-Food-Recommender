@@ -14,6 +14,7 @@ import Blog from '../views/Blog.vue'
 import Artikel from '../views/Artikel.vue'
 import Eror from '../views/Error.vue'
 import NoLog from '../views/NoLogin.vue'
+import PaymentFinish from '../views/PaymentFinish.vue'
 import Verif from '../views/Verifikasi.vue'
 
 const router = createRouter({
@@ -50,14 +51,16 @@ const router = createRouter({
       component: Profil
     },
     {
-      path: '/restaurant',
+      path: '/restaurant/:restaurantId',
       name: 'restaurant',
-      component: Restaurant
+      component: Restaurant,
+      props: true
     },
     {
-      path: '/reservasi',
+      path: '/reservasi/:restaurantId',
       name: 'reservasi',
-      component: Reservasi
+      component: Reservasi,
+      props: true
     },
     {
       path: '/reservasimu',
@@ -70,6 +73,12 @@ const router = createRouter({
       component: Wishlist
     },
     {
+      path: '/restaurant/:restaurantId',
+      name: 'review',
+      component: Review,
+      props: true
+    },
+    {
       path: '/review',
       name: 'review',
       component: Review
@@ -80,9 +89,10 @@ const router = createRouter({
       component: Blog
     },
     {
-      path: '/artikel',
+      path: '/artikel/:artikelId',
       name: 'artikel',
-      component: Artikel
+      component: Artikel,
+      props: true
     },
     {
       path: '/error',
@@ -91,7 +101,7 @@ const router = createRouter({
     },
     {
       path: '/nolog',
-      name: 'nolog',
+      name: 'nonog',
       component: NoLog
     },
     {
@@ -99,6 +109,16 @@ const router = createRouter({
       name: 'verif',
       component: Verif
     },
+    {
+      path: '/paymentfinish',
+      name: 'paymentFinish',
+      component: PaymentFinish
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: Eror
+    }
   ]
 })
 

@@ -7,6 +7,9 @@ const app = express()
 const brain = require('brain.js');
 const cors = require('cors');
 
+const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first');
+
 const mongoose=require("mongoose")
 
 mongoose.connect("mongodb+srv://hamudi:DFHjOlbRAM9bvAKR@cluster0.45rn36l.mongodb.net/TerserahDB")
@@ -72,6 +75,13 @@ app.use(terserahinRoutes);
 app.use(wishlistRoutes);
 app.use(artikelRoutes);
 
+// Serve Vue app
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// Handle all other routes
+app.get('*', (req, res) => {
+ res.sendFile(path.join(__dirname, 'dist/index.html'));
+});
 
 app.listen(port, () => {
     console.log('port connected');
