@@ -1,0 +1,56 @@
+<div class="container mx-auto py-10">
+  <h1 class="text-4xl font-bold text-center mb-8">Restaurant Details</h1>
+
+  <div class="bg-white shadow rounded-lg p-6">
+    <h2 class="text-3xl font-semibold mb-4"><%= restaurant.restaurant_name %></h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <!-- Basic Information -->
+      <div>
+        <p><strong>Company Name:</strong> <%= restaurant.company_name %></p>
+        <p><strong>Business Type:</strong> <%= restaurant.business_type %></p>
+        <p><strong>Email:</strong> <%= restaurant.email %></p>
+        <p><strong>Phone:</strong> <%= restaurant.phone_number %></p>
+        <p><strong>NPWP:</strong> <%= restaurant.npwp %></p>
+      </div>
+
+      <!-- Personal Information -->
+      <div>
+        <p><strong>Full Name:</strong> <%= restaurant.full_name %></p>
+        <p><strong>NIK:</strong> <%= restaurant.nik %></p>
+        <p><strong>Gender:</strong> <%= restaurant.gender %></p>
+        <p><strong>Birth Date:</strong> <%= restaurant.birth_date %></p>
+        <p><strong>Personal Phone:</strong> <%= restaurant.personal_phone %></p>
+      </div>
+    </div>
+
+    <!-- Address Information -->
+    <h3 class="text-xl font-semibold mb-2">Address:</h3>
+    <p><%= restaurant.full_address %></p>
+    <p><strong>Domicile:</strong> <%= restaurant.domicile %></p>
+
+    <!-- Images -->
+    <div class="grid grid-cols-2 gap-4 mt-6">
+      <div>
+        <h3 class="text-xl font-semibold mb-2">NPWP Photo:</h3>
+        <img src="<%= restaurant.npwp_photo %>" alt="NPWP Photo" class="rounded-lg">
+      </div>
+      <div>
+        <h3 class="text-xl font-semibold mb-2">KTP Photo:</h3>
+        <img src="<%= restaurant.ktp_photo %>" alt="KTP Photo" class="rounded-lg">
+      </div>
+    </div>
+
+    <!-- Approve/Reject Buttons -->
+    <div class="mt-6 flex space-x-4">
+      <form action="/admin-dashboard/review-restaurant/<%= restaurant._id %>" method="POST">
+        <input type="hidden" name="action" value="approve">
+        <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">Approve</button>
+      </form>
+      <form action="/admin-dashboard/review-restaurant/<%= restaurant._id %>" method="POST">
+        <input type="hidden" name="action" value="reject">
+        <button type="submit" class="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600">Reject</button>
+      </form>
+    </div>
+  </div>
+</div>

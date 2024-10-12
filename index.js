@@ -19,6 +19,11 @@ const reservationRoutes = require('./routes/reservation');
 const restaurantRoutes = require('./routes/restaurant');
 const terserahinRoutes = require('./routes/terserahin');
 const wishlistRoutes = require('./routes/wishlist');
+const loginRestaurantRoutes = require('./routes/loginRestaurant');
+const signupRestaurantRoutes = require('./routes/signupRestaurant');
+const loginAdminRoutes = require('./routes/loginAdmin');
+const adminDashboardRoutes = require('./routes/adminDashboard');
+const restaurantDashboardRoutes = require('./routes/restaurantDashboard')
 
 const port = process.env.PORT || 3000
 app.use(express.json())
@@ -51,7 +56,11 @@ app.use(reviewRoutes);
 app.use(signupRoutes);
 app.use(terserahinRoutes);
 app.use(wishlistRoutes);
-
+app.use(loginRestaurantRoutes);
+app.use(signupRestaurantRoutes);
+app.use(loginAdminRoutes);
+app.use(restaurantDashboardRoutes );
+app.use(adminDashboardRoutes);
 
 app.listen(port, () => {
     console.log('port connected');
