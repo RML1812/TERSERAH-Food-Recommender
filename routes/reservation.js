@@ -3,6 +3,7 @@ const {Transaction} = require("../model/transaction.js")
 const {Reservation} = require("../model/reservation.js")
 const {migrateRatings, updateRestaurantReferences, checkAuth, snap} = require("../function/function")
 const {Restaurant, CulinaryTypeView, PaymentMethodView, AvailableFacilityView, PriceRangeView} = require("../model/restaurant")
+const User = require("../model/user")
 const router = express.Router();
 const schedule = require('node-schedule');
 
@@ -37,6 +38,14 @@ router.post('/reservation/:restaurantId', async (req, res) => {
             waktuSelesai
         });
 
+        const user = await User.findById(userLogin._id);
+        const restaurant = await Restaurant.findById(restaurantId);
+        if (!restaurant) {
+            return res.status(404).json({ error: "Restaurant tidak ditemukan" });
+        }
+
+        user.restaurants.push(restaurantId);
+        await user.save();
         // Create and save the new transaction
 
         // Pass the reservation and transaction data to the view

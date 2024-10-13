@@ -2,10 +2,17 @@
 
 <!-- Form to edit restaurant details -->
 <form action="/restaurant-dashboard/edit-konten" method="POST">
+
+    
     <div class="form-group">
         <label for="culinary_type">Culinary Type:</label>
-        <input type="text" id="culinary_type" name="culinary_type" value="<%= restaurant.culinary_type %>" required>
+        <select id="culinary_type" name="culinary_type" required>
+            <% culinaryTypes.forEach(type => { %>
+                <option value="<%= type.name %>" <%= restaurant.culinary_type === type.name ? 'selected' : '' %>><%= type.name %></option>
+            <% }) %>
+        </select>
     </div>
+    
 
     <div class="form-group">
         <label for="address">Address:</label>
@@ -29,13 +36,23 @@
 
     <div class="form-group">
         <label for="payment_methods">Payment Methods:</label>
-        <input type="text" id="payment_methods" name="payment_methods" value="<%= restaurant.payment_methods %>" required>
+        <select id="payment_methods" name="payment_methods" multiple required>
+            <% paymentMethods.forEach(method => { %>
+                <option value="<%= method.name %>" <%= restaurant.payment_methods.includes(method.name) ? 'selected' : '' %>><%= method.name %></option>
+            <% }) %>
+        </select>
     </div>
+    
 
     <div class="form-group">
         <label for="price_range">Price Range:</label>
-        <input type="text" id="price_range" name="price_range" value="<%= restaurant.price_range %>" required>
+        <select id="price_range" name="price_range" required>
+            <% priceRanges.forEach(range => { %>
+                <option value="<%= range.name %>" <%= restaurant.price_range === range.name ? 'selected' : '' %>><%= range.name %></option>
+            <% }) %>
+        </select>
     </div>
+    
 
     <div class="form-group">
         <label for="open_schedule">Open Schedule:</label>
@@ -44,9 +61,13 @@
 
     <div class="form-group">
         <label for="available_facilities">Available Facilities:</label>
-        <input type="text" id="available_facilities" name="available_facilities" value="<%= restaurant.available_facilities %>" required>
+        <select id="available_facilities" name="available_facilities" multiple required>
+            <% availableFacilities.forEach(facility => { %>
+                <option value="<%= facility.name %>" <%= restaurant.available_facilities.includes(facility.name) ? 'selected' : '' %>><%= facility.name %></option>
+            <% }) %>
+        </select>
     </div>
-
+    
     <div class="form-group">
         <label for="unavailable_facilities">Unavailable Facilities:</label>
         <input type="text" id="unavailable_facilities" name="unavailable_facilities" value="<%= restaurant.unavailable_facilities %>" required>

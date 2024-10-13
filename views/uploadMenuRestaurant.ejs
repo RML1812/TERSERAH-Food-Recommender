@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Gallery and Menu</title>
+    <link rel="stylesheet" href="/path/to/tailwind.css">
+</head>
+<body>
+    <div class="container mx-auto p-5">
+        <h1 class="text-2xl font-bold mb-4">Edit Image Gallery and Menu</h1>
+
+        <!-- Section to display existing gallery images -->
+        <div class="mb-6">
+            <h2 class="text-xl mb-2">Current Gallery Images</h2>
+            <div class="grid grid-cols-3 gap-4">
+                <% if (galleryUrls.length > 0) { %>
+                    <% galleryUrls.forEach(function(url) { %>
+                        <div class="border p-2">
+                            <img src="<%= url %>" alt="Gallery Image" class="w-full h-32 object-cover">
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p>No gallery images uploaded yet.</p>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Section to display existing menu image -->
+        <div class="mb-6">
+            <h2 class="text-xl mb-2">Current Menu Image</h2>
+            <% if (menuUrl) { %>
+                <div class="border p-2">
+                    <img src="<%= menuUrl %>" alt="Menu Image" class="w-full h-32 object-cover">
+                </div>
+            <% } else { %>
+                <p>No menu image uploaded yet.</p>
+            <% } %>
+        </div>
+
+        <!-- Form to upload new gallery and menu images -->
+        <form action="/restaurant-dashboard/upload-menu" method="POST" enctype="multipart/form-data" class="mb-6">
+            <div class="mb-4">
+                <label for="new_gallery_images" class="block text-sm font-bold mb-2">Upload New Gallery Images:</label>
+                <input type="file" name="new_gallery_images" id="new_gallery_images" multiple class="block w-full border">
+            </div>
+
+            <div class="mb-4">
+                <label for="new_menu_image" class="block text-sm font-bold mb-2">Upload New Menu Image:</label>
+                <input type="file" name="new_menu_image" id="new_menu_image" class="block w-full border">
+            </div>
+
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Upload</button>
+        </form>
+    </div>
+</body>
+</html>

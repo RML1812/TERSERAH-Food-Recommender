@@ -2,6 +2,7 @@ const express = require('express');
 const {Rating} = require("../model/rating")
 const {Restaurant, CulinaryTypeView, PaymentMethodView, AvailableFacilityView, PriceRangeView} = require("../model/restaurant")
 const {Review} = require("../model/review")
+const User = require("../model/user")
 const router = express.Router();
 
 
@@ -43,6 +44,16 @@ router.post('/review/:restaurantId', async (req, res) => {
         });
 
         await newReview.save();
+
+        const user = await User.findById(userLogin._id);
+        const restaurant = await Restaurant.findById(restaurantId);
+        if (!restaurant) {
+            return res.status(404).json({ error: "Restaurant tidak ditemukan" });
+        }
+
+        user.restaurants.push(restaurantId);
+        await user.save();
+
         res.redirect(`/restaurants/${restaurantId}`)
     } catch (error) {
         console.error("Error creating review:", error);

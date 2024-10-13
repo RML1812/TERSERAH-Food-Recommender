@@ -77,10 +77,8 @@ router.post('/wishlist', async (req, res) => {
             return res.status(404).json({ error: "Restaurant tidak ditemukan" });
         }
 
-        if (!user.restaurants.includes(restaurantId)) {
-            user.restaurants.push(restaurantId);
-            await user.save();
-        }
+        user.restaurants.push(restaurantId);
+        await user.save();
         //masukin ke ml
 
         res.status(200).json({ message: "Wishlist berhasil diunggah" });

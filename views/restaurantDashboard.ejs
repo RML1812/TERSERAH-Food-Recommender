@@ -18,6 +18,18 @@
     </form>
 </div>
 
+<form action="/restaurant-dashboard/toggle-live" method="POST">
+    <button type="submit">
+        <%= restaurant.is_live ? "Hide" : "Live" %>
+    </button>
+</form>
+
+<!-- Example button to move data to live
+<form action="/restaurant-dashboard/move-to-live" method="POST">
+    <button type="submit" {{ restaurant.is_live ? "" : "disabled" }}>Go Live</button>
+</form> -->
+
+
 <!-- Section for dashboard statistics -->
 <div class="dashboard-stats">
     <h2>Dashboard Statistics</h2>
@@ -85,3 +97,6 @@
 
 <!-- Button to edit restaurant info -->
 <a href="/restaurant-dashboard/edit-konten" class="btn btn-primary">Edit Restaurant Information</a>
+
+<!-- Button to upload menu -->
+<a href="/restaurant-dashboard/upload-menu" class="btn btn-secondary">Edit Image Gallery and Menu</a>

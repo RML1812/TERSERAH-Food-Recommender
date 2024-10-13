@@ -4,6 +4,7 @@ const restaurantACCSchema = new mongoose.Schema({
     email: { type: String, required: true },
     password: { type: String, required: true },
     restaurant_name: { type: String, required: true },
+    id_restaurant : {type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant'},
     phone_number: { type: String, required: true },
     business_type: { type: String, required: true },
     company_name: { type: String, default: null },

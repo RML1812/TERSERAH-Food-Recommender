@@ -5,16 +5,18 @@ const User = require("../model/user")
 const {Restaurant} = require("../model/restaurant")
 const { RestaurantACC } = require("../model/restaurantACC");
 const { TempRestaurantACC } = require("../model/tempRestaurantACC");
+const { TempRestaurant } = require("../model/tempRestaurant");
 const {Rating} = require("../model/rating")
 const router = express.Router();
+const {isRestaurant, isAdmin, isUser } = require("../function/access");
+const {Menu} = require("../model/menu.js")
 
-// Main Admin Dashboard
-router.get('/admin-dashboard', async (req, res) => {
+// Main Admin Dashboar
+router.get('/admin-dashboard', isAdmin ,async (req, res) => {
     try {
         if (!req.session.adminLogin) {
             return res.status(401).redirect('/admin-dashboard/login');
         }
-
         // Get total counts
         const totalUsers = await User.countDocuments();
         const totalRestaurants = await Restaurant.countDocuments();
@@ -36,7 +38,7 @@ router.get('/admin-dashboard', async (req, res) => {
 
 
 
-router.get('/admin-dashboard/review-restaurant', async (req, res) => {
+router.get('/admin-dashboard/review-restaurant', isAdmin , async (req, res) => {
     try {
         if (!req.session.adminLogin) {
             return res.status(401).redirect('/admin-dashboard/login');
@@ -56,7 +58,7 @@ router.get('/admin-dashboard/review-restaurant', async (req, res) => {
 });
 
 // Approve or reject a restaurant account (POST)
-router.post('/admin-dashboard/review-restaurant/:id_restaurant', async (req, res) => {
+router.post('/admin-dashboard/review-restaurant/:id_restaurant', isAdmin , async (req, res) => {
     try {
         if (!req.session.adminLogin) {
             return res.status(401).redirect('/admin-dashboard/login');
@@ -83,9 +85,16 @@ router.post('/admin-dashboard/review-restaurant/:id_restaurant', async (req, res
             });
             await newRating.save();
 
+            const newMenu = new Menu({
+                link: restaurantACC.link || '',
+                gallery_link: '',
+                menu_link: '',
+            });
+            await newMenu.save();
+
             // Create corresponding entry in Restaurant collection
             
-            const newRestaurant = new Restaurant({
+            const newRestaurant = new TempRestaurant({
                 name: restaurantACC.restaurant_name,
                 culinary_type: restaurantACC.culinary_type || '', // Assuming culinary type is provided
                 address: restaurantACC.address || '',
@@ -97,18 +106,18 @@ router.post('/admin-dashboard/review-restaurant/:id_restaurant', async (req, res
                 available_facilities: restaurantACC.available_facilities || '',
                 unavailable_facilities: restaurantACC.unavailable_facilities || '',
                 phone: restaurantACC.phone || '',
-                overall_rating: 0,  // Initial rating, can be updated later
-                individual_rating: '',  // Placeholder for future rating system
+                overall_rating: 4,  // Initial rating, can be updated later
+                individual_rating: '4,4,4,4,4',  // Placeholder for future rating system
                 rating_id: newRating._id,  // Link to rating document
+                menu_id: newMenu._id,
                 slot: 30  // Default slot
             });
-
-            await newRestaurant.save();
 
             const newRestaurantACC = new RestaurantACC({
                 email: restaurantACC.email,
                 password: restaurantACC.password,
                 restaurant_name: restaurantACC.restaurant_name,
+                id_restaurant : newRestaurant._id,
                 phone_number: restaurantACC.phone_number,
                 business_type: restaurantACC.business_type,
                 company_name: restaurantACC.company_name,
@@ -124,7 +133,7 @@ router.post('/admin-dashboard/review-restaurant/:id_restaurant', async (req, res
                 ktp_photo: restaurantACC.ktp_photo
                 // tambahkan field lain yang dibutuhkan untuk RestaurantACC
             });
-            
+            await newRestaurant.save();
             await newRestaurantACC.save();
 
             // Remove from tempRestaurantACC after successful approval

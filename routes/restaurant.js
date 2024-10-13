@@ -68,17 +68,16 @@ router.get('/restaurants/:restaurantId', async (req, res) => {
         if (!(userLogin._id.toString() === "1")) {    
             // Masukin ke ML
             const user = await User.findById(userLogin._id);
+            const restaurant = await Restaurant.findById(restaurantId);
             if (!restaurant) {
                 return res.status(404).json({ error: "Restaurant tidak ditemukan" });
             }
-    
-            if (!user.restaurants.includes(restaurantId)) {
-                user.restaurants.push(restaurantId);
-                await user.save();
+
+            user.restaurants.push(restaurantId);
+            await user.save();
+                // Masukin ke ML
             }
-            // Masukin ke ML
-        }
-        
+            
         const rating = await Rating.findById(restaurant.rating_id);
 
         // Render halaman dengan data restaurant dan menu

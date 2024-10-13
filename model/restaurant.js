@@ -14,6 +14,8 @@ const restaurantSchema = new mongoose.Schema({
     overall_rating: Number,
     individual_rating: String,
     rating_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Rating' },
+    menu_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Menu' },
+    is_live: { type: Boolean, default: true },
     slot: { type: Number, default: 30 }
 });
 
