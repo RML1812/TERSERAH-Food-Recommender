@@ -16,6 +16,12 @@ import Eror from '../views/Error.vue'
 import NoLog from '../views/NoLogin.vue'
 import PaymentFinish from '../views/PaymentFinish.vue'
 import Verif from '../views/Verifikasi.vue'
+import LogRestaurant from '../views/RestaurantLanding.vue'
+import RegRestaurant from '../views/RestaurantRegister.vue'
+import ProfileRest from '../views/RestaurantProfile.vue'
+import RestaurantDashboard from '@/views/RestaurantDashboard.vue'
+import RestaurantKonten from '@/views/RestaurantKonten.vue'
+import RestaurantReservasi from '@/views/RestaurantReservasi.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -118,7 +124,43 @@ const router = createRouter({
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: Eror
-    }
+    },
+    {
+      path: '/account/restaurant/login',
+      name: 'LoginAccountRestaurant',
+      component: LogRestaurant,
+      meta: { hideNavbarFooter: true }
+    },
+    {
+      path: '/account/restaurant/register',
+      name: 'RegisterAccountRestaurant',
+      component: RegRestaurant,
+      meta: { hideNavbarFooter: true }
+    },
+    {
+      path: '/restaurant/profile',
+      name: 'ProfileRestaurant',
+      component: ProfileRest,
+      meta: { hideNavbarFooter: true }
+    },
+    {
+      path: '/restaurant/dashboard',
+      name: 'RestaurantDashboard',
+      component: RestaurantDashboard,
+      meta: { hideNavbarFooter: true }
+    },
+    {
+      path: '/restaurant/konten',
+      name: 'RestaurantKonten',
+      component: RestaurantKonten,
+      meta: { hideNavbarFooter: true }
+    },
+    {
+      path: '/restaurant/reservasi',
+      name: 'RestaurantReservasi',
+      component: RestaurantReservasi,
+      meta: { hideNavbarFooter: true }
+    },
   ]
 })
 
