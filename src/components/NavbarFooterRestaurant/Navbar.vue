@@ -1,9 +1,9 @@
 <template>
   <div class="navbar">
-    <span class="nav-item">Main Dashboard</span>
-    <span class="nav-item">Konten</span>
-    <span class="nav-item">Reservasi</span>
-    <span class="nav-item user-info">| Restaurant A</span>
+    <router-link to="/restaurant/dashboard" class="nav-item">Main Dashboard</router-link>
+    <router-link to="/restaurant/konten" class="nav-item">Konten</router-link>
+    <router-link to="/restaurant/reservasi" class="nav-item">Reservasi</router-link>
+    <router-link to="/restaurant/profile" class="nav-item user-info">| Restaurant A</router-link>
   </div>
 </template>
 
