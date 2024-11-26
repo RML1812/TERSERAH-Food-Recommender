@@ -22,6 +22,9 @@ import ProfileRest from '../views/RestaurantProfile.vue'
 import RestaurantDashboard from '@/views/RestaurantDashboard.vue'
 import RestaurantKonten from '@/views/RestaurantKonten.vue'
 import RestaurantReservasi from '@/views/RestaurantReservasi.vue'
+import Admin from '../views/AdminLandingPage.vue'
+import DashboardAdmin from '../views/AdminDashboard.vue'
+import AdminReview from '../views/AdminReview.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -161,6 +164,25 @@ const router = createRouter({
       component: RestaurantReservasi,
       meta: { hideNavbarFooter: true }
     },
+    {
+      path: '/admin',
+      name: 'Admin',
+      component: Admin,
+      meta: { hideNavbarFooter: true }
+    },
+    {
+      path: '/admin/dashboard',
+      name: 'DashboardAdmin',
+      component: DashboardAdmin,
+      meta: { hideNavbarFooter: true }
+    },
+    {
+      path: '/admin/review',
+      name: 'AdminReview',
+      component: AdminReview,
+      meta: { hideNavbarFooter: true }
+    },
+
   ]
 })
 
