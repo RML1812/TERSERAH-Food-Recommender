@@ -13,7 +13,7 @@ const restaurantSchema = new mongoose.Schema({
     phone: String,
     overall_rating: Number,
     individual_rating: String,
-    rating_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Rating', required: true },
+    rating_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Rating' },
     slot: { type: Number, default: 30 }
 });
 
