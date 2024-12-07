@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#f5f1eb] flex flex-col"> <!-- Main container with full-screen height -->
+  <div class="min-h-screen bg-[#f5f1eb] flex flex-col">
     <!-- Header -->
     <header class="p-4 flex justify-center mt-5">
       <div class="flex items-center space-x-2">
@@ -14,7 +14,7 @@
     <!-- Main Content -->
     <main class="flex-grow flex items-center justify-center p-2">
       <div class="flex w-full items-center justify-center">
-        <!-- Left Panel (Admin Dashboard) -->
+        <!-- Left Panel (Restaurant Dashboard) -->
         <div
           class="bg-[#969696] rounded-lg shadow-lg overflow-hidden w-1/3 bg-cover bg-center text-white flex flex-col items-center justify-center py-16"
           style="background-image: url('/admin-dashboard-pic.png')"
@@ -39,9 +39,6 @@
                 required
               >
             </div>
-            <label class="absolute font-bold text-red-500 text-[11px] ml-13" v-if="userEmail">
-              Masukkan {{ simbol }} digit karakter (Minimal 12 Karakter)
-            </label>
             
             <!-- Password Input -->
             <div class="mb-6 ml-4 flex items-center">
@@ -57,9 +54,9 @@
                 <ion-icon class="text-white text-xl" :name="hidePw ? 'eye-off' : 'eye'"></ion-icon>
               </div>
             </div>
-            <label class="absolute font-bold text-red-500 text-[11px] ml-13" v-if="userPw">
-              Masukkan {{ simbols }} digit karakter (Minimal 12 Karakter)
-            </label>
+            
+            <!-- Error Message -->
+            <p v-if="errorMessage" class="text-red-500 text-sm mt-2 text-center">{{ errorMessage }}</p>
             
             <!-- Login Button -->
             <div class="text-right mt-10">
@@ -71,58 +68,59 @@
         </div>
       </div>
     </main>
-
-    <!-- Bottom Panel -->
-    <div
-      class="bg-center h-auto p-6 flex flex-col items-center justify-center"
-      style="background-image: url('/gambar-register-restaurant.png');"
-    >
-      <h3 class="text-5xl font-bold text-white text-center mb-4">Bergabung-lah dan menjadi</h3>
-      <h3 class="text-5xl font-bold text-white text-center mt-3 mb-4">
-        bagian dari <span class="text-[#C2CFC2] italic">Terserah</span>!
-      </h3>
-      <p class="text-lg font-bold text-white text-center mb-6 mt-3">Mulai dari buat akun restaurant-mu</p>
-      <button class="bg-white text-black rounded-xl py-1 px-16 hover:bg-slate-300">
-        Sign Up
-      </button>
-    </div>
+        <!-- Bottom Panel -->
+        <div
+        class="bg-center h-auto p-6 flex flex-col items-center justify-center"
+        style="background-image: url('/gambar-register-restaurant.png');"
+      >
+        <h3 class="text-5xl font-bold text-white text-center mb-4">Bergabung-lah dan menjadi</h3>
+        <h3 class="text-5xl font-bold text-white text-center mt-3 mb-4">
+          bagian dari <span class="text-[#C2CFC2] italic">Terserah</span>!
+        </h3>
+        <p class="text-lg font-bold text-white text-center mb-6 mt-3">Mulai dari buat akun restaurant-mu</p>
+        <button class="bg-white text-black rounded-xl py-1 px-16 hover:bg-slate-300"
+                onclick="window.location.href='/account/restaurant/register';">
+          Sign Up
+        </button>
+      </div>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue';
+import axios from 'axios';
 
 export default {
-  name: 'LoginPage',
-  setup() {
-    const user = ref('');
-    const pw = ref('');
-    const hidePw = ref(false);
-    const simbol = ref(12); // Minimum karakter untuk username
-    const simbols = ref(12); // Minimum karakter untuk password
-    const userEmail = ref(false); // Kondisi untuk menampilkan pesan validasi username
-    const userPw = ref(false); // Kondisi untuk menampilkan pesan validasi password
-
-    const loginUser = () => {
-      console.log('Login attempted with:', user.value, pw.value);
-      // Implement actual login logic here
-    };
-
-    const menuEye = () => {
-      hidePw.value = !hidePw.value;
-    };
-
+  name: 'RestaurantLoginPage',
+  data() {
     return {
-      user,
-      pw,
-      hidePw,
-      simbol,
-      simbols,
-      userEmail,
-      userPw,
-      loginUser,
-      menuEye,
+      user: '', // Input for username or email
+      pw: '',   // Input for password
+      hidePw: false, // Toggles password visibility
+      errorMessage: '', // Error message to display in UI
     };
+  },
+  methods: {
+    async loginUser() {
+        try {
+            const response = await axios.post('http://localhost:3000/restaurant-dashboard/login', {
+                email: this.user,
+                password: this.pw,
+            });
+
+            if (response.data.message === 'Login successful') {
+                localStorage.setItem('restaurantName', response.data.user.name);
+                window.location.href = '/restaurant/dashboard';
+            } else {
+                this.errorMessage = response.data.message || 'Login failed. Please try again.';
+            }
+        } catch (error) {
+            console.error('Error logging in:', error);
+            this.errorMessage = error.response?.data?.message || 'An error occurred. Please try again.';
+        }
+    },
+    menuEye() {
+      this.hidePw = !this.hidePw;
+    },
   },
 };
 </script>

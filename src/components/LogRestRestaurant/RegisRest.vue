@@ -130,9 +130,10 @@
             <div class="form-group">
               <strong>Foto NPWP</strong>
               <input
-                type="file"
-                @change="onFileChange('npwpPhoto', $event)"
-                class="bg-[#D3D3D3] rounded-2xl shadow-sm border-black"
+                type="text"
+                v-model="form.npwpPhoto"
+                placeholder="Link Foto NPWP"
+                class="pl-4 text-black h-10 bg-[#D3D3D3] rounded-2xl shadow-sm border-black"
                 required
               />
             </div>
@@ -166,8 +167,8 @@
             <div class="form-group">
               <strong>Jenis Kelamin</strong>
               <div class="flex items-center space-x-4">
-                <input type="radio" v-model="form.gender" value="Laki-laki" required /> <span>Laki-laki</span>
-                <input type="radio" v-model="form.gender" value="Perempuan" required /> <span>Perempuan</span>
+                <input type="radio" v-model="form.gender" value="Male" required /> <span>Laki-laki</span>
+                <input type="radio" v-model="form.gender" value="Female" required /> <span>Perempuan</span>
               </div>
             </div>
             <div class="form-group">
@@ -202,9 +203,10 @@
             <div class="form-group">
               <strong>Foto KTP</strong>
               <input
-                type="file"
-                @change="onFileChange('ktpPhoto', $event)"
-                class="bg-[#D3D3D3] rounded-2xl shadow-sm border-black"
+                type="text"
+                v-model="form.ktpPhoto"
+                placeholder="Link Foto KTP"
+                class="pl-4 text-black h-10 bg-[#D3D3D3] rounded-2xl shadow-sm border-black"
                 required
               />
             </div>
@@ -221,6 +223,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
@@ -244,20 +248,43 @@ export default {
         domicile: '',
         ktpPhoto: null,
       },
-      simbol: '6',
-      simbols: '6',
     };
   },
   methods: {
-    onFileChange(field, event) {
-      this.form[field] = event.target.files[0];
-    },
-    submitForm() {
-      console.log("Form data:", this.form);
+    async submitForm() {
+      const payload = {
+        email: this.form.email,
+        password: this.form.password,
+        repeatPassword: this.form.repeatPassword,
+        restaurant_name: this.form.businessName,
+        phone_number: this.form.phoneNumber,
+        business_type: this.form.businessType,
+        company_name: this.form.companyName,
+        full_address: this.form.address,
+        npwp: this.form.npwp,
+        npwp_photo: this.form.npwpPhoto,
+        full_name: this.form.ownerName,
+        nik: this.form.nik,
+        gender: this.form.gender,
+        birth_date: this.form.birthDate,
+        personal_phone: this.form.phoneNumberOwner,
+        domicile: this.form.domicile,
+        ktp_photo: this.form.ktpPhoto,
+      };
+
+      try {
+        const response = await axios.post('http://localhost:3000/restaurant-dashboard/signup', payload);
+        console.log('Signup successful:', response.data);
+        alert('Signup successful! Redirecting...');
+        this.$router.push('/restaurant-dashboard/pending');
+      } catch (error) {
+          console.error('Error during signup:', error.response?.data || error.message);
+          alert(`Signup failed: ${error.response?.data?.message || error.message}`);
+      }
     },
     menuEye() {
       this.hidePw = !this.hidePw;
-    }
+    },
   },
 };
 </script>

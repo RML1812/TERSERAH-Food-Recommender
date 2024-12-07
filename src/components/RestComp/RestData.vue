@@ -21,15 +21,42 @@
                                 </div>
                             </div>
                         </div>
-                        <div v-if="menu" class="flex mx-4 center items-center relative z-10">
-                            <ion-icon @click="prevHidang" class="lg:mt-36 mt-28 mr-2 hover:scale-110 text-2xl h-6 w-7 bg-white rounded-2xl cursor-pointer" name="arrow-dropleft"></ion-icon>
-                            <img v-for="(img, index) in visibleHidangan" :src="img" :key="index" @click="changeBackground(img)" class="lg:mt-36 mt-28 mr-2 hover:scale-105 cursor-pointer bg-no-repeat shadow-3xl border-2 bg-cover w-[105px] md:h-14 sm:h-10 h-14 rounded-xl">
-                            <ion-icon @click="nextHidang" class="lg:mt-36 mt-28 hover:scale-110 text-2xl bg-white rounded-2xl h-6 w-7 cursor-pointer" name="arrow-dropright"></ion-icon>
-                        </div>
                         <div v-if="!menu" class="flex mx-4 center items-center relative z-10">
-                            <ion-icon @click="prevImages" class="lg:mt-36 mt-28 mr-2 hover:scale-110 text-2xl h-6 w-7 bg-white rounded-2xl cursor-pointer" name="arrow-dropleft"></ion-icon>
-                            <img v-for="(img, index) in visibleImages" :src="img" :key="index" @click="changeBackground(img)" class="lg:mt-36 mt-28 mr-2 hover:scale-105 cursor-pointer bg-no-repeat shadow-3xl border-2 bg-cover w-[105px] md:h-14 sm:h-10 h-14 rounded-xl">
-                            <ion-icon @click="nextImages" class="lg:mt-36 mt-28 hover:scale-110 text-2xl bg-white rounded-2xl h-6 w-7 cursor-pointer" name="arrow-dropright"></ion-icon>
+                            <ion-icon 
+                                @click="prevImages" 
+                                class="lg:mt-36 mt-28 mr-2 hover:scale-110 text-2xl h-6 w-7 bg-white rounded-2xl cursor-pointer" 
+                                name="arrow-dropleft">
+                            </ion-icon>
+                            <img 
+                                v-for="(img, index) in visibleImages" 
+                                :src="img" 
+                                :key="index" 
+                                @click="changeBackground(img)" 
+                                class="lg:mt-36 mt-28 mr-2 hover:scale-105 cursor-pointer bg-no-repeat shadow-3xl border-2 bg-cover w-[105px] md:h-14 sm:h-10 h-14 rounded-xl">
+                            <ion-icon 
+                                @click="nextImages" 
+                                class="lg:mt-36 mt-28 hover:scale-110 text-2xl bg-white rounded-2xl h-6 w-7 cursor-pointer" 
+                                name="arrow-dropright">
+                            </ion-icon>
+                        </div>
+                        
+                        <div v-if="menu" class="flex mx-4 center items-center relative z-10">
+                            <ion-icon 
+                                @click="prevImages" 
+                                class="lg:mt-36 mt-28 mr-2 hover:scale-110 text-2xl h-6 w-7 bg-white rounded-2xl cursor-pointer" 
+                                name="arrow-dropleft">
+                            </ion-icon>
+                            <img 
+                                v-for="(img, index) in visibleMenuImages" 
+                                :src="img" 
+                                :key="index" 
+                                @click="changeBackground(img)" 
+                                class="lg:mt-36 mt-28 mr-2 hover:scale-105 cursor-pointer bg-no-repeat shadow-3xl border-2 bg-cover w-[105px] md:h-14 sm:h-10 h-14 rounded-xl">
+                            <ion-icon 
+                                @click="nextImages" 
+                                class="lg:mt-36 mt-28 hover:scale-110 text-2xl bg-white rounded-2xl h-6 w-7 cursor-pointer" 
+                                name="arrow-dropright">
+                            </ion-icon>
                         </div>
                     </div>
                 </div>
@@ -41,7 +68,17 @@
                     <div class="flex">
                         <div class="flex mt-4">
                             <img class="lg:h-6 md:h-5 h-4 sm:h-4 mt-1 mr-4" src="/public/Clock.png" alt="">
-                            <p class="lg:text-[16px] md:text-[14px] sm:text-[13px] text-[14px] font-medium mt-1">{{ restaurant.open_schedule }}</p>
+                            <!-- Template Lama -->
+                            <p v-if="typeof restaurant.open_schedule === 'string'" 
+                               class="lg:text-[16px] md:text-[14px] sm:text-[13px] text-[14px] font-medium mt-1">
+                                {{ restaurant.open_schedule }}
+                            </p>
+                            <!-- Template Baru -->
+                            <div v-else class="lg:text-[16px] md:text-[14px] sm:text-[13px] text-[14px] font-medium mt-1">
+                                <p v-for="(schedule, index) in formattedSchedules" :key="index">
+                                    {{ schedule }}
+                                </p>
+                            </div>
                         </div>
                         <div class="flex mt-4">
                             <img class="ml-7 lg:h-5 md:h-4 h-4 sm:h-4 mt-1 mr-4" src="/public/Phone.png" alt="">
@@ -103,8 +140,13 @@
                         <p v-if="restaurant" class="sm:pt-1 lg:text-[15px] md:text-[14px] sm:text-[13px] text-[13px] font-semibold sm:mr-5 mx-5 sm:mx-0 mb-1 sm:mb-1 italic">
                             Slot Tersedia: {{ restaurant.slot }} Orang
                         </p>
-                        <button @click="redirectToReservation" class="h-auto w-auto rounded-lg bg-black text-white text-center py-1 md:px-8 sm:px-6 hover:bg-slate-500 sm:text-[15px] lg:text-[17px]">
-                            Reservasi
+                        <button
+                            :class="['h-auto w-auto rounded-lg text-center py-1 md:px-8 sm:px-6 sm:text-[15px] lg:text-[17px]', 
+                                restaurant?.is_live ? 'bg-black text-white hover:bg-slate-500 cursor-pointer' : 'bg-gray-400 text-gray-700 cursor-not-allowed']"
+                            :disabled="!restaurant?.is_live"
+                            @click="handleReservationClick"
+                            >
+                            {{ restaurant?.is_live ? 'Reservasi' : 'Maaf, Restaurant ini sedang tidak bisa melakukan Reservasi :(' }}
                         </button>
                     </div>
                 </div>
@@ -134,6 +176,7 @@ export default {
             open: false,
             currentImage: '',
             images: [],
+            menuImages: [],
             hidangan: [],
             startIndex: 0,
             menu: true,
@@ -147,8 +190,30 @@ export default {
         visibleImages() {
             return this.images.slice(this.startIndex, this.startIndex + 3);
         },
+        visibleMenuImages() {
+            return this.menuImages.slice(this.startIndex, this.startIndex + 3); // Menampilkan 3 gambar menu
+        },
         visibleHidangan() {
             return this.hidangan.slice(this.startIndex, this.startIndex + 3);
+        },
+        formattedSchedules() {
+            if (this.restaurant && typeof this.restaurant.open_schedule === 'object') {
+                try {
+                    return Object.entries(this.restaurant.open_schedule).map(([day, details]) => {
+                        if (typeof details === 'string') {
+                            return `${day}: ${details}`;  // Directly use the string for days like "Closed" or "10:00 - 22:00"
+                        } else if (details.Closed) {
+                            return `${day}: Closed`;
+                        } else if (details.open && details.close) {
+                            return `${day}: ${details.open} - ${details.close}`;
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error formatting schedules:', error);
+                    return ['Invalid schedule format'];
+                }
+            }
+            return ['Loading schedules...'];
         }
     },
     methods: {
@@ -160,7 +225,7 @@ export default {
         },
         changeBackground(image) {
             this.currentImage = image;
-            console.log('Changing background to:', image); // Debug log
+            console.log('Changing background to:', image);
         },
         nextImages() {
             if (this.startIndex + 3 < this.images.length) {
@@ -201,6 +266,17 @@ export default {
             try {
                 const response = await axios.get(`http://localhost:3000/restaurant/${this.restaurantId}`);
                 const { rating, restaurant, reservations, menu } = response.data;
+
+                if (typeof restaurant.open_schedule === 'string') {
+                    // Check if the string is JSON-like
+                    try {
+                        restaurant.open_schedule = JSON.parse(restaurant.open_schedule);
+                    } catch {
+                        // If not JSON, assume it's the custom string format and parse it
+                        restaurant.open_schedule = this.parseSchedule(restaurant.open_schedule);
+                    }
+                }
+
                 this.restaurant = restaurant;
 
                 // Set individual ratings
@@ -231,10 +307,50 @@ export default {
                 console.error('Error fetching restaurant data:', error);
             }
         },
+        async fetchGalleryImages() {
+            if (!this.restaurantId) {
+                console.error('Restaurant ID is not defined');
+                return;
+            }
+            try {
+                const response = await axios.get(`http://localhost:3000/restaurant/image/galeri/${this.restaurantId}`);
+                this.images = response.data.map(item => item.imgBase64);
+                if (this.images.length > 0) {
+                    this.currentImage = this.images[0]; // Set gambar pertama sebagai default
+                }
+            } catch (error) {
+                console.error('Error fetching gallery images:', error);
+            }
+        },
+        async fetchMenuImages() {
+            if (!this.restaurantId) {
+                console.error('Restaurant ID is not defined');
+                return;
+            }
+            try {
+                const response = await axios.get(`http://localhost:3000/restaurant/image/menu/${this.restaurantId}`);
+                this.menuImages = response.data.map(item => item.imgBase64); // Simpan gambar menu dalam base64
+                if (this.menuImages.length > 0) {
+                    this.currentImage = this.menuImages[0]; // Set gambar pertama sebagai default
+                }
+            } catch (error) {
+                console.error('Error fetching menu images:', error);
+            }
+        },
         async redirectToReservation() {
             const isLoggedIn = await this.checkLogin();
             if (isLoggedIn) {
                 window.location.href = `http://localhost:5173/reservasi/${this.restaurantId}`;
+            }
+        },
+        async handleReservationClick() {
+            if (this.restaurant?.is_live) {
+                const isLoggedIn = await this.checkLogin();
+                if (isLoggedIn) {
+                    window.location.href = `http://localhost:5173/reservasi/${this.restaurantId}`;
+                }
+            } else {
+                console.warn('Reservasi tidak tersedia untuk restoran ini.');
             }
         },
         async checkLogin() {
@@ -252,9 +368,46 @@ export default {
                 return false;
             }
         },
+        parseSchedule(scheduleStr) {
+            const dayMap = {
+                'Senin': 'Senin', 'Selasa': 'Selasa', 'Rabu': 'Rabu',
+                'Kamis': 'Kamis', 'Jumat': 'Jumat', 'Sabtu': 'Sabtu', 'Minggu': 'Minggu'
+            };
+            let schedule = {};
+            scheduleStr.split(', ').forEach(part => {
+                // Check if the part indicates closure
+                if (part.includes("Tutup")) {
+                    const dayClosed = part.split(' ')[0]; // Assumes format "Day Tutup"
+                    if (dayMap[dayClosed]) { // Check if it's a valid day
+                        schedule[dayMap[dayClosed]] = "Tutup";
+                    }
+                    return; // Skip further processing for this part
+                }
+
+                let [daysRange, times] = part.split(' (');
+                if (times) {
+                    times = times.slice(0, -1); // Remove the closing parenthesis if times is not undefined
+                }
+
+                let daysSplit = daysRange.split(' - ');
+                let startDay = daysSplit[0].trim();
+                let endDay = daysSplit.length > 1 ? daysSplit[1].trim() : startDay;
+
+                let startIndex = Object.keys(dayMap).indexOf(startDay);
+                let endIndex = endDay ? Object.keys(dayMap).indexOf(endDay) : startIndex;
+
+                for (let i = startIndex; i <= endIndex; i++) {
+                    let day = Object.keys(dayMap)[i];
+                    schedule[day] = times; // Use times, assumes it's not "Tutup"
+                }
+            });
+            return schedule;
+        },
     },
     mounted() {
         this.fetchRestaurantData();
+        this.fetchGalleryImages(); // Ambil data galeri
+        this.fetchMenuImages();    // Ambil data menu
     }
 };
 </script>

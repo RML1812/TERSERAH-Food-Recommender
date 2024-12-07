@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
 
-const tempRestaurantACCSchema = new mongoose.Schema({
+const tempRejectedRestaurantSchema = new mongoose.Schema({
     email: { type: String, required: true },
     password: { type: String, required: true },
     restaurant_name: { type: String, required: true },
-    status: { type: String, default: 'Pending' },
     phone_number: { type: String, required: true },
     business_type: { type: String, required: true },
     company_name: { type: String, default: null },
@@ -17,11 +16,13 @@ const tempRestaurantACCSchema = new mongoose.Schema({
     birth_date: { type: Date, required: true },
     personal_phone: { type: String, required: true },
     domicile: { type: String, required: true },
-    ktp_photo: { type: String, required: true } // assuming the photo is stored as a URL or file path
+    ktp_photo: { type: String, required: true }, // assuming the photo is stored as a URL or file path
+    rejection_reason: { type: String, required: true }, // Reason for rejection
+    rejected_at: { type: Date, default: Date.now } // Timestamp for when the rejection happened
 });
 
-const TempRestaurantACC = mongoose.model('TempRestaurantACC', tempRestaurantACCSchema);
+const TempRejectedRestaurant = mongoose.model('TempRejectedRestaurant', tempRejectedRestaurantSchema);
 
 module.exports = {
-    TempRestaurantACC
+    TempRejectedRestaurant
 };

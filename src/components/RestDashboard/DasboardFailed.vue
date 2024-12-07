@@ -1,31 +1,64 @@
 <template>
+  <Navbar />
   <div class="rejected-status">
     <div class="content">
       <div class="left-section">
         <div class="lock-icon">
           <img src="/lock-icon.png" alt="Lock Icon" />
         </div>
-        <button class="settings-button">Pergi ke Pengaturan Akun</button>
+        <button class="settings-button" @click="goToAccountSettings">Pergi ke Pengaturan Akun</button>
       </div>
       <div class="text-content">
         <h2 class="title font-bold">Ups, status akunmu sekarang adalah</h2>
         <h1 class="status">REJECTED</h1>
         <p class="font-semibold">Alasan ditolak:</p>
         <div class="reason-box">
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+          <p>{{ rejectionReason }}</p>
         </div>
         <p class="font-semibold">
           Jika kamu masih ingin akun-mu diterima, silahkan ubah isian akun-mu di
-          <span class="link">Pengaturan Akun</span>. Kami akan selalu menginginkan kamu menjadi bagian dari kami :)
+          <span class="link" @click="goToAccountSettings">Pengaturan Akun</span>. Kami akan selalu menginginkan kamu menjadi bagian dari kami :)
         </p>
       </div>
     </div>
   </div>
+  <Footer />
 </template>
 
 <script>
+import axios from 'axios';
+
+import Navbar from '@/components/NavbarFooterRestaurant/Navbar.vue';
+import Footer from '@/components/NavbarFooterRestaurant/Footer.vue';
+
 export default {
   name: 'RejectedStatus',
+  components: {
+    Navbar,
+    Footer,
+  },
+  data() {
+    return {
+      rejectionReason: '', // Default reason
+    };
+  },
+  methods: {
+    goToAccountSettings() {
+      // Navigasi ke halaman pengaturan akun
+      this.$router.push('/restaurant/pengaturan-akun');
+    },
+  },
+  async created() {
+    try {
+      const response = await axios.get('http://localhost:3000/api/restaurant-dashboard/status');
+      if (response.data.status === 'Failed' && response.data.data) {
+        // Menampilkan alasan penolakan dari properti data
+        this.rejectionReason = response.data.data.rejection_reason || 'Akunmu ditolak karena alasan yang tidak disebutkan.';
+      }
+    } catch (error) {
+      console.error('Error fetching rejection reason:', error.response?.data || error.message);
+    }
+  },
 };
 </script>
 

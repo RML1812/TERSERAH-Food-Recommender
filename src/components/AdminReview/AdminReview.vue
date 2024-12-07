@@ -1,232 +1,258 @@
 <template>
-    <div>
-      <!-- Title Section -->
-      <div class="title-section">
-        <h1 class="title">Review <span class="highlight">Akun Restaurant</span></h1>
-      </div>
-      <div class="review-container">
-        <!-- Sidebar Card for Tabs -->
-        <div class="sidebar-card">
-          <div class="tab-options">
+  <div>
+    <!-- Title Section -->
+    <div class="title-section">
+      <h1 class="title">Review <span class="highlight">Akun Restaurant</span></h1>
+    </div>
+    <div class="review-container">
+      <!-- Sidebar Card for Tabs -->
+      <div class="sidebar-card">
+        <div class="tab-options">
             <button
-              class="tab-option"
-              :class="{ active: activeTab === 'Pending' }"
-              @click="setActiveTab('Pending')"
+                class="tab-option"
+                :class="{ active: activeTab === 'Pending' }"
+                @click="setActiveTab('Pending')"
             >
-              Pending
+                Pending
             </button>
             <button
-              class="tab-option"
-              :class="{ active: activeTab === 'Rejected' }"
-              @click="setActiveTab('Rejected')"
+                class="tab-option"
+                :class="{ active: activeTab === 'Rejected' }"
+                @click="setActiveTab('Rejected')"
             >
-              Rejected
+                Rejected
             </button>
-          </div>
         </div>
-  
-        <!-- Main Content -->
-        <div class="content">
+      </div>
+
+      <!-- Main Content -->
+      <div class="content">
+        <div v-if="isLoading" class="loading-spinner">Loading...</div>
+        <div v-else>
           <div class="account-list">
+            <!-- Tampilkan pesan jika tidak ada data -->
+            <div v-if="accounts.length === 0" class="no-data-message">
+              <p v-if="activeTab === 'Pending'">Hore! Tidak ada Restaurant Account pending</p>
+              <p v-else-if="activeTab === 'Rejected'">Hore! Tidak ada Restaurant Account rejected</p>
+            </div>
+            
+            
+            <!-- Tampilkan akun jika ada data -->
             <div
+              v-else
               class="account-card"
               v-for="account in paginatedAccounts"
-              :key="account.id"
+              :key="account._id"
               @click="openPopup(account)"
             >
-              {{ account.name }}
+              {{ account.restaurant_name }}
             </div>
           </div>
-          <div class="pagination">
+        </div>
+        <div class="pagination" v-if="accounts.length > 0">
             <button class="pagination-button" @click="goToFirstPage">«</button>
             <button class="pagination-button" @click="previousPage">‹</button>
             <span>{{ currentPage }} dari {{ totalPages }}</span>
             <button class="pagination-button" @click="nextPage">›</button>
             <button class="pagination-button" @click="goToLastPage">»</button>
           </div>
-        </div>
-      </div>
-  
-    <!-- Popup Modal -->
-    <div v-if="showPopup" class="popup-overlay">
-        <div class="popup-content wider-popup">
-          <!-- Popup Header -->
-          <div class="popup-header bg-gradient">
-            <h2 class="popup-title">{{ selectedAccount.name }}</h2>
-            <button @click="closePopup" class="close-button">✕</button>
-          </div>
-  
-          <div class="popup-body grid grid-cols-2 gap-10"> <!-- Gap antar kolom lebih besar -->
-            <!-- Badan Usaha -->
-            <div>
-              <h3 class="section-title">Badan Usaha</h3>
-              <label>Nama Usaha</label>
-              <input class="popup-input" type="text" :value="selectedAccount.businessName" disabled />
-              <label>No. Telepon</label>
-              <input class="popup-input" type="text" :value="selectedAccount.phoneNumber" disabled />
-              <label>Tipe Usaha</label>
-              <div>
-                <input type="radio" value="UMKM" v-model="selectedAccount.businessType" disabled /> UMKM
-                <input type="radio" value="Perusahaan" v-model="selectedAccount.businessType" disabled /> Perusahaan
-              </div>
-              <label v-if="selectedAccount.businessType === 'Perusahaan'">Nama Perusahaan</label>
-              <input
-                v-if="selectedAccount.businessType === 'Perusahaan'"
-                class="popup-input"
-                type="text"
-                :value="selectedAccount.companyName"
-                disabled
-              />
-              <label>Alamat Lengkap</label>
-              <textarea class="popup-input" :value="selectedAccount.address" disabled></textarea>
-              <label>NPWP</label>
-              <input class="popup-input" type="text" :value="selectedAccount.npwp" disabled />
-              <label>Foto NPWP</label>
-              <div class="download-container">
-                <button class="popup-download-button" @click="downloadFile(selectedAccount.npwpPhoto)">Download</button>
-              </div>
-            </div>
-  
-            <!-- Identitas Pemilik -->
-            <div>
-              <h3 class="section-title">Identitas Pemilik</h3>
-              <label>Nama Lengkap</label>
-              <input class="popup-input" type="text" :value="selectedAccount.ownerName" disabled />
-              <label>NIK</label>
-              <input class="popup-input" type="text" :value="selectedAccount.nik" disabled />
-              <label>Jenis Kelamin</label>
-              <div>
-                <input type="radio" value="Laki-laki" v-model="selectedAccount.gender" disabled /> Laki-laki
-                <input type="radio" value="Perempuan" v-model="selectedAccount.gender" disabled /> Perempuan
-              </div>
-              <label>Tanggal Lahir</label>
-              <input class="popup-input" type="date" :value="selectedAccount.dateOfBirth" disabled />
-              <label>No. Handphone</label>
-              <input class="popup-input" type="text" :value="selectedAccount.ownerPhoneNumber" disabled />
-              <label>Domisili</label>
-              <input class="popup-input" type="text" :value="selectedAccount.domicile.province" disabled />
-              <input class="popup-input" type="text" :value="selectedAccount.domicile.city" disabled />
-              <input class="popup-input" type="text" :value="selectedAccount.domicile.district" disabled />
-              <label>Foto KTP</label>
-              <div class="download-container">
-                <button class="popup-download-button" @click="downloadFile(selectedAccount.ktpPhoto)">Download</button>
-              </div>
-            </div>
-          </div>
-  
-          <!-- Action Buttons -->
-          <div class="action-buttons">
-            <button class="accept-button" @click="acceptAccount">✔ Accept</button>
-            <button class="reject-button" @click="rejectAccount">✘ Reject</button>
-          </div>
-  
-          <!-- Reject Reason -->
-          <div v-if="isRejecting" class="reject-reason">
-            <textarea v-model="rejectReason" placeholder="Alasan Reject"></textarea>
-            <button @click="confirmReject" class="confirm-reject-button">Submit</button>
-          </div>
+          <div v-else class="no-pagination">
         </div>
       </div>
     </div>
-  </template>
-  
-  
-  
-  
-  <script>
-  export default {
-    data() {
+
+    <!-- Popup Modal -->
+    <div v-if="showPopup" class="popup-overlay">
+      <div class="popup-content wider-popup">
+        <!-- Popup Header -->
+        <div class="popup-header bg-gradient">
+          <h2 class="popup-title">{{ selectedAccount.restaurant_name }}</h2>
+          <button @click="closePopup" class="close-button">✕</button>
+        </div>
+
+        <div class="popup-body grid grid-cols-2 gap-10">
+          <!-- Badan Usaha -->
+          <div>
+            <h3 class="section-title">Badan Usaha</h3>
+            <label>Nama Usaha</label>
+            <input class="popup-input" type="text" :value="selectedAccount.restaurant_name" disabled />
+            <label>No. Telepon</label>
+            <input class="popup-input" type="text" :value="selectedAccount.phone_number" disabled />
+            <label>Tipe Usaha</label>
+            <input class="popup-input" type="text" :value="selectedAccount.business_type" disabled />
+            <label v-if="selectedAccount.business_type === 'Perusahaan'">Nama Perusahaan</label>
+            <input
+              v-if="selectedAccount.business_type === 'Perusahaan'"
+              class="popup-input"
+              type="text"
+              :value="selectedAccount.company_name"
+              disabled
+            />
+            <label>Alamat Lengkap</label>
+            <textarea class="popup-input" :value="selectedAccount.full_address" disabled></textarea>
+            <label>NPWP</label>
+            <input class="popup-input" type="text" :value="selectedAccount.npwp" disabled />
+            <label>Foto NPWP</label>
+            <div class="download-container">
+              <button class="popup-download-button" @click="downloadFile(selectedAccount.npwp_photo)">Download</button>
+            </div>
+          </div>
+          
+          <!-- Identitas Pemilik -->
+          <div>
+            <h3 class="section-title">Identitas Pemilik</h3>
+            <label>Nama Lengkap</label>
+            <input class="popup-input" type="text" :value="selectedAccount.full_name" disabled />
+            <label>NIK</label>
+            <input class="popup-input" type="text" :value="selectedAccount.nik" disabled />
+            <label>Jenis Kelamin</label>
+            <input class="popup-input" type="text" :value="selectedAccount.gender" disabled />
+            <label>Tanggal Lahir</label>
+            <input class="popup-input" type="date" :value="selectedAccount.birth_date.substring(0, 10)" disabled />
+            <label>No. Handphone</label>
+            <input class="popup-input" type="text" :value="selectedAccount.personal_phone" disabled />
+            <label>Domisili</label>
+            <input class="popup-input" type="text" :value="selectedAccount.domicile" disabled />
+            <label>Foto KTP</label>
+            <div class="download-container">
+              <button class="popup-download-button" @click="downloadFile(selectedAccount.ktp_photo)">Download</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tampilkan Alasan Penolakan jika ada -->
+        <div v-if="activeTab === 'Rejected'" class="rejection-reason">
+          <h3>Alasan Penolakan</h3>
+          <p>{{ selectedAccount.rejection_reason || "Tidak ada alasan diberikan" }}</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons" v-if="activeTab !== 'Rejected'">
+          <button class="accept-button" @click="approveAccount(selectedAccount._id)">✔ Approve</button>
+          <button class="reject-button" @click="rejectAccount(selectedAccount._id)">✘ Reject</button>
+        </div>
+
+        <div v-if="isRejecting && activeTab !== 'Rejected'" class="reject-reason">
+          <textarea
+            v-model="rejectReason"
+            placeholder="Tuliskan alasan penolakan..."
+          ></textarea>
+          <button @click="confirmReject(selectedAccount._id)" class="confirm-reject-button">
+            Kirim
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import axios from "axios";
+
+export default {
+  data() {
     return {
       activeTab: "Pending",
       currentPage: 1,
       accountsPerPage: 5,
       showPopup: false,
-      isRejecting: false,
-      rejectReason: "",
-      selectedAccount: null,
-      accounts: Array(15).fill().map((_, index) => ({
-        id: index + 1,
-        name: `Akun ${index + 1}`,
-        businessName: `Usaha ${index + 1}`,
-        phoneNumber: "08123456789",
-        businessType: index % 2 === 0 ? "Perusahaan" : "UMKM", // Alternating types
-        companyName: index % 2 === 0 ? `Perusahaan ${index + 1}` : null,
-        address: `Alamat ${index + 1}`,
-        npwp: `12345678${index}`,
-        npwpPhoto: `npwp-${index + 1}.jpg`,
-        ownerName: `Pemilik ${index + 1}`,
-        nik: `123456789012345${index}`,
-        gender: index % 2 === 0 ? "Laki-laki" : "Perempuan",
-        dateOfBirth: "1990-01-01",
-        ownerPhoneNumber: "08123456789",
-        domicile: {
-          province: "Jawa Barat",
-          city: "Bandung",
-          district: "Cimahi",
-        },
-        ktpPhoto: `ktp-${index + 1}.jpg`,
-      })),
+      isLoading: false,
+      accounts: [],
+      isRejecting: false, // Inisialisasi isRejecting
+      rejectReason: "", // Inisialisasi rejectReason
+      selectedAccount: null, // Pastikan selectedAccount diinisialisasi
     };
   },
-    computed: {
-      totalPages() {
-        return Math.ceil(this.accounts.length / this.accountsPerPage);
-      },
-      paginatedAccounts() {
-        const start = (this.currentPage - 1) * this.accountsPerPage;
-        const end = start + this.accountsPerPage;
-        return this.accounts.slice(start, end);
-      },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.accounts.length / this.accountsPerPage);
     },
-    methods: {
-      setActiveTab(tab) {
-        this.activeTab = tab;
-        this.currentPage = 1;
-      },
-      previousPage() {
-        if (this.currentPage > 1) this.currentPage--;
-      },
-      nextPage() {
-        if (this.currentPage < this.totalPages) this.currentPage++;
-      },
-      goToFirstPage() {
-        this.currentPage = 1;
-      },
-      goToLastPage() {
-        this.currentPage = this.totalPages;
-      },
-      openPopup(account) {
-        this.selectedAccount = account;
-        this.showPopup = true;
-      },
-      closePopup() {
-        this.showPopup = false;
-        this.isRejecting = false;
-        this.rejectReason = "";
-      },
-      downloadFile(fileName) {
-        alert(`Downloading: ${fileName}`);
-        },
-      acceptAccount() {
-        alert(`Account ${this.selectedAccount.name} accepted!`);
-        this.closePopup();
-      },
-      rejectAccount() {
-        this.isRejecting = true;
-      },
-      confirmReject() {
-        if (this.rejectReason.trim()) {
-          alert(
-            `Account ${this.selectedAccount.name} rejected for reason: ${this.rejectReason}`
-          );
-          this.closePopup();
-        } else {
-          alert("Please provide a reason for rejection.");
+    paginatedAccounts() {
+      const start = (this.currentPage - 1) * this.accountsPerPage;
+      const end = start + this.accountsPerPage;
+      return this.accounts.slice(start, end);
+    },
+  },
+  mounted() {
+    this.fetchAccounts();
+  },
+  methods: {
+    async fetchAccounts() {
+        try {
+          const response = await axios.get("http://localhost:3000/admin-dashboard/review-restaurant", {
+            params: { tab: this.activeTab },
+          });
+          this.accounts = response.data.accounts || []; // Kosongkan array jika tidak ada data
+        } catch (error) {
+          console.error("Error fetching accounts:", error);
+          alert("Error fetching data. Please try again later.");
+          this.accounts = []; // Pastikan tetap kosong jika terjadi error
+        } finally {
+            this.isLoading = false; // Selesai loading
         }
-      },
     },
-  };
-  </script>
+    setActiveTab(tab) {
+    this.activeTab = tab;
+    this.currentPage = 1;
+    this.fetchAccounts(); // Ambil data berdasarkan tab baru
+    },
+    previousPage() {
+      if (this.currentPage > 1) this.currentPage--;
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) this.currentPage++;
+    },
+    goToFirstPage() {
+      this.currentPage = 1;
+    },
+    goToLastPage() {
+      this.currentPage = this.totalPages;
+    },
+    openPopup(account) {
+      this.selectedAccount = account;
+      this.showPopup = true;
+    },
+    closePopup() {
+      this.showPopup = false;
+      this.isRejecting = false;
+      this.rejectReason = "";
+    },
+    async approveAccount(accountId) {
+      try {
+        await axios.post(`http://localhost:3000/admin-dashboard/review-restaurant/${accountId}`, { action: "approve" });
+        alert("Account approved successfully!");
+        this.fetchAccounts(); // Refresh the list
+        this.closePopup();
+      } catch (error) {
+        console.error("Error approving account:", error);
+        alert("Error approving account. Please try again.");
+      }
+    },
+    rejectAccount(accountId) {
+      this.isRejecting = true; // Tampilkan textarea untuk alasan penolakan
+      this.rejectReason = ""; // Reset alasan reject
+    },
+    async confirmReject(accountId) {
+      if (!this.rejectReason.trim()) {
+        alert("Silakan masukkan alasan penolakan.");
+        return;
+      }
+      try {
+        await axios.post(`http://localhost:3000/admin-dashboard/review-restaurant/${accountId}`, {
+          action: "reject",
+          reason: this.rejectReason,
+        });
+        alert("Account berhasil ditolak.");
+        this.fetchAccounts();
+        this.closePopup();
+      } catch (error) {
+        console.error("Error rejecting account:", error);
+        alert("Terjadi kesalahan saat menolak account.");
+      }
+    },
+  },
+};
+</script>
   
   
   <style scoped>
@@ -512,6 +538,32 @@
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
+  }
+  .no-data-message {
+    text-align: center;
+    color: #636963;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-top: 20px;
+  }
+  .no-pagination {
+    text-align: center;
+    color: #a0a0a0;
+    font-size: 1em;
+    margin-top: 10px;
+  }
+  .rejection-reason {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #ffe5e5;
+    border: 1px solid #ff4d4d;
+    border-radius: 8px;
+    color: #333;
+    font-size: 1em;
+  }
+  .rejection-reason h3 {
+    margin-bottom: 10px;
+    color: #ff4d4d;
   }
   </style>
   

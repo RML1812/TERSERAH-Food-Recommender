@@ -25,6 +25,11 @@ import RestaurantReservasi from '@/views/RestaurantReservasi.vue'
 import Admin from '../views/AdminLandingPage.vue'
 import DashboardAdmin from '../views/AdminDashboard.vue'
 import AdminReview from '../views/AdminReview.vue'
+import PengaturanAkunRejected from '@/components/LogRestRestaurant/PengaturanAkunRejected.vue'
+
+import PendingDashboard from '../components/RestDashboard/DasboardPending.vue';
+import DasboardFailed from '../components/RestDashboard/DasboardFailed.vue';
+import MainDashboard from '../components/RestDashboard/MainDashboardRest.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -150,6 +155,30 @@ const router = createRouter({
       path: '/restaurant/dashboard',
       name: 'RestaurantDashboard',
       component: RestaurantDashboard,
+      meta: { hideNavbarFooter: true },
+    },
+    {
+      path: '/restaurant/main/dashboard',
+      name: 'MainDashboard',
+      component: MainDashboard,
+      meta: { hideNavbarFooter: true }
+    },
+    {
+      path: '/restaurant-dashboard/pending',
+      name: 'PendingDashboard',
+      component: PendingDashboard,
+      meta: { hideNavbarFooter: true }
+    },
+    {
+      path: '/restaurant-dashboard/failed',
+      name: 'FailedDashboard',
+      component: DasboardFailed,
+      meta: { hideNavbarFooter: true }
+    },
+    {
+      path: '/restaurant/pengaturan-akun',
+      name: 'PengaturanAkunRejected',
+      component: PengaturanAkunRejected,
       meta: { hideNavbarFooter: true }
     },
     {

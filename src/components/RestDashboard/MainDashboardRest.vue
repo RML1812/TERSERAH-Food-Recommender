@@ -11,51 +11,47 @@
       <span>-</span>
       <input type="date" v-model="endDate" class="date-input" />
       <button class="filter-button">Same Day</button>
-      <button class="apply-button">Apply</button>
+      <button class="apply-button" @click="fetchDashboardData">Apply</button>
     </div>
     <p class="info-text">Naik/turun angka dibandingkan dengan range waktu yang sama</p>
 
-    <!-- Stacked Cards for Statistics -->
-    <div class="dashboard-content">
-      <!-- Total Klik and Total Wishlist -->
-      <div class="section-card">
-        <div class="stat-card">
-          <p class="stat-title">Total Klik</p>
-          <p class="stat-value">100</p>
-          <p class="stat-change">▼ 10</p>
+      <!-- Stacked Cards for Statistics -->
+      <div class="dashboard-content">
+        <!-- Total Klik and Total Wishlist -->
+        <div class="section-card">
+          <div class="stat-card">
+            <p class="stat-title">Total Klik</p>
+            <p class="stat-value">{{ dashboardData.totalUserInteractions }}</p>
+          </div>
+          <div class="stat-card">
+            <p class="stat-title">Total Wishlist</p>
+            <p class="stat-value">{{ dashboardData.wishlistCount }}</p>
+          </div>
         </div>
-        <div class="stat-card">
-          <p class="stat-title">Total Wishlist</p>
-          <p class="stat-value">30</p>
-          <p class="stat-change">▼ 10</p>
+      
+        <!-- Total Reservasi and Total Pemasukan -->
+        <div class="section-card">
+          <div class="stat-card">
+            <p class="stat-title">Total Reservasi</p>
+            <p class="stat-value">{{ dashboardData.totalReservations }}</p>
+          </div>
+          <div class="stat-card">
+            <p class="stat-title">Total Pemasukan</p>
+            <p class="stat-value">Rp {{ dashboardData.totalRevenue }}</p>
+          </div>
         </div>
-      </div>
-
-      <!-- Total Reservasi and Total Pemasukan -->
-      <div class="section-card">
-        <div class="stat-card">
-          <p class="stat-title">Total Reservasi</p>
-          <p class="stat-value">20</p>
-          <p class="stat-change">▼ 10</p>
+      
+        <!-- Total Rating and Total Review -->
+        <div class="section-card">
+          <div class="stat-card">
+            <p class="stat-title">Total Rating</p>
+            <p class="stat-value">⭐ {{ restaurant.overall_rating || "N/A" }}</p>
+          </div>
+          <div class="stat-card">
+            <p class="stat-title">Total Review</p>
+            <p class="stat-value">{{ dashboardData.reviews.length }}</p>
+          </div>
         </div>
-        <div class="stat-card">
-          <p class="stat-title">Total Pemasukan</p>
-          <p class="stat-value">Rp 500.000</p>
-          <p class="stat-change">▲ Rp 100.000</p>
-        </div>
-      </div>
-    </div>
-    <!-- Bottom Section for Rating -->
-    <div class="section-card">
-      <div class="stat-card">
-        <p class="stat-title">Total Rating</p>
-        <p class="stat-value">⭐ 4.5</p>
-      </div>
-      <div class="stat-card">
-        <p class="stat-title">Total Review</p>
-        <p class="stat-value">10</p>
-        <p class="stat-change">▼ 10</p>
-      </div>
       
       <!-- Centered Button Container -->
       <div class="review-button-container">
@@ -77,90 +73,182 @@
       <div class="reviews">
         <div class="review-card" v-for="(review, index) in reviews" :key="index">
           <div class="review-header">
-            <p class="review-username">Username</p>
-            <p class="review-date">21/05/2024</p>
+            <!-- Ambil Nama dari ratings._id.name -->
+            <p class="review-username">{{ review.username }}</p>
+            <p class="review-date">{{ review.date }}</p>
           </div>
-          <p class="review-text">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dapibus turpis eget quam luctus...
-          </p>
+          <p class="review-text">{{ review.text }}</p>
           <div class="review-footer">
             <button class="action-button">🗑️</button>
-            <button class="rating-button">Total Rating ⭐ 4.5</button>
+            <!-- Ambil Total Rating dari restaurant.overall_rating -->
+            <button class="rating-button" @click="openRatingModal(review)">
+              Total Rating ⭐ {{ review.rating_id.combined_rating || "N/A" }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal untuk Rating Details -->
+      <div v-if="showRatingModal" class="modal-overlay" @click.self="closeRatingModal">
+        <div class="modal-content rating-details">
+          <!-- Modal Header -->
+          <div class="modal-header modal-header-rating-details">
+            <h2>
+              <span class="text-[#C2CFC2]">Rating</span> Details <span class="text-[#C2CFC2]">{{ selectedRating.username || "Anonymous" }} </span>
+            </h2>
+            <button class="close-button" @click="closeRatingModal">✕</button>
+          </div>
+
+          <!-- Ratings Detail -->
+          <div class="ratings-detail">
+            <p><strong>Combined Rating:</strong> {{ selectedRating.combined_rating }}</p>
+            <p><strong>Ambience Rating:</strong> {{ selectedRating.ambience_rating }}</p>
+            <p><strong>Taste to Price Rating:</strong> {{ selectedRating.taste_to_price_rating }}</p>
+            <p><strong>Service Rating:</strong> {{ selectedRating.service_rating }}</p>
+            <p><strong>Cleanliness Rating:</strong> {{ selectedRating.cleanliness_rating }}</p>
           </div>
         </div>
       </div>
 
       <!-- Pagination -->
       <div class="pagination">
-        <button class="pagination-button">«</button>
-        <button class="pagination-button">‹</button>
-        <span class="mt-2">1 dari 3</span>
-        <button class="pagination-button">›</button>
-        <button class="pagination-button">»</button>
+        <button class="pagination-button" @click="goToPreviousPage" :disabled="currentPage === 1">«</button>
+        <button class="pagination-button" @click="goToPreviousPage" :disabled="currentPage === 1">‹</button>
+        <span class="mt-2">{{ currentPage }} dari {{ Math.ceil(totalReviews / reviewsPerPage) }}</span>
+        <button class="pagination-button" @click="goToNextPage" :disabled="currentPage === Math.ceil(totalReviews / reviewsPerPage)">›</button>
+        <button class="pagination-button" @click="goToNextPage" :disabled="currentPage === Math.ceil(totalReviews / reviewsPerPage)">»</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { Line } from "vue-chartjs";
-import {
-  Chart as ChartJS,
-  Title,
-  Tooltip,
-  Legend,
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-} from "chart.js";
-
-ChartJS.register(Title, Tooltip, Legend, LineElement, CategoryScale, LinearScale, PointElement);
+import axios from 'axios';
 
 export default {
-  name: "MainDashboard",
-  components: {
-    LineChart: {
-      extends: Line,
-      props: ["data", "options"],
-      mounted() {
-        this.renderChart(
-          {
-            labels: ["1", "2", "3", "4"],
-            datasets: [
-              {
-                label: "Data 1",
-                data: [5, 10, 15, 20],
-                borderColor: "red",
-                fill: false,
-              },
-              {
-                label: "Data 2",
-                data: [15, 10, 5, 25],
-                borderColor: "blue",
-                fill: false,
-              },
-            ],
-          },
-          { responsive: true, maintainAspectRatio: false }
-        );
-      },
-    },
-  },
+  name: 'MainDashboard',
   data() {
     return {
-      showModal: false,
-      reviews: [
-        // Placeholder reviews; replace with actual review data
-        { username: "Username", date: "21/05/2024", text: "Lorem ipsum dolor sit amet..." },
-        { username: "Username", date: "21/05/2024", text: "Lorem ipsum dolor sit amet..." },
-      ],
+      currentPage: 1, // Halaman aktif
+      reviewsPerPage: 5, // Jumlah review per halaman
+      totalReviews: 0, // Total jumlah review (diisi dari respons backend)
+      reviews: [], // Data ulasan
+      paginatedReviews: [], // Ulasan yang ditampilkan per halaman
+      showRatingModal: false, // Status modal untuk rating
+      showModal: false, // Status modal ulasan
+      selectedRating: {}, // Data rating yang dipilih untuk modal detail rating
+      startDate: '', // Tanggal mulai untuk filter
+      endDate: '', // Tanggal akhir untuk filter
+      dashboardData: {
+        wishlistCount: 0,
+        totalReservations: 0,
+        totalRevenue: 0,
+        reviews: [], // Data reviews dari backend
+        totalUserInteractions: 0,
+      },
+      restaurant: {
+        overall_rating: 0, // Rating keseluruhan restoran
+      },
     };
   },
   methods: {
+    async fetchDashboardData() {
+      try {
+        const response = await axios.get('http://localhost:3000/restaurant-dashboard', {
+          params: {
+            start_date: this.startDate,
+            end_date: this.endDate,
+          },
+          withCredentials: true, // Sertakan cookie sesi
+        });
+
+        // Simpan data dari respons backend
+        this.dashboardData = response.data;
+
+        // Mapping data reviews
+        this.reviews = response.data.reviews.map(review => ({
+          username: review.user_id?.name || 'Anonymous',
+          date: review.review_date || 'N/A',
+          text: review.review || 'No review provided.',
+          rating_id: review.rating_id || {},
+        }));
+
+        this.totalReviews = this.reviews.length;
+        this.updatePaginatedReviews();
+
+        // Simpan overall rating restoran
+        this.restaurant.overall_rating = response.data.restaurant?.overall_rating || 0;
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+        alert('Failed to load dashboard data.');
+        this.$router.push('/account/restaurant/login');
+      }
+    },
+
+    async checkAccountStatus() {
+      try {
+        const response = await axios.get('http://localhost:3000/api/restaurant-dashboard/status', {
+          withCredentials: true, // Sertakan cookie sesi
+        });
+
+        const status = response.data.status;
+
+        if (status === 'Pending') {
+          this.$router.push('/restaurant-dashboard/pending');
+        } else if (status === 'Failed') {
+          this.$router.push('/restaurant-dashboard/failed');
+        } else if (status === 'Active') {
+          // Status Active, lanjutkan
+          await this.fetchDashboardData();
+        }
+      } catch (error) {
+        console.error('Error checking account status:', error.response?.data || error.message);
+        alert('Error checking account status. Redirecting to login.');
+        this.$router.push('/account/restaurant/login');
+      }
+    },
+
+    updatePaginatedReviews() {
+      const startIndex = (this.currentPage - 1) * this.reviewsPerPage;
+      const endIndex = startIndex + this.reviewsPerPage;
+      this.paginatedReviews = this.reviews.slice(startIndex, endIndex);
+    },
+
+    goToPreviousPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+        this.updatePaginatedReviews();
+      }
+    },
+
+    goToNextPage() {
+      const totalPages = Math.ceil(this.totalReviews / this.reviewsPerPage);
+      if (this.currentPage < totalPages) {
+        this.currentPage++;
+        this.updatePaginatedReviews();
+      }
+    },
+
     closeModal() {
       this.showModal = false;
     },
+
+    closeRatingModal() {
+      this.showRatingModal = false;
+      this.selectedRating = {};
+    },
+
+    openRatingModal(review) {
+      this.selectedRating = {
+        ...review.rating_id,
+        username: review.username || 'Anonymous',
+      };
+      this.showRatingModal = true;
+    },
+  },
+  async mounted() {
+    // Periksa status akun saat komponen di-mount
+    await this.checkAccountStatus();
   },
 };
 </script>
@@ -302,7 +390,6 @@ export default {
   border-radius: 8px;
   width: 80%;
   max-width: 800px;
-  padding: 20px;
   overflow-y: auto;
   max-height: 90vh;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
@@ -314,14 +401,22 @@ export default {
   justify-content: space-between;
   align-items: center;
   background: linear-gradient(to right, #9CA69C, #636963);
-  padding: 15px;
+  padding: 25px;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
 }
-
+.modal-header-rating-details {
+  padding: 10px; /* Kurangi padding */
+  font-size: 1.2em; /* Ukuran font lebih kecil */
+  background: linear-gradient(to right, #9CA69C, #636963); /* Pertahankan gaya jika diperlukan */
+  color: #fff; /* Warna teks tetap putih */
+  text-align: center; /* Teks tetap di tengah */
+  border-top-left-radius: 8px; /* Sudut melengkung jika ada */
+  border-top-right-radius: 8px;
+}
 .modal-title {
   color: #C2CFC2;
-  font-size: 1.5em;
+  font-size: 2.0em;
   font-weight: bold;
 }
 
@@ -335,6 +430,34 @@ export default {
   font-size: 1.5em;
   color: #ffffff;
   cursor: pointer;
+}
+
+/* Ratings Detail Modal */
+.modal-content.rating-details {
+  width: 40%; /* Lebar lebih kecil */
+  position: absolute;
+  top: 20%; /* Atur posisi vertikal */
+  right: 10%; /* Atur posisi ke kanan */
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1050; /* Pastikan berada di atas popup belakang */
+}
+
+.modal-content.rating-details .ratings-detail {
+  padding: 20px; /* Tambahkan padding untuk kenyamanan */
+  text-align: center; /* Pusatkan teks */
+  color: #333; /* Warna teks default */
+}
+
+.modal-content.rating-details .modal-header {
+  background: linear-gradient(to right, #9CA69C, #636963);
+  padding: 15px;
+  color: #fff;
+  font-size: 1.5em;
+  font-weight: bold;
+  text-align: center;
 }
 
 /* Reviews Section */
@@ -393,20 +516,24 @@ export default {
   color: #ffffff;
 }
 
-/* Pagination */
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 10px 0;
-  gap: 5px;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 20px;
 }
 
 .pagination-button {
-  background: none;
   border: none;
-  font-size: 2em;
+  border-radius: 5px;
+  padding: 5px 10px;
   cursor: pointer;
-  padding: 3px 20px
+  font-size: 1em;
+}
+
+.pagination-button:disabled {
+  cursor: not-allowed;
 }
 </style>

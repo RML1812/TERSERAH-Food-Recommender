@@ -9,9 +9,9 @@
         </div>
         <div class="input-group">
           <h2 class="font-bold">Password</h2>
-          <input type="password" v-model="password" class="styled-input" placeholder="Password" />
+          <input type="password" v-model="password" class="styled-input" placeholder="Current Password" />
           <h2 class="font-bold mt-4">Change Password</h2>
-          <input type="password" v-model="newPassword" class="styled-input" placeholder="Password" />
+          <input type="password" v-model="newPassword" class="styled-input" placeholder="New Password" />
         </div>
       </div>
       <button class="update-button" @click="updateProfile">Ubah</button>
@@ -28,6 +28,12 @@
           <span :class="['toggle-option', { 'active': !isOnline }]">Offline</span>
         </div>
       </div>
+
+      <!-- Kondisi Status -->
+      <div class="status-message">
+        <p v-if="isOnline" class="online-message">Restaurant-Mu Online! Reservasi dapat dibuat.</p>
+        <p v-else class="offline-message">Restaurant-Mu sedang Offline sehingga tidak ada transaksi reservasi.</p>
+      </div>
       
       <button class="logout-button" @click="logout">Log Out</button>
     </div>
@@ -35,26 +41,68 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
       email: '',
       password: '',
       newPassword: '',
-      isOnline: false
+      isOnline: false,
     };
   },
   methods: {
-    updateProfile() {
-      console.log("Profile updated with:", this.email, this.password, this.newPassword);
+    async fetchRestaurantStatus() {
+      try {
+        const response = await axios.get('http://localhost:3000/restaurant-dashboard', {
+          withCredentials: true, // Jika membutuhkan autentikasi
+        });
+        // Ambil `is_live` dari respons
+        this.isOnline = response.data.restaurant.is_live;
+      } catch (error) {
+        console.error('Error fetching restaurant status:', error);
+      }
     },
-    toggleStatus() {
-      this.isOnline = !this.isOnline;
+    async toggleStatus() {
+      if (this.isOnline) {
+        const confirmed = window.confirm("Apakah anda yakin ingin membuat Restaurant-Mu Offline?");
+        if (!confirmed) {
+          return; // Batalkan jika pengguna tidak mengonfirmasi
+        }
+      }
+
+      try {
+        this.isOnline = !this.isOnline; // Toggle nilai `isOnline`
+        // Kirim update ke server
+        await axios.put(
+          'http://localhost:3000/restaurant-dashboard',
+          { is_live: this.isOnline },
+          { withCredentials: true }
+        );
+      } catch (error) {
+        console.error('Error updating status:', error);
+        // Kembalikan nilai toggle jika gagal
+        this.isOnline = !this.isOnline;
+      }
     },
-    logout() {
-      console.log("Logged out");
-    }
-  }
+    async logout() {
+      try {
+        await axios.get('http://localhost:3000/restaurant-dashboard/logout', {
+          withCredentials: true,
+        });
+        localStorage.removeItem('restaurantName');
+        localStorage.removeItem('restaurantId');
+        window.location.href = '/account/restaurant/login';
+      } catch (error) {
+        console.error('Error during logout:', error);
+      }
+    },
+  },
+  async mounted() {
+    // Ambil status `is_live` saat komponen dimuat
+    await this.fetchRestaurantStatus();
+  },
 };
 </script>
 
@@ -208,5 +256,19 @@ html, body {
   border-radius: 20px;
   cursor: pointer;
   font-weight: bold;
+}
+.status-message {
+  margin-top: 20px;
+  font-size: 1.2em;
+  font-weight: bold;
+  text-align: center;
+}
+
+.online-message {
+  color: green;
+}
+
+.offline-message {
+  color: red;
 }
 </style>

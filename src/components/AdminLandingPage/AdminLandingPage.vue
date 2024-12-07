@@ -1,15 +1,15 @@
 <template>
-    <div class="min-h-screen bg-[#f5f1eb] flex flex-col"> <!-- Main container with full-screen height -->
-        <!-- Header -->
-        <header class="p-4 flex justify-center mt-5">
-        <div class="flex items-center space-x-2">
-            <img src="/LogoKotak.png" alt="Terserah Logo" class="w-22 h-24">
-            <div class="flex flex-col ml-6">
-            <h1 class="text-6xl font-semibold ml-5">TERSERAH</h1>
-            <p class="text-xl ml-auto">Solusi perut bingungmu</p>
-            </div>
+  <div class="min-h-screen bg-[#f5f1eb] flex flex-col">
+    <!-- Header -->
+    <header class="p-4 flex justify-center mt-5">
+      <div class="flex items-center space-x-2">
+        <img src="/LogoKotak.png" alt="Terserah Logo" class="w-22 h-24">
+        <div class="flex flex-col ml-6">
+          <h1 class="text-6xl font-semibold ml-5">TERSERAH</h1>
+          <p class="text-xl ml-auto">Solusi perut bingungmu</p>
         </div>
-        </header>    
+      </div>
+    </header>    
 
     <!-- Main Content -->
     <main class="flex-grow flex items-center justify-center p-2">
@@ -70,43 +70,49 @@
         </div>
       </div>
     </main>
-</div>
+  </div>
 </template>
 
 <script>
-import { ref } from 'vue';
+import axios from 'axios';
 
 export default {
   name: 'LoginPage',
-  setup() {
-    const user = ref('');
-    const pw = ref('');
-    const hidePw = ref(false);
-    const simbol = ref(12); // Minimum karakter untuk username
-    const simbols = ref(12); // Minimum karakter untuk password
-    const userEmail = ref(false); // Kondisi untuk menampilkan pesan validasi username
-    const userPw = ref(false); // Kondisi untuk menampilkan pesan validasi password
-
-    const loginUser = () => {
-      console.log('Login attempted with:', user.value, pw.value);
-      // Implement actual login logic here
-    };
-
-    const menuEye = () => {
-      hidePw.value = !hidePw.value;
-    };
-
+  data() {
     return {
-      user,
-      pw,
-      hidePw,
-      simbol,
-      simbols,
-      userEmail,
-      userPw,
-      loginUser,
-      menuEye,
+      user: '', // Input for username or email
+      pw: '',   // Input for password
+      loggedIn: false, // Tracks if the user is logged in
+      userData: null,  // Stores logged-in user data
     };
+  },
+  methods: {
+    async loginUser() {
+      try {
+        const response = await axios.post('http://localhost:3000/admin-dashboard/login', {
+          email: this.user,
+          password: this.pw,
+        });
+
+        if (response.data.message === 'Login successful') {
+          console.log("Login response:", response.data);
+
+          // Save the user's name to local state or localStorage
+          this.loggedIn = true;
+          this.userData = response.data.user; // Save all user data
+          this.username = response.data.user.name; // Extract name
+          localStorage.setItem('userName', this.username); // Optional: Save to localStorage
+
+          // Redirect to dashboard
+          window.location.href = '/admin/dashboard';
+        } else {
+          alert(response.data.message);
+        }
+      } catch (error) {
+        console.error('Error logging in:', error);
+        alert('An error occurred during login. Please try again.');
+      }
+    },
   },
 };
 </script>
