@@ -1,20 +1,45 @@
-    <h1>Detail Restoran <%= restaurant.name %></h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Details</title>
+    <style>
+        .gallery-slide, .menu-slide {
+            display: none;
+            width: 100%;
+            height: 300px;
+            background-size: cover;
+            background-position: center;
+        }
+        .active {
+            display: block;
+        }
+        .gallery-btn-prev, .gallery-btn-next,
+        .menu-btn-prev, .menu-btn-next {
+            cursor: pointer;
+            font-size: 18px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Detail Restoran <%= restaurant.name || 'No name available' %></h1>
     <ul>
-        <li><strong>ID:</strong> <%= restaurant._id %></li>
-        <li><strong>Nama:</strong> <%= restaurant.name %></li>
-        <li><strong>Jenis Kuliner:</strong> <%= restaurant.culinary_type %></li>
-        <li><strong>Alamat:</strong> <%= restaurant.address %></li>
+        <li><strong>ID:</strong> <%= restaurant._id || 'No ID available' %></li>
+        <li><strong>Nama:</strong> <%= restaurant.name || 'No name available' %></li>
+        <li><strong>Jenis Kuliner:</strong> <%= restaurant.culinary_type || 'No culinary type available' %></li>
+        <li><strong>Alamat:</strong> <%= restaurant.address || 'No address available' %></li>
         <br>
-        <li><strong>Rating:</strong> <%= restaurant.overall_rating %></li>
-        <li><strong>Combined Rating</strong> <%= rating.combined_rating %></li>
-        <li><strong>Ambience Rating</strong> <%= rating.ambience_rating %></li>
-        <li><strong>Taste to price Rating</strong> <%= rating.taste_to_price_rating %></li>
-        <li><strong>Service Rating</strong> <%= rating.service_rating %></li>
-        <li><strong>Cleanliness Rating</strong> <%= rating.cleanliness_rating %></li>
-        <!-- Tambahkan informasi restoran lainnya sesuai kebutuhan -->
+        <li><strong>Rating:</strong> <%= restaurant.overall_rating || 'No rating available' %></li>
+        <li><strong>Combined Rating:</strong> <%= rating?.combined_rating || 'No combined rating available' %></li>
+        <li><strong>Ambience Rating:</strong> <%= rating?.ambience_rating || 'No ambience rating available' %></li>
+        <li><strong>Taste to price Rating:</strong> <%= rating?.taste_to_price_rating || 'No taste to price rating available' %></li>
+        <li><strong>Service Rating:</strong> <%= rating?.service_rating || 'No service rating available' %></li>
+        <li><strong>Cleanliness Rating:</strong> <%= rating?.cleanliness_rating || 'No cleanliness rating available' %></li>
     </ul>
 
-    <% if (menu.gallery_link) { %>
+    <% if (menu?.gallery_link) { %>
         <% const galleryImages = menu.gallery_link.split(';'); %>
         <% if (galleryImages.length > 0 && galleryImages[0] !== '') { %>
             <h1>Gallery Pict</h1>
@@ -26,9 +51,11 @@
             <button class="gallery-btn-prev">❮</button>
             <button class="gallery-btn-next">❯</button>
         <% } %>
+    <% } else { %>
+        <p>No gallery images available.</p>
     <% } %>
     
-    <% if (menu.menu_link) { %>
+    <% if (menu?.menu_link) { %>
         <% const menuImages = menu.menu_link.split(';'); %>
         <% if (menuImages.length > 0 && menuImages[0] !== '') { %>
             <h1>Menu Pict</h1>
@@ -40,41 +67,19 @@
             <button class="menu-btn-prev">❮</button>
             <button class="menu-btn-next">❯</button>
         <% } %>
+    <% } else { %>
+        <p>No menu images available.</p>
     <% } %>
-    
 
-    <a href="/review/<%= restaurant._id %>">Liat Review</a>
+    <a href="/review/<%= restaurant._id %>">Lihat Review</a>
     <a href="/">Kembali ke Halaman Utama</a>
-    <form form action="/wishlist" method="POST">
+
+    <form action="/wishlist" method="POST">
         <input type="hidden" id="restaurantId" name="restaurantId" value="<%= restaurant._id %>">
         <button type="submit">Tambahkan ke Wishlist</button>
     </form>
 
-    <a href="/getReservation/<%= restaurant._id %>">Cek&Reservasi</a>
-    
-    <!-- <script>
-        document.getElementById("addToWishlistForm").addEventListener("submit", async function(event) {
-            event.preventDefault();
-            const restaurantId = document.getElementById("restaurantId").value;
-
-            try {
-                const response = await fetch('/wishlist', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        restaurantId: restaurantId
-                    })
-                });
-                const data = await response.json();
-                alert(data.message);
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error occurred while adding to wishlist.');
-            }
-        });
-    </script> -->
+    <a href="/getReservation/<%= restaurant._id %>">Cek & Reservasi</a>
 
     <script>
         // Gallery slideshow
@@ -90,7 +95,7 @@
             currentGallerySlide = (currentGallerySlide + 1) % gallerySlides.length;
             gallerySlides[currentGallerySlide].classList.add('active');
         });
-    
+
         // Menu slideshow
         const menuSlides = document.querySelectorAll('.menu-slide');
         let currentMenuSlide = 0;
@@ -105,6 +110,5 @@
             menuSlides[currentMenuSlide].classList.add('active');
         });
     </script>
-    
 </body>
 </html>

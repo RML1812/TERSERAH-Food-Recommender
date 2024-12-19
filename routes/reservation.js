@@ -285,5 +285,30 @@ router.get('/reservation/detail/:id_reservation', async (req, res) => {
     }
 });
 
+// GET endpoint to retrieve a single reservation by reservation ID
+router.get('/reservation/detailRestaurant/:id_reservation', async (req, res) => {
+    const userLogin = req.session.userLogin;
+    try {
+        // Find all reservations for the given user ID
+        const reservations = await Reservation.findById(req.params.id_reservation);
+
+        // Find all transactions related to the reservation IDs
+        const transactions = await Transaction.findOne({ reservation_id:  reservations._id });
+
+        // Find all restaurants related to the restaurant IDs
+        const restaurants = await Restaurant.findById(reservations.restaurant_id);
+        res.render('detailtransactionForRestaurant', {
+            layout: "./layouts/main_layouts",
+            title: "Reservation Details",
+            reservations, // Pass the reservations data to the frontend
+            userLogin, // Assuming req.user contains the logged-in user's data
+            transactions,
+            restaurants
+        });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
 
 module.exports = router;

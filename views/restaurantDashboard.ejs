@@ -1,0 +1,87 @@
+<h1>Welcome, <%= restaurantLogin.restaurant_name %>!</h1>
+
+<div class="restaurant-details">
+    <!-- Informasi restoran seperti sebelumnya -->
+</div>
+
+<!-- Form untuk memilih rentang waktu -->
+<div class="date-filter">
+    <h2>Filter by Date Range</h2>
+    <form action="/restaurant-dashboard" method="GET">
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" value="<%= startDate %>">
+        
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" value="<%= endDate %>">
+        
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+</div>
+
+<!-- Section for dashboard statistics -->
+<div class="dashboard-stats">
+    <h2>Dashboard Statistics</h2>
+    <p><strong>Total Interaction:</strong> <%= totalUserInteractions %></p>
+    <p><strong>Total Wishlist:</strong> <%= wishlistCount %></p>
+    <p><strong>Total Reservations:</strong> <%= totalReservations %></p>
+    <p><strong>Total Revenue:</strong> Rp<%= totalRevenue %></p>
+    
+    
+    
+    <p><strong>Ratings and Reviews:</strong></p>
+    <ul>
+        <% ratings.forEach(function(rating) { %>
+            <li>Ambience Rating: <%= rating.ambience_rating %></li>
+            <li>Taste-to-Price Rating: <%= rating.taste_to_price_rating %></li>
+            <li>Service Rating: <%= rating.service_rating %></li>
+            <li>Cleanliness Rating: <%= rating.cleanliness_rating %></li>
+        <% }) %>
+    </ul>
+</div>
+
+
+<div class="reservation-section">
+    <h2>Ongoing Reservations for <%= selectedDate %></h2>
+    <ul>
+        <% ongoingReservations.forEach(function(reservation) { %>
+            <li>
+                Reservation ID: <%= reservation._id %> - 
+                User: <%= reservation.user_id.name %> - 
+                Phone: <%= reservation.user_id.phone %> - 
+                Total: <%= reservation.totalHarga %>
+                <a href="/reservation/detail/<%= reservation._id %>">View Details</a>
+            </li>
+        <% }) %>
+    </ul>
+
+    <h2>Previous Reservations</h2>
+    <ul>
+        <% previousReservations.forEach(function(reservation) { %>
+            <li>
+                Reservation ID: <%= reservation._id %> - 
+                User: <%= reservation.user_id.name %> - 
+                Phone: <%= reservation.user_id.phone %> - 
+                Total: <%= reservation.totalHarga %>
+                <a href="/reservation/detail/<%= reservation._id %>">View Details</a>
+            </li>
+        <% }) %>
+    </ul>
+
+    <h2>Next Reservations</h2>
+    <ul>
+        <% nextReservations.forEach(function(reservation) { %>
+            <li>
+                Reservation ID: <%= reservation._id %> - 
+                User: <%= reservation.user_id.name %> - 
+                Phone: <%= reservation.user_id.noHP %> - 
+                Total: <%= reservation.totalHarga %>
+                <a href="/reservation/detail/<%= reservation._id %>">View Details</a>
+            </li>
+        <% }) %>
+    </ul>
+</div>
+
+
+
+<!-- Button to edit restaurant info -->
+<a href="/restaurant-dashboard/edit-konten" class="btn btn-primary">Edit Restaurant Information</a>

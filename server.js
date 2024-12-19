@@ -30,6 +30,13 @@ const restaurantRoutes = require('./routes/RestaurantRoutes');
 const terserahinRoutes = require('./routes/TerserahinRoutes');
 const wishlistRoutes = require('./routes/WishlistRoutes');
 const artikelRoutes = require('./routes/ArtikelRoutes')
+const loginRestaurantRoutes = require('./routes/loginRestaurantRoutes');
+const signupRestaurantRoutes = require('./routes/SignupRestaurantRoutes');
+const loginAdminRoutes = require('./routes/LoginAdminRoutes');
+const adminDashboardRoutes = require('./routes/adminDashboardRoutes');
+const restaurantDashboardRoutes = require('./routes/restaurantDashboardRoutes')
+const imageRoutes = require('./routes/uploadImageRoutes');
+
 
 const port = process.env.PORT || 3000
 app.use(express.json())
@@ -74,7 +81,12 @@ app.use(reviewRoutes);
 app.use(terserahinRoutes);
 app.use(wishlistRoutes);
 app.use(artikelRoutes);
-
+app.use(loginRestaurantRoutes);
+app.use(signupRestaurantRoutes);
+app.use(loginAdminRoutes);
+app.use(restaurantDashboardRoutes );
+app.use(adminDashboardRoutes);
+app.use(imageRoutes);
 // Serve Vue app
 app.use(express.static(path.join(__dirname, 'dist')));
 
