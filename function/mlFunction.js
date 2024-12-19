@@ -9,7 +9,6 @@ const bcrypt = require("bcryptjs"); // Use bcryptjs
 const app = express();
 const brain = require("brain.js");
 const tf = require("@tensorflow/tfjs"); // Use pure TensorFlow.js
-// const fetch = require('node-fetch');
 
 const createMLModel = async () => {
     const users = await User.find().populate('restaurants');
