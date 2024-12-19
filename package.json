@@ -8,8 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "all": "concurrently \"npm run dev\" \"npm start\"",
-    "vercel-build": "yarn global add gl node-gyp"
+    "all": "concurrently \"npm run dev\" \"npm start\""
   },
   "keywords": [],
   "author": "",
