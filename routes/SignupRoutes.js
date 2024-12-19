@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const User = require("../model/user");
 const TempUser = require("../model/tempUser");
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const passport = require('passport');

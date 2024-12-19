@@ -6,7 +6,7 @@ const router = express.Router();
 const Wishlist = require("../model/wishlist");
 const { Reservation } = require("../model/reservation");
 const User = require("../model/user")
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 // Handle dashboard page (display restaurant data)
 router.get('/restaurant-dashboard', async (req, res) => {

@@ -1,5 +1,5 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const { RestaurantACC } = require("../model/restaurantACC");
 const { TempRestaurantACC } = require("../model/tempRestaurantACC");
 const { TempRejectedRestaurant } = require("../model/tempRejectedRestaurant");

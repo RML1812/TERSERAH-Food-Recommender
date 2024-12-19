@@ -1,20 +1,15 @@
-const User = require("../model/user")
-const {Restaurant,
-    CulinaryTypeView,
-    PaymentMethodView,
-    AvailableFacilityView,
-    PriceRangeView} = require("../model/restaurant")
-const express = require('express');
-const http = require('http');
-const expressLayouts = require('express-ejs-layouts');
-const path = require("path")
-const session = require('express-session');
-const bcrypt = require('bcrypt');
-const app = express()
-const brain = require('brain.js');
-const tf = require('@tensorflow/tfjs-node');
+const User = require("../model/user");
+const { Restaurant, CulinaryTypeView, PaymentMethodView, AvailableFacilityView, PriceRangeView } = require("../model/restaurant");
+const express = require("express");
+const http = require("http");
+const expressLayouts = require("express-ejs-layouts");
+const path = require("path");
+const session = require("express-session");
+const bcrypt = require("bcryptjs"); // Use bcryptjs
+const app = express();
+const brain = require("brain.js");
+const tf = require("@tensorflow/tfjs"); // Use pure TensorFlow.js
 // const fetch = require('node-fetch');
-
 
 const createMLModel = async () => {
     const users = await User.find().populate('restaurants');
@@ -86,7 +81,7 @@ const createMLModel = async () => {
             tf.callbacks.earlyStopping({ monitor: 'loss' }),
             {
                 onEpochEnd: (epoch, logs) => {
-                    console.log(`Epoch ${epoch + 1}: Loss = ${logs.loss}, Accuracy = ${logs.acc}`);
+                    console.log(`Epoch ${epoch + 1}: Loss = ${logs.loss}, Accuracy = ${logs.acc}`)
                 }
             }
         ]
@@ -138,7 +133,7 @@ async function testModel(user_id, nilai) {
     });
 
     try {
-        const model = await tf.loadLayersModel('file://function/restaurant-recommendation-model/model.json');
+        const model = await tf.loadLayersModel('https://raw.githubusercontent.com/RML1812/TERSERAH-Food-Recommender/refs/heads/main/function/restaurant-recommendation-model/model.json');
         console.log("Model loaded successfully");
 
         let restaurantData = await Restaurant.find({});
