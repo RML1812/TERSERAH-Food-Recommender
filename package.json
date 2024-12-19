@@ -9,7 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "all": "concurrently \"npm run dev\" \"npm start\"",
-    "vercel-build": "yarn global add node-gyp"
+    "vercel-build": "yarn global add gl node-gyp"
   },
   "keywords": [],
   "author": "",
