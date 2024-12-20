@@ -21,7 +21,8 @@ router.post('/review/:restaurantId', async (req, res) => {
         cleanliness_rating } = req.body;
 
     try {
-        const newRating= new Rating({
+        // Simpan rating baru
+        const newRating = new Rating({
             combined_rating,
             ambience_rating,
             taste_to_price_rating,
@@ -29,8 +30,9 @@ router.post('/review/:restaurantId', async (req, res) => {
             cleanliness_rating
         });
 
-        await newRating.save()        
-        
+        await newRating.save();
+
+        // Simpan review baru
         const newReview = new Review({
             rating_id: newRating._id,
             user_id: userLogin._id,
@@ -41,6 +43,18 @@ router.post('/review/:restaurantId', async (req, res) => {
         });
 
         await newReview.save();
+
+        // Ambil semua review untuk restoran ini untuk menghitung rata-rata rating
+        const reviews = await Review.find({ restaurant_id: restaurantId }).populate('rating_id');
+
+        if (reviews.length > 0) {
+            const totalRating = reviews.reduce((sum, review) => sum + review.rating_id.combined_rating, 0);
+            const averageRating = totalRating / reviews.length;
+
+            // Perbarui overall_rating pada restoran
+            await Restaurant.findByIdAndUpdate(restaurantId, { overall_rating: averageRating });
+        }
+
         res.status(201).json({ message: "Review berhasil dibuat", review: newReview });
     } catch (error) {
         console.error("Error creating review:", error);

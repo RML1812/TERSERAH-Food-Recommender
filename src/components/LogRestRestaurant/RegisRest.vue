@@ -25,46 +25,63 @@
           <h3 class="font-bold"><strong>Akun</strong></h3>
           <div class="grid grid-cols-2 gap-4">
             <!-- Email Input -->
-            <div class="mb-4 ml-4 flex flex-col">
+            <div class="form-group">
               <strong>Email</strong>
               <input
                 type="email"
                 v-model="form.email"
-                class="pl-4 text-black md:h-7 h-6 mt-1 md:w-[400px] w-[280px] bg-[#D3D3D3] rounded-2xl shadow-sm border-black"
                 placeholder="Email Address"
+                class="pl-4 text-black h-10 bg-[#D3D3D3] rounded-2xl shadow-sm border-black"
+                @input="validateEmail" 
                 required
               />
+              <p v-if="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</p>
             </div>
-
+          
             <!-- Password Input -->
-            <div class="mb-4 ml-4 flex flex-col">
+            <div class="form-group">
               <strong>Password</strong>
               <div class="flex items-center">
                 <input
                   :type="hidePw ? 'password' : 'text'"
                   v-model="form.password"
-                  class="pl-4 text-black md:h-7 h-6 mt-1 md:w-[300px] w-[230px] bg-[#D3D3D3] rounded-2xl shadow-sm border-black"
+                  @input="validatePassword"
                   placeholder="Password"
+                  class="pl-4 text-black h-10 bg-[#D3D3D3] rounded-2xl shadow-sm border-black"
                   required
                 />
-                <div @click="menuEye" class="ml-3 h-6 w-6 cursor-pointer flex items-center justify-center bg-black rounded-xl">
+                <div
+                  @click="menuEye"
+                  class="ml-3 h-8 w-8 cursor-pointer flex items-center justify-center bg-black rounded-xl"
+                >
                   <ion-icon class="text-white text-lg" :name="hidePw ? 'eye-off' : 'eye'"></ion-icon>
                 </div>
               </div>
+              <p v-if="passwordError" class="text-red-500 text-sm mt-1">{{ passwordError }}</p>
             </div>
-
-            <!-- Repeat Password Input below Password -->
-            <div class="mb-4 ml-4 flex flex-col">
+            
+            <div class="form-group">
               <strong>Repeat Password</strong>
-              <input
-                type="password"
-                v-model="form.repeatPassword"
-                class="pl-4 text-black md:h-7 h-6 mt-1 md:w-[400px] w-[280px] bg-[#D3D3D3] rounded-2xl shadow-sm border-black"
-                placeholder="Repeat Password"
-                required
-              />
+              <div class="flex items-center">
+                <input
+                  :type="hideRepeatPw ? 'password' : 'text'"
+                  v-model="form.repeatPassword"
+                  @input="validateRepeatPassword"
+                  placeholder="Repeat Password"
+                  class="pl-4 text-black h-10 bg-[#D3D3D3] rounded-2xl shadow-sm border-black"
+                  required
+                />
+                <div
+                  @click="menuEyeRepeat"
+                  class="ml-3 h-8 w-8 cursor-pointer flex items-center justify-center bg-black rounded-xl"
+                >
+                  <ion-icon class="text-white text-lg" :name="hideRepeatPw ? 'eye-off' : 'eye'"></ion-icon>
+                </div>
+              </div>
+              <p v-if="repeatPasswordError" class="text-red-500 text-sm mt-1">{{ repeatPasswordError }}</p>
             </div>
-          </div>
+            
+          </div>          
         </div>
 
         <!-- Badan Usaha Section -->
@@ -105,7 +122,7 @@
                 v-model="form.companyName"
                 :disabled="form.businessType !== 'Perusahaan'"
                 placeholder="Nama Perusahaan"
-                class="pl-4 text-black h-10 bg-[#D3D3D3] rounded-2xl shadow-sm border-black"
+                class="pl-4 text-black h-10 bg-[#D3D3D3] rounded-2xl shadow-sm border-black transition-all"
               />
             </div>
             <div class="form-group col-span-2">
@@ -229,6 +246,7 @@ export default {
   data() {
     return {
       hidePw: true,
+      hideRepeatPw: true,
       form: {
         email: '',
         password: '',
@@ -248,10 +266,59 @@ export default {
         domicile: '',
         ktpPhoto: null,
       },
+      emailError: '',
+      passwordError: '',
+      repeatPasswordError: '',
     };
   },
   methods: {
+    validateEmail() {
+      const validDomains = ['gmail.com', 'yahoo.com', 'company.com', 'apple.com', 'microsoft.com', 'amazon.com', 'google.com', 'facebook.com', 'linkedin.com', 'twitter.com', 'ibm.com', 'adobe.com', 'salesforce.com'];
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!emailRegex.test(this.form.email)) {
+        this.emailError = 'Format email tidak valid.';
+        return false;
+      }
+
+      const emailDomain = this.form.email.split('@')[1];
+      if (!validDomains.includes(emailDomain)) {
+        this.emailError = `Email harus menggunakan domain resmi.`;
+        return false;
+      }
+
+      this.emailError = '';
+      return true;
+    },
+    validatePassword() {
+      const passwordRegex = /^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$/;
+
+      if (!passwordRegex.test(this.form.password)) {
+        this.passwordError = 'Password harus minimal 8 karakter dan mengandung huruf dan angka.';
+        return false;
+      }
+
+      this.passwordError = '';
+      return true;
+    },
+    validateRepeatPassword() {
+      if (this.form.repeatPassword !== this.form.password) {
+        this.repeatPasswordError = 'Repeat password harus sama dengan password.';
+        return false;
+      }
+
+      this.repeatPasswordError = '';
+      return true;
+    },
     async submitForm() {
+      const isEmailValid = this.validateEmail();
+      const isPasswordValid = this.validatePassword();
+      const isRepeatPasswordValid = this.validateRepeatPassword();
+
+      if (!isEmailValid || !isPasswordValid || !isRepeatPasswordValid) {
+        return;
+      }
+
       const payload = {
         email: this.form.email,
         password: this.form.password,
@@ -278,12 +345,15 @@ export default {
         alert('Signup successful! Redirecting...');
         this.$router.push('/restaurant-dashboard/pending');
       } catch (error) {
-          console.error('Error during signup:', error.response?.data || error.message);
-          alert(`Signup failed: ${error.response?.data?.message || error.message}`);
+        console.error('Error during signup:', error.response?.data || error.message);
+        alert(`Signup failed: ${error.response?.data?.message || error.message}`);
       }
     },
     menuEye() {
       this.hidePw = !this.hidePw;
+    },
+    menuEyeRepeat() {
+      this.hideRepeatPw = !this.hideRepeatPw;
     },
   },
 };
@@ -347,5 +417,33 @@ button[type="submit"] {
 
 button[type="submit"]:hover {
   background-color: #555;
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="tel"],
+textarea {
+  width: 100%;
+  max-width: 100%; /* Buat lebar konsisten */
+}
+
+.disabled input {
+  background-color: #b0b0b0 !important; /* Lebih gelap */
+  filter: brightness(85%); /* Reduksi kecerahan */
+  cursor: not-allowed; /* Tunjukkan bahwa input tidak dapat diisi */
+}
+.disabled input:focus {
+  outline: none; /* Hilangkan fokus saat di klik */
+}
+
+.text-red-500 {
+  color: #f56565; /* Warna merah untuk pesan error */
+}
+.text-sm {
+  font-size: 0.875rem; /* Ukuran font kecil */
+}
+.mt-1 {
+  margin-top: 0.25rem; /* Memberikan jarak kecil ke atas */
 }
 </style>

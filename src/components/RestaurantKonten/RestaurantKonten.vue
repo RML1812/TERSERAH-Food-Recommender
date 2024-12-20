@@ -227,12 +227,35 @@
         </div>
       </div>
       <!-- Navigasi Halaman -->
-      <div class="pagination">
-        <button class="pagination-button">«</button>
-        <button class="pagination-button">‹</button>
-        <span>1 dari 3</span>
-        <button class="pagination-button">›</button>
-        <button class="pagination-button">»</button>
+      <div class="pagination" v-if="totalPages > 1">
+        <button
+          class="pagination-button"
+          :disabled="currentPage === 1"
+          @click="changePage(1)">
+          «
+        </button>
+        <button
+          class="pagination-button"
+          :disabled="currentPage === 1"
+          @click="changePage(currentPage - 1)">
+          ‹
+        </button>
+        <span>{{ currentPage }} dari {{ totalPages }}</span>
+        <button
+          class="pagination-button"
+          :disabled="currentPage === totalPages"
+          @click="changePage(currentPage + 1)">
+          ›
+        </button>
+        <button
+          class="pagination-button"
+          :disabled="currentPage === totalPages"
+          @click="changePage(totalPages)">
+          »
+        </button>
+      </div>
+      <div class="pagination" v-else>
+        <span>1</span>
       </div>
       <button class="save-button" @click="saveImages">Simpan</button>
     </div>
@@ -249,6 +272,8 @@ export default {
       galleryImages: [], // Array gambar untuk Galeri
       menuImages: [],    // Array gambar untuk Menu
       activeTab: "Galeri", // Tab yang aktif
+      imagesPerPage: 9,  // Jumlah gambar per halaman
+      currentPage: 1,    // Halaman aktif
       showPreview: false,
       previewData: null,
       submitted: false,
@@ -375,7 +400,7 @@ export default {
             const images = this.activeTab === "Galeri" ? this.galleryImages : this.menuImages;
             const formData = new FormData();
             images.forEach((fileData) => {
-                formData.append("file", fileData.file); // Gunakan file asli untuk upload
+                formData.append("files", fileData.file); // Gunakan file asli untuk upload
             });
 
             const response = await axios.post(url, formData, {
@@ -479,6 +504,27 @@ export default {
     unmounted() {
       // Membersihkan semua URL yang telah dibuat
       [...this.galleryImages, ...this.menuImages].forEach(URL.revokeObjectURL);
+  },
+  changePage(page) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  },
+    // Metode untuk mendapatkan gambar berdasarkan tab aktif dan halaman
+    getImagesByTab() {
+      return this.paginatedImages;
+    },
+  computed: {
+    totalPages() {
+    const images = this.activeTab === "Galeri" ? this.galleryImages : this.menuImages;
+    return Math.max(1, Math.ceil(images.length / this.imagesPerPage));
+    },
+    paginatedImages() {
+      const images = this.activeTab === "Galeri" ? this.galleryImages : this.menuImages;
+      const start = (this.currentPage - 1) * this.imagesPerPage;
+      const end = start + this.imagesPerPage;
+      return images.slice(start, end);
+    },
   },
 };
 </script>
@@ -680,7 +726,11 @@ export default {
   .image-preview {
     width: 200px;
     height: 200px;
-  }
+    object-fit: cover;
+    display: block; /* Opsional: memastikan elemen gambar tampil sebagai blok */
+    border: 1px solid #ddd; /* Opsional: untuk memberikan batas */
+    overflow: hidden; /* Opsional: memastikan elemen yang melebihi area tidak terlihat */
+}
   
   .remove-button {
     position: absolute;

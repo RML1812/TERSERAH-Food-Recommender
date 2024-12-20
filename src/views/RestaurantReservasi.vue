@@ -1,12 +1,14 @@
 <script>
 import RestaurantReservasi from '@/components/RestaurantReservasi/RestaurantReservasi.vue';
 import Navbar from '@/components/NavbarFooterRestaurant/Navbar.vue';
+import Footer from '@/components/NavbarFooterRestaurant/Footer.vue';
 import axios from 'axios';
 
 export default {
   components: {
     Navbar,
     RestaurantReservasi,
+    Footer
   },
   async beforeRouteEnter(to, from, next) {
     try {
@@ -40,4 +42,5 @@ export default {
 <template>
   <Navbar />
   <RestaurantReservasi />
+  <Footer />
 </template>
