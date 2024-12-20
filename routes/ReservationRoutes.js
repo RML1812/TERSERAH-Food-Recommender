@@ -171,7 +171,7 @@ router.get('/payment/finish', async (req, res) => {
                 }
             });
 
-            res.redirect('http://localhost:5173/paymentfinish');
+            res.redirect(`${process.env.VITE_FE}/paymentfinish`);
         } else {
             res.status(404).send('Transaction not found');
         }

@@ -135,7 +135,7 @@ export default {
   methods: {
     async checkLoginStatus() {
       try {
-        const response = await axios.get('http://localhost:3000/login');
+        const response = await axios.get(`${import.meta.env.VITE_BE}/login`);
         if (response.data.user) {
           this.loggedIn = true;
           this.userData = response.data.user;
@@ -155,7 +155,7 @@ export default {
     },
     async loginUser() {
       try {
-        const response = await axios.post('http://localhost:3000/login', {
+        const response = await axios.post(`${import.meta.env.VITE_BE}/login`, {
           name: this.user,
           password: this.pw
         });

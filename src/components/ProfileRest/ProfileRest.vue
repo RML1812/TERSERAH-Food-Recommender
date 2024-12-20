@@ -55,7 +55,7 @@ export default {
   methods: {
     async fetchRestaurantStatus() {
       try {
-        const response = await axios.get('http://localhost:3000/restaurant-dashboard', {
+        const response = await axios.get(`${import.meta.env.VITE_BE}/restaurant-dashboard`, {
           withCredentials: true, // Jika membutuhkan autentikasi
         });
         // Ambil `is_live` dari respons
@@ -76,7 +76,7 @@ export default {
         this.isOnline = !this.isOnline; // Toggle nilai `isOnline`
         // Kirim update ke server
         await axios.put(
-          'http://localhost:3000/restaurant-dashboard',
+          `${import.meta.env.VITE_BE}/restaurant-dashboard`,
           { is_live: this.isOnline },
           { withCredentials: true }
         );
@@ -88,7 +88,7 @@ export default {
     },
     async logout() {
       try {
-        await axios.get('http://localhost:3000/restaurant-dashboard/logout', {
+        await axios.get(`${import.meta.env.VITE_BE}/restaurant-dashboard/logout`, {
           withCredentials: true,
         });
         localStorage.removeItem('restaurantName');

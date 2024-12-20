@@ -59,7 +59,8 @@ export default {
   methods: {
     async fetchRecommendations() {
       try {
-        const response = await axios.get('http://localhost:3000/');
+        const response = await axios.get(`${import.meta.env.VITE_BE}`);
+        console.log('link: ', import.meta.env.VITE_BE)
         console.log('Full Response:', response); // Log the entire response object
 
         if (response.data && response.data.recommendedRestaurants) {

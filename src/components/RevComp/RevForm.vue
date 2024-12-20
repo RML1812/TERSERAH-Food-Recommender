@@ -256,13 +256,13 @@ export default {
       },
       async fetchUserReviews() {
           try {
-              const userResponse = await axios.get(`http://localhost:3000/user/${this.$route.params.id}`);
+              const userResponse = await axios.get(`${import.meta.env.VITE_BE}/user/${this.$route.params.id}`);
               if (userResponse.status === 200) {
                   const userData = userResponse.data.userLogin;
                   if (userData) {
                       const userId = userData._id;
 
-                      const response = await axios.get(`http://localhost:3000/review/user/${userId}`);
+                      const response = await axios.get(`${import.meta.env.VITE_BE}/review/user/${userId}`);
                       const reviews = response.data.reviews;
 
                       const reviewPromises = reviews.map(async (review) => {
@@ -301,11 +301,11 @@ export default {
 
           try {
               if (this.isEditMode) {
-                  await axios.post(`http://localhost:3000/edit-review/${this.selectedReview._id}`, reviewData);
+                  await axios.post(`${import.meta.env.VITE_BE}/edit-review/${this.selectedReview._id}`, reviewData);
                   this.showSuccessModal = true;
               } else {
                   const restaurantId = this.$route.params.restaurantId;
-                  await axios.post(`http://localhost:3000/review/${restaurantId}`, reviewData);
+                  await axios.post(`${import.meta.env.VITE_BE}/review/${restaurantId}`, reviewData);
               }
               this.fetchUserReviews();
               this.resetForm();
@@ -316,7 +316,7 @@ export default {
       async deleteReview(reviewId) {
           if (confirm("Anda yakin ingin menghapus review ini?")) {
               try {
-                  await axios.post(`http://localhost:3000/delete-review`, { reviewId });
+                  await axios.post(`${import.meta.env.VITE_BE}/delete-review`, { reviewId });
                   this.fetchUserReviews();
               } catch (error) {
                   console.error("Error deleting review:", error);

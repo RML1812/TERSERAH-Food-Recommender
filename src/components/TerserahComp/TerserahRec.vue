@@ -77,7 +77,8 @@ export default {
       // Fetch gallery images for each restaurant
       for (const resto of props.restaurants) {
         try {
-          const response = await axios.get(`http://localhost:3000/restaurant/${resto._id}`);
+          const response = await axios.get(`${import.meta.env.VITE_BE}/restaurant/${resto._id}`);
+          console.log("Response: ", response)
           const { menu } = response.data;
           if (menu && menu.gallery_link) {
             const images = menu.gallery_link.split(';');

@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const User = require("../model/user");
 const TempUser = require("../model/tempUser");
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const passport = require('passport');
@@ -24,7 +24,7 @@ const transporter = nodemailer.createTransport({
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: 'http://localhost:3000/auth/google/callback'
+    callbackURL: `${process.env.BE}/auth/google/callback`
 },
 async (accessToken, refreshToken, profile, done) => {
     try {
@@ -73,7 +73,7 @@ router.get('/signup', (req, res) => {
     res.render('signup', {
         layout: "./layouts/main_layouts",
         title: "Sign Up",
-        googleLoginUrl: `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=http://localhost:3000/auth/google/callback&scope=profile email&response_type=code`
+        googleLoginUrl: `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${process.env.VITE_BE}/auth/google/callback&scope=profile email&response_type=code`
     });
 });
 

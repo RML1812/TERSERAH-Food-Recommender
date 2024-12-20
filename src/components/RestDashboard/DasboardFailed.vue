@@ -50,7 +50,7 @@ export default {
   },
   async created() {
     try {
-      const response = await axios.get('http://localhost:3000/api/restaurant-dashboard/status');
+      const response = await axios.get(`${import.meta.env.VITE_BE}/api/restaurant-dashboard/status`);
       if (response.data.status === 'Failed' && response.data.data) {
         // Menampilkan alasan penolakan dari properti data
         this.rejectionReason = response.data.data.rejection_reason || 'Akunmu ditolak karena alasan yang tidak disebutkan.';

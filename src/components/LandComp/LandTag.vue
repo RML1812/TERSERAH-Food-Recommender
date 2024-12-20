@@ -234,7 +234,7 @@ export default {
         payment: this.filter,
       };
 
-      axios.get('http://localhost:3000/search', { params: searchParams })
+      axios.get(`${import.meta.env.VITE_BE}/search`, { params: searchParams })
         .then(response => {
           this.searchResults = response.data.restaurants;
           this.searchError = null;

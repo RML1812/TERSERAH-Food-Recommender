@@ -83,7 +83,7 @@ export default {
     methods: {
         async fetchRecommendations() {
             try {
-                const response = await axios.get('http://localhost:3000/rekomendasi');
+                const response = await axios.get(`${import.meta.env.VITE_BE}/rekomendasi`);
                 this.promos = response.data.recommendedRestaurants;
                 this.totalResults = response.data.totalResults || this.promos.length; // Update totalResults if available
             } catch (error) {

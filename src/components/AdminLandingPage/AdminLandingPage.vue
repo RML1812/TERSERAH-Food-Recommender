@@ -89,7 +89,7 @@ export default {
   methods: {
     async loginUser() {
       try {
-        const response = await axios.post('http://localhost:3000/admin-dashboard/login', {
+        const response = await axios.post(`${import.meta.env.VITE_BE}/admin-dashboard/login`, {
           email: this.user,
           password: this.pw,
         });

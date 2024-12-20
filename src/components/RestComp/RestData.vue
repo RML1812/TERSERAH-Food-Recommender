@@ -264,7 +264,7 @@ export default {
                 return;
             }
             try {
-                const response = await axios.get(`http://localhost:3000/restaurant/${this.restaurantId}`);
+                const response = await axios.get(`${import.meta.env.VITE_BE}/restaurant/${this.restaurantId}`);
                 const { rating, restaurant, reservations, menu } = response.data;
 
                 if (typeof restaurant.open_schedule === 'string') {
@@ -313,7 +313,7 @@ export default {
                 return;
             }
             try {
-                const response = await axios.get(`http://localhost:3000/restaurant/image/galeri/${this.restaurantId}`);
+                const response = await axios.get(`${import.meta.env.VITE_BE}/restaurant/image/galeri/${this.restaurantId}`);
                 this.images = response.data.map(item => item.imgBase64);
                 if (this.images.length > 0) {
                     this.currentImage = this.images[0]; // Set gambar pertama sebagai default
@@ -328,7 +328,7 @@ export default {
                 return;
             }
             try {
-                const response = await axios.get(`http://localhost:3000/restaurant/image/menu/${this.restaurantId}`);
+                const response = await axios.get(`${import.meta.env.VITE_BE}/restaurant/image/menu/${this.restaurantId}`);
                 this.menuImages = response.data.map(item => item.imgBase64); // Simpan gambar menu dalam base64
                 if (this.menuImages.length > 0) {
                     this.currentImage = this.menuImages[0]; // Set gambar pertama sebagai default
@@ -340,14 +340,14 @@ export default {
         async redirectToReservation() {
             const isLoggedIn = await this.checkLogin();
             if (isLoggedIn) {
-                window.location.href = `http://localhost:5173/reservasi/${this.restaurantId}`;
+                window.location.href = `${import.meta.env.VITE_FE}/reservasi/${this.restaurantId}`;
             }
         },
         async handleReservationClick() {
             if (this.restaurant?.is_live) {
                 const isLoggedIn = await this.checkLogin();
                 if (isLoggedIn) {
-                    window.location.href = `http://localhost:5173/reservasi/${this.restaurantId}`;
+                    window.location.href = `${import.meta.env.VITE_FE}/reservasi/${this.restaurantId}`;
                 }
             } else {
                 console.warn('Reservasi tidak tersedia untuk restoran ini.');
@@ -355,16 +355,16 @@ export default {
         },
         async checkLogin() {
             try {
-                const response = await axios.get(`http://localhost:3000/user/${this.$route.params.id}`);
+                const response = await axios.get(`${import.meta.env.VITE_BE}/user/${this.$route.params.id}`);
                 if (response.status === 200 && response.data.userLogin) {
                     return true;
                 } else {
-                    window.location.href = 'http://localhost:5173/nolog';
+                    window.location.href = `${import.meta.env.VITE_FE}/nolog`;
                     return false;
                 }
             } catch (error) {
                 console.error("Error checking user login:", error);
-                window.location.href = 'http://localhost:5173/nolog';
+                window.location.href = `${import.meta.env.VITE_FE}/nolog`;
                 return false;
             }
         },

@@ -29,7 +29,7 @@ export default {
         async fetchArtikel() {
             const artikelId = this.$route.params.artikelId;
             try {
-                const response = await axios.get(`http://localhost:3000/artikel/${artikelId}`);
+                const response = await axios.get(`${import.meta.env.VITE_BE}/artikel/${artikelId}`);
                 this.artikel = response.data;
             } catch (error) {
                 console.error('Error fetching artikel:', error);

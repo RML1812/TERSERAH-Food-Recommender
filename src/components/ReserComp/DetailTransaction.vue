@@ -37,7 +37,7 @@
       document.head.appendChild(script);
   
       try {
-        const response = await axios.get(`http://localhost:3000/user/${this.$route.params.id}`);
+        const response = await axios.get(`${import.meta.env.VITE_BE}/user/${this.$route.params.id}`);
         if (response.status === 200) {
           this.userId = response.data.userLogin;
           this.loading = false;
@@ -60,7 +60,7 @@
             restaurant_id: this.restaurantId
           };
   
-          const response = await axios.post('http://localhost:3000/save-reservation', reservationData, {
+          const response = await axios.post(`${import.meta.env.VITE_BE}/save-reservation`, reservationData, {
             headers: {
               'Content-Type': 'application/json'
             }
@@ -69,13 +69,13 @@
           const data = response.data;
   
           // Retrieve the transaction token from the server-side
-          const tokenResponse = await axios.get(`http://localhost:3000/get-transaction-token?reservation_id=${data._id}`);
+          const tokenResponse = await axios.get(`${import.meta.env.VITE_BE}/get-transaction-token?reservation_id=${data._id}`);
           const tokenData = tokenResponse.data;
   
           if (tokenData && tokenData.transactionToken) {
             window.snap.pay(tokenData.transactionToken, {
               onSuccess: function(result) {
-                window.location.href = `http://localhost:3000/payment/finish?reservation_id=${data._id}`;
+                window.location.href = `${import.meta.env.VITE_BE}/payment/finish?reservation_id=${data._id}`;
               },
               onPending: function(result) {},
               onError: function(result) {},

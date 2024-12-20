@@ -155,7 +155,7 @@ export default {
   methods: {
     async fetchReservations() {
       try {
-        const response = await axios.get("http://localhost:3000/restaurant-dashboard", {
+        const response = await axios.get(`${import.meta.env.VITE_BE}/restaurant-dashboard`, {
           withCredentials: true,
         });
         const { previousReservations, ongoingReservations, nextReservations } = response.data;

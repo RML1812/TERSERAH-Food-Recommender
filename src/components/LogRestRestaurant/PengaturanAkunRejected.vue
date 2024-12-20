@@ -228,7 +228,7 @@
     methods: {
       async checkAccountStatus() {
         try {
-          const response = await axios.get('http://localhost:3000/api/restaurant-dashboard/status');
+          const response = await axios.get(`${import.meta.env.VITE_BE}/api/restaurant-dashboard/status`);
           if (response.data.status === 'Active') {
             this.statusMessage = 'Akun Anda sekarang sudah Active.';
           } else if (response.data.status === 'Pending') {
@@ -264,7 +264,7 @@
       async submitForm() {
         try {
           const payload = { ...this.form };
-          const response = await axios.put('http://localhost:3000/api/restaurant-dashboard/update', payload);
+          const response = await axios.put(`${import.meta.env.VITE_BE}/api/restaurant-dashboard/update`, payload);
           alert('Update successful!');
   
           // Cek kembali status setelah update

@@ -92,7 +92,7 @@ export default {
   methods: {
     async fetchWishlist() {
       try {
-        const response = await axios.get('http://localhost:3000/wishlist');
+        const response = await axios.get(`${import.meta.env.VITE_BE}/wishlist`);
         console.log(response.data); // Log the response data
         this.wishs = response.data.restaurants; // Assign the restaurants array to wishs
       } catch (error) {
@@ -105,7 +105,7 @@ export default {
       if (confirm('Anda yakin ingin menghapus?')) {
         console.log('Deleting wishlist item with ID:', restaurantId);
         try {
-          const response = await axios.post('http://localhost:3000/delete-wishlist', { restaurantId });
+          const response = await axios.post(`${import.meta.env.VITE_BE}/delete-wishlist`, { restaurantId });
           console.log('Delete response:', response.data); // Log the response data
           this.wishs = this.wishs.filter(resto => resto._id !== restaurantId); // Update the wishlist to remove the deleted item
           alert('Wishlist item berhasil dihapus');
@@ -133,13 +133,13 @@ export default {
     },
     async checkLogin() {
       try {
-        const response = await axios.get(`http://localhost:3000/user/${this.$route.params.id}`);
+        const response = await axios.get(`${import.meta.env.VITE_BE}/user/${this.$route.params.id}`);
         if (response.status !== 200 || !response.data.userLogin) {
-          window.location.href = 'http://localhost:5173/nolog';
+          window.location.href = `${import.meta.env.VITE_FE}/nolog`;
         }
       } catch (error) {
         console.error("Error checking user login:", error);
-        window.location.href = 'http://localhost:5173/nolog';
+        window.location.href = `${import.meta.env.VITE_FE}/nolog`;
       }
     }
   },

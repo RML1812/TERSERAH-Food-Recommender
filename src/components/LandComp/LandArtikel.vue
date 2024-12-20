@@ -39,7 +39,8 @@ export default {
     methods: {
         async fetchArtikels() {
             try {
-                const response = await axios.get('http://localhost:3000/artikel');
+                const response = await axios.get(`${import.meta.env.VITE_BE}/artikel`);
+                console.log('Artikel:', response)
                 this.artikels = response.data;
             } catch (error) {
                 console.error('Error fetching articles:', error);

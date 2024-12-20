@@ -244,7 +244,7 @@ export default {
     },
     async fetchReviews(restaurantId) {
       try {
-        const response = await axios.get(`http://localhost:3000/review/${restaurantId}`);
+        const response = await axios.get(`${import.meta.env.VITE_BE}/review/${restaurantId}`);
         const reviewsData = response.data.reviews;
         if (Array.isArray(reviewsData)) {
           this.reviews = reviewsData.map(review => ({
@@ -271,15 +271,15 @@ export default {
     },
     async checkLogin() {
       try {
-        const response = await axios.get(`http://localhost:3000/user/${this.$route.params.id}`);
+        const response = await axios.get(`${import.meta.env.VITE_BE}/user/${this.$route.params.id}`);
         if (response.status !== 200 || !response.data.userLogin) {
-          window.location.href = 'http://localhost:5173/nolog';
+          window.location.href = `${import.meta.env.VITE_FE}/nolog`;
         } else {
           return true;
         }
       } catch (error) {
         console.error("Error checking user login:", error);
-        window.location.href = 'http://localhost:5173/nolog';
+        window.location.href = `${import.meta.env.VITE_FE}/nolog`;
       }
     },
     async openReviewForm() {
@@ -302,7 +302,7 @@ export default {
       };
 
       try {
-        await axios.post(`http://localhost:3000/review/${restaurantId}`, reviewData);
+        await axios.post(`${import.meta.env.VITE_BE}/review/${restaurantId}`, reviewData);
         this.fetchReviews(restaurantId);
         this.menuOpen();
         this.resetForm();

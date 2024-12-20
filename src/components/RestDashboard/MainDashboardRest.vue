@@ -154,7 +154,7 @@ export default {
   methods: {
     async fetchDashboardData() {
       try {
-        const response = await axios.get('http://localhost:3000/restaurant-dashboard', {
+        const response = await axios.get(`${import.meta.env.VITE_BE}/restaurant-dashboard`, {
           params: {
             start_date: this.startDate,
             end_date: this.endDate,
@@ -187,7 +187,7 @@ export default {
 
     async checkAccountStatus() {
       try {
-        const response = await axios.get('http://localhost:3000/api/restaurant-dashboard/status', {
+        const response = await axios.get(`${import.meta.env.VITE_BE}/api/restaurant-dashboard/status`, {
           withCredentials: true, // Sertakan cookie sesi
         });
 

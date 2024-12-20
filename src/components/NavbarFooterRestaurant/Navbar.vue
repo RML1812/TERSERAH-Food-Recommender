@@ -37,7 +37,7 @@ export default {
     // Fungsi untuk mengecek status akun
     const checkAccountStatus = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/restaurant-dashboard/status', {
+        const response = await axios.get(`${import.meta.env.VITE_BE}/api/restaurant-dashboard/status`, {
           withCredentials: true,
         });
         isAccountActive.value = response.data.status === 'Active';
@@ -50,7 +50,7 @@ export default {
     // Fungsi untuk mengambil data "restaurant"
       const fetchContentData = async () => {
         try {
-          const response = await axios.get('http://localhost:3000/restaurant-dashboard', {
+          const response = await axios.get(`${import.meta.env.VITE_BE}/restaurant-dashboard`, {
             withCredentials: true,
           });
           const restaurant = response.data.restaurant;

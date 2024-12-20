@@ -141,18 +141,18 @@ export default {
   methods: {
     async checkLogin() {
       try {
-        const response = await axios.get(`http://localhost:3000/user/${this.$route.params.id}`);
+        const response = await axios.get(`${import.meta.env.VITE_BE}/user/${this.$route.params.id}`);
         if (response.status !== 200 || !response.data.userLogin) {
-          window.location.href = 'http://localhost:5173/nolog';
+          window.location.href = `${import.meta.env.VITE_FE}/nolog`;
         }
       } catch (error) {
         console.error("Error checking user login:", error);
-        window.location.href = 'http://localhost:5173/nolog';
+        window.location.href = `${import.meta.env.VITE_FE}/nolog`;
       }
     },
     async fetchRestaurantSchedule() {
       try {
-        const response = await axios.get(`http://localhost:3000/restaurant/${this.$route.params.restaurantId}`);
+        const response = await axios.get(`${process.env.VITE_BE}/restaurant/${this.$route.params.restaurantId}`);
         const { restaurant } = response.data;
 
         // Check if the open_schedule is a JSON-formatted string
@@ -265,7 +265,7 @@ export default {
       }
 
       try {
-        const response = await axios.get(`http://localhost:3000/check-slot/${this.$route.params.restaurantId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_BE}/check-slot/${this.$route.params.restaurantId}`, {
           params: {
             tanggal: this.tanggal,
             waktuMulai: this.awal,

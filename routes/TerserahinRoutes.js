@@ -23,7 +23,7 @@ router.get('/terserahin', async (req, res) => {
 router.get('/terserahinAja', async (req, res) => {
   const { address } = req.query;
   let query = {
-    overall_rating: { $gte: 4.5, $lte: 5.0 }
+    overall_rating: { $gte: 4.5 , $lte: 5.0 }
   };
 
   // Add filter based on provided address parameter

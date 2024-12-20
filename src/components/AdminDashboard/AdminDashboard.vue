@@ -84,7 +84,7 @@ export default {
   methods: {
     async fetchDashboardData() {
       try {
-        const response = await axios.get("http://localhost:3000/admin-dashboard");
+        const response = await axios.get(`${import.meta.env.VITE_BE}/admin-dashboard`);
         const data = response.data;
 
         // Calculate changes (example logic, adjust as needed)

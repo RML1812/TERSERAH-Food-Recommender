@@ -179,7 +179,7 @@ export default {
   methods: {
     async fetchAccounts() {
         try {
-          const response = await axios.get("http://localhost:3000/admin-dashboard/review-restaurant", {
+          const response = await axios.get(`${import.meta.env.VITE_BE}/admin-dashboard/review-restaurant`, {
             params: { tab: this.activeTab },
           });
           this.accounts = response.data.accounts || []; // Kosongkan array jika tidak ada data
@@ -219,7 +219,7 @@ export default {
     },
     async approveAccount(accountId) {
       try {
-        await axios.post(`http://localhost:3000/admin-dashboard/review-restaurant/${accountId}`, { action: "approve" });
+        await axios.post(`${import.meta.env.VITE_BE}/admin-dashboard/review-restaurant/${accountId}`, { action: "approve" });
         alert("Account approved successfully!");
         this.fetchAccounts(); // Refresh the list
         this.closePopup();
@@ -238,7 +238,7 @@ export default {
         return;
       }
       try {
-        await axios.post(`http://localhost:3000/admin-dashboard/review-restaurant/${accountId}`, {
+        await axios.post(`${import.meta.env.VITE_BE}/admin-dashboard/review-restaurant/${accountId}`, {
           action: "reject",
           reason: this.rejectReason,
         });

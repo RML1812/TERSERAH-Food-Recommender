@@ -24,7 +24,7 @@ const transporter = nodemailer.createTransport({
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: 'http://localhost:3000/auth/google/callback'
+    callbackURL: `${process.env.BE}/auth/google/callback`
 },
 async (accessToken, refreshToken, profile, done) => {
     try {
@@ -73,7 +73,7 @@ router.get('/signup', (req, res) => {
     res.status(200).json({
         message: "Sign Up Page",
         title: "Sign Up",
-        googleLoginUrl: `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=http://localhost:3000/auth/google/callback&scope=profile email&response_type=code`
+        googleLoginUrl: `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${process.env.BE}/auth/google/callback&scope=profile email&response_type=code`
     });
 });
 
@@ -154,7 +154,7 @@ router.get('/confirm/:token', async (req, res) => {
 
     await newUser.save();
     await TempUser.deleteOne({ _id: tempUser._id });
-    res.redirect('http://localhost:5173/');
+    res.redirect(`${process.env.VITE_FE}`);
 });
 
 cron.schedule('*/10 * * * *', async () => {
@@ -175,7 +175,7 @@ router.get('/auth/google',
 router.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/login' }),
     (req, res) => {
-        res.redirect('http://localhost:5173/');
+        res.redirect(`${process.env.VITE_FE}`);
     }
 );
 

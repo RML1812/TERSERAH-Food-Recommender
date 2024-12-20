@@ -51,7 +51,7 @@ export default {
     async logout() {
       try {
         console.log('Logging out...');
-        await axios.get('http://localhost:3000/logout'); // Call logout endpoint
+        await axios.get(`${import.meta.env.VITE_BE}/logout`); // Call logout endpoint
 
         this.showPopup = false;
         localStorage.removeItem('userToken');

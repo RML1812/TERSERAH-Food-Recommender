@@ -162,27 +162,27 @@ export default {
   methods: {
     async checkLogin() {
       try {
-        const response = await axios.get(`http://localhost:3000/user/${this.$route.params.id}`);
+        const response = await axios.get(`${import.meta.env.VITE_BE}/user/${this.$route.params.id}`);
         if (response.status !== 200 || !response.data.userLogin) {
-          window.location.href = 'http://localhost:5173/nolog';
+          window.location.href = `${import.meta.env.VITE_FE}/nolog`;
         }
       } catch (error) {
         console.error("Error checking user login:", error);
-        window.location.href = 'http://localhost:5173/nolog';
+        window.location.href = `${import.meta.env.VITE_FE}/nolog`;
       }
     },
     async fetchReservations() {
       try {
-        const userResponse = await axios.get(`http://localhost:3000/user/${this.$route.params.id}`);
+        const userResponse = await axios.get(`${import.meta.env.VITE_BE}/user/${this.$route.params.id}`);
         if (userResponse.status === 200) {
           const userData = userResponse.data.userLogin;
           if (userData) {
             const userId = userData._id;
-            const response = await axios.get(`http://localhost:3000/reservasimu/${userId}`);
+            const response = await axios.get(`${import.meta.env.VITE_BE}/reservasimu/${userId}`);
             const reservations = response.data.reservations;
 
             const reservationPromises = reservations.map(async (reservation) => {
-              const restaurantResponse = await axios.get(`http://localhost:3000/restaurant/${reservation.restaurant_id}`);
+              const restaurantResponse = await axios.get(`${import.meta.env.VITE_BE}/restaurant/${reservation.restaurant_id}`);
               reservation.restaurantName = restaurantResponse.data.restaurant.name;
               return reservation;
             });
@@ -203,7 +203,7 @@ export default {
     async deleteReservation(reservationId) {
       if (confirm('Anda yakin ingin menghapus?')) {
         try {
-          await axios.post('http://localhost:3000/delete-reservation', { id_reservation: reservationId });
+          await axios.post(`${import.meta.env.VITE_BE}/delete-reservation`, { id_reservation: reservationId });
           alert('Reservation berhasil dihapus');
           this.fetchReservations();
         } catch (error) {

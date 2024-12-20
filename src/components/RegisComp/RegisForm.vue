@@ -234,7 +234,7 @@ export default {
       }
 
       try {
-        const response = await axios.post('http://localhost:3000/signup', userData);
+        const response = await axios.post(`${import.meta.env.VITE_BE}/signup`, userData);
         alert(response.data.message);
         if (response.status === 200) {
           this.router.push('/verif');
@@ -247,7 +247,7 @@ export default {
     handleGoogleLogin() {
       // Handle Google login here
       // This can involve redirecting to your backend's Google OAuth endpoint
-      window.location.href = 'http://localhost:3000/auth/google';
+      window.location.href = `${import.meta.env.VITE_BE}/auth/google`;
     }
   }
 };

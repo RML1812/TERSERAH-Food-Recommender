@@ -31,8 +31,8 @@ const terserahinRoutes = require('./routes/TerserahinRoutes');
 const wishlistRoutes = require('./routes/WishlistRoutes');
 const artikelRoutes = require('./routes/ArtikelRoutes')
 const loginRestaurantRoutes = require('./routes/loginRestaurantRoutes');
-const signupRestaurantRoutes = require('./routes/SignupRestaurantRoutes');
-const loginAdminRoutes = require('./routes/LoginAdminRoutes');
+const signupRestaurantRoutes = require('./routes/signupRestaurantRoutes');
+const loginAdminRoutes = require('./routes/loginAdminRoutes');
 const adminDashboardRoutes = require('./routes/adminDashboardRoutes');
 const restaurantDashboardRoutes = require('./routes/restaurantDashboardRoutes')
 const imageRoutes = require('./routes/uploadImageRoutes');
@@ -49,7 +49,7 @@ console.log(publicPath);
 
 // Enable CORS with credentials
 app.use(cors({
-    origin: 'http://localhost:5173', // Ganti dengan URL frontend Anda
+    origin: `${process.env.VITE_FE}`, // Ganti dengan URL frontend Anda
     credentials: true
 }));
 
@@ -60,7 +60,7 @@ app.use(session({
     secret: 'secret-key', 
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: 'mongodb://localhost/your-database' }),
+    store: MongoStore.create({ mongoUrl: 'mongodb+srv://hamudi:DFHjOlbRAM9bvAKR@cluster0.45rn36l.mongodb.net/TerserahDB' }),
     cookie: {
         maxAge: 1000 * 60 * 60 * 24, // 1 day
         httpOnly: true,

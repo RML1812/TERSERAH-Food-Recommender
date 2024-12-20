@@ -148,7 +148,7 @@ export default {
 methods: {
   async fetchUserData() {
     try {
-      const response = await axios.get(`http://localhost:3000/user/${this.$route.params.id}`);
+      const response = await axios.get(`${import.meta.env.VITE_BE}/user/${this.$route.params.id}`);
       if (response.status === 200) {
         const userData = response.data.userLogin; // Corrected part to access userLogin instead of user
         if (userData) {
@@ -179,7 +179,7 @@ methods: {
         domisili: this.domisili
       };
       
-      const response = await axios.post('http://localhost:3000/update', userData);
+      const response = await axios.post(`${import.meta.env.VITE_BE}/update`, userData);
       if (response.status === 200) {
         console.log('Changes saved successfully:', response.data);
         window.location.reload();
@@ -193,7 +193,7 @@ methods: {
   },
   async logout() {
     try {
-      const response = await axios.get('http://localhost:3000/logout');
+      const response = await axios.get(`${import.meta.env.VITE_BE}/logout`);
       console.log('Logout successful:', response.data);
       window.location.href = '/';
       // Additional logout handling logic here

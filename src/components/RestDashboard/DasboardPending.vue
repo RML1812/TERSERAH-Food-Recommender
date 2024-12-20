@@ -50,7 +50,7 @@ export default {
     },
     async checkStatus() {
       try {
-        const response = await axios.get('http://localhost:3000/api/restaurant-dashboard/status');
+        const response = await axios.get(`${import.meta.env.VITE_BE}/api/restaurant-dashboard/status`);
         const status = response.data.status;
 
         if (status === 'Active') {

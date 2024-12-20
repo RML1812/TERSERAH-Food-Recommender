@@ -162,7 +162,7 @@ export default {
     async generate() {
       const address = `${this.kecamatan}, ${this.kota}`.trim();
       try {
-        const response = await fetch(`http://localhost:3000/terserahinAja?address=${encodeURIComponent(address)}`);
+        const response = await fetch(`${import.meta.env.VITE_BE}/terserahinAja?address=${encodeURIComponent(address)}`);
         
         const contentType = response.headers.get("content-type");
         if (!response.ok || !contentType || !contentType.includes("application/json")) {

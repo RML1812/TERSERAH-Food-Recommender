@@ -51,7 +51,7 @@ export default {
             }
 
             try {
-                const response = await axios.get(`http://localhost:3000/restaurant/${this.restaurantId}`);
+                const response = await axios.get(`${import.meta.env.VITE_BE}/restaurant/${this.restaurantId}`);
                 this.restaurant = response.data.restaurant;
                 this.checkIfInWishlist();
             } catch (error) {
@@ -60,7 +60,7 @@ export default {
         },
         async checkIfInWishlist() {
             try {
-                const response = await axios.get('http://localhost:3000/wishlist', {
+                const response = await axios.get(`${import.meta.env.VITE_BE}/wishlist`, {
                     withCredentials: true
                 });
                 this.isInWishlist = response.data.restaurants.some(resto => resto._id === this.restaurantId);
@@ -75,7 +75,7 @@ export default {
             }
 
             try {
-                const response = await axios.post('http://localhost:3000/wishlist', {
+                const response = await axios.post(`${import.meta.env.VITE_BE}/wishlist`, {
                     restaurantId: this.restaurantId
                 }, {
                     withCredentials: true // Pastikan ini diatur

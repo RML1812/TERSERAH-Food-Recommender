@@ -369,8 +369,8 @@ export default {
 
         try {
             const url = this.activeTab === "Galeri"
-                ? `http://localhost:3000/restaurant/upload-image/galeri/${this.restaurantId}`
-                : `http://localhost:3000/restaurant/upload-image/menu/${this.restaurantId}`;
+                ? `${import.meta.env.VITE_BE}/restaurant/upload-image/galeri/${this.restaurantId}`
+                : `${import.meta.env.VITE_BE}/restaurant/upload-image/menu/${this.restaurantId}`;
 
             const images = this.activeTab === "Galeri" ? this.galleryImages : this.menuImages;
             const formData = new FormData();
@@ -423,7 +423,7 @@ export default {
 
       try {
         // Kirim data ke backend
-        await axios.post("http://localhost:3000/restaurant-dashboard/edit-konten", payload, {
+        await axios.post(`${import.meta.env.VITE_BE}/restaurant-dashboard/edit-konten`, payload, {
           withCredentials: true,
         });
         alert("Data berhasil disimpan!");
@@ -434,7 +434,7 @@ export default {
     },
     async fetchPreviewData() {
       try {
-        const response = await axios.get("http://localhost:3000/restaurant-dashboard");
+        const response = await axios.get(`${import.meta.env.VITE_BE}/restaurant-dashboard`);
         this.previewData = response.data.restaurant;
         this.showPreview = true;
       } catch (error) {

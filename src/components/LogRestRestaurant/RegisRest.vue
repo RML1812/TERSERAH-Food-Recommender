@@ -273,7 +273,7 @@ export default {
       };
 
       try {
-        const response = await axios.post('http://localhost:3000/restaurant-dashboard/signup', payload);
+        const response = await axios.post(`${import.meta.env.VITE_BE}/restaurant-dashboard/signup`, payload);
         console.log('Signup successful:', response.data);
         alert('Signup successful! Redirecting...');
         this.$router.push('/restaurant-dashboard/pending');
