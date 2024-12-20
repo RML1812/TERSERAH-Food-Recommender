@@ -291,6 +291,7 @@ export default {
     font-size: 1em;
     font-weight: bold;
     cursor: pointer;
+    margin-bottom: 200px;
   }
   
   .review-button:hover {

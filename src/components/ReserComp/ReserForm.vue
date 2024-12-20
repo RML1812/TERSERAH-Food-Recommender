@@ -8,9 +8,21 @@
               <div class="pt-8 flex flex-col">
                 <label class="font-bold text-[20px] ml-10 lg:ml-20 md:mr-7" for="">Waktu Reservasi</label>
                 <div class="flex justify-between">
-                  <input v-model="awal" type="time" class="ml-10 lg:ml-20 hover:scale-105 w-32 mt-5 rounded-xl bg-[#D3D3D3] pl-5 py-1" required>
+                  <input 
+                    v-model="awal" 
+                    type="time" 
+                    :min="minTime"
+                    class="ml-10 lg:ml-20 hover:scale-105 w-32 mt-5 rounded-xl bg-[#D3D3D3] pl-5 py-1" 
+                    required
+                  >
                   <p class="mt-6">-</p>
-                  <input v-model="akhir" type="time" class="mr-10 lg:mr-20 hover:scale-105 w-32 mt-5 rounded-xl bg-[#D3D3D3] pl-5 py-1" required>
+                  <input 
+                    v-model="akhir" 
+                    type="time" 
+                    :min="awal" 
+                    class="mr-10 lg:mr-20 hover:scale-105 w-32 mt-5 rounded-xl bg-[#D3D3D3] pl-5 py-1" 
+                    required
+                  >
                 </div>
               </div>
             </div>
@@ -59,8 +71,15 @@
             </div>
             <div class="pt-8 flex flex-col">
               <label class="font-bold text-[20px] ml-10 lg:ml-20" for="">Jumlah Orang</label>
-              <input type="number" v-model="jumlah" class="mx-10 lg:mx-20 w-auto mt-5 rounded-xl bg-[#D3D3D3] pl-5 py-1 transition-all"
-                      placeholder="Jumlah Orang" :class="{ 'disabled-field': isDisabled }" :disabled="isDisabled" required>
+              <input 
+                type="number" 
+                v-model="jumlah" 
+                class="mx-10 lg:mx-20 w-auto mt-5 rounded-xl bg-[#D3D3D3] pl-5 py-1 transition-all"
+                placeholder="Jumlah Orang" 
+                :class="{ 'disabled-field': isDisabled }" 
+                :disabled="isDisabled" 
+                @input="validateJumlahOrang(jumlah)" 
+                required>
             </div>
             <div class="pt-8">
               <div class="flex flex-col">
@@ -124,13 +143,27 @@ export default {
     };
   },
   computed: {
+    minTime() {
+        if (!this.tanggal) return '00:00';
+
+        const today = new Date().toISOString().split('T')[0];
+        const now = new Date();
+
+        // Jika tanggal yang dipilih adalah hari ini, gunakan waktu saat ini sebagai batas bawah
+        if (this.tanggal === today) {
+            return now.toTimeString().slice(0, 5); // Format HH:MM
+        }
+
+        // Jika bukan hari ini, gunakan waktu minimum (00:00)
+        return '00:00';
+    },
     isDisabled() {
-    // Field hanya akan dinonaktifkan jika slot belum dicek atau slot tidak tersedia
-    return (
-      this.availableSlots === null || // Kondisi awal (belum cek slot)
-      this.availableSlots <= 0 // Slot tidak tersedia
-    );
-  }
+      // Field hanya akan dinonaktifkan jika slot belum dicek atau slot tidak tersedia
+      return (
+        this.availableSlots === null || // Kondisi awal (belum cek slot)
+        this.availableSlots <= 0 // Slot tidak tersedia
+      );
+    }
   },
   watch: {
     awal: 'handleInputChange',
@@ -139,6 +172,11 @@ export default {
     tanggal: 'validateReservationTime',
   },
   methods: {
+    validateJumlahOrang() {
+      if (this.availableSlots !== null && this.jumlah > this.availableSlots) {
+        this.jumlah = this.availableSlots; // Tetapkan ke slot maksimum
+      }
+    },
     async checkLogin() {
       try {
         const response = await axios.get(`http://localhost:3000/user/${this.$route.params.id}`);
@@ -204,16 +242,16 @@ export default {
             return schedule;
         },
       validateReservationTime() {
+        const now = new Date(); // Waktu sekarang
+        const selectedDate = new Date(this.tanggal); // Tanggal yang dipilih
+
         if (!this.tanggal || !this.awal || !this.akhir || !this.restaurantSchedule) {
             this.validationError = '';
             return;
         }
 
-        const dayOfWeek = new Date(this.tanggal).toLocaleDateString('id-ID', { weekday: 'long' });
+        const dayOfWeek = selectedDate.toLocaleDateString('id-ID', { weekday: 'long' });
         const schedule = this.restaurantSchedule[dayOfWeek];
-
-        console.log("Day of week:", dayOfWeek); // Check the computed day of week
-        console.log("Schedule for the day:", schedule); // What does the schedule look like?
 
         if (!schedule || schedule === 'Tutup' || schedule.Closed) {
             this.validationError = `Restoran tidak bisa melakukan reservasi pada hari ${dayOfWeek} yang kamu pilih.`;
@@ -222,10 +260,8 @@ export default {
 
         let openTime, closeTime;
         if (typeof schedule === 'string' && schedule.includes('-')) {
-            // Split the string by '-' to extract the open and close times
             [openTime, closeTime] = schedule.split(' - ').map(s => s.trim());
         } else if (schedule.open && schedule.close) {
-            // Use the open and close properties directly if they exist
             openTime = schedule.open;
             closeTime = schedule.close;
         } else {
@@ -233,11 +269,18 @@ export default {
             return;
         }
 
-        // Convert the times to Date objects for comparison
-        const reservationStartTime = this.parseTime(this.awal);
-        const reservationEndTime = this.parseTime(this.akhir);
-        openTime = this.parseTime(openTime);
-        closeTime = this.parseTime(closeTime);
+        const reservationStartTime = this.parseTime(this.awal, selectedDate);
+        const reservationEndTime = this.parseTime(this.akhir, selectedDate);
+        openTime = this.parseTime(openTime, selectedDate);
+        closeTime = this.parseTime(closeTime, selectedDate);
+
+        // Pastikan waktu reservasi tidak di masa lalu jika tanggal sama dengan hari ini
+        if (selectedDate.toDateString() === now.toDateString()) {
+            if (reservationStartTime < now) {
+                this.validationError = "Waktu reservasi tidak boleh di masa lalu.";
+                return;
+            }
+        }
 
         if (reservationStartTime < openTime || reservationEndTime > closeTime) {
             this.validationError = `Waktu reservasi harus di antara ${openTime.toLocaleTimeString('id-ID', { timeStyle: 'short' })} dan ${closeTime.toLocaleTimeString('id-ID', { timeStyle: 'short' })}.`;
@@ -247,11 +290,11 @@ export default {
             this.validationError = '';
         }
     },
-    parseTime(time) {
-      const [hours, minutes] = time.split(':').map(Number);
-      const date = new Date();
-      date.setHours(hours, minutes, 0, 0);
-      return date;
+    parseTime(time, date = new Date()) {
+        const [hours, minutes] = time.split(':').map(Number);
+        const parsedDate = new Date(date);
+        parsedDate.setHours(hours, minutes, 0, 0);
+        return parsedDate;
     },
     async checkSlot() {
       if (this.validationError) {
@@ -281,17 +324,30 @@ export default {
     handleInputChange() {
       this.validateReservationTime();
       this.calculateTotal();
+      this.validateJumlahOrang();
     },
     calculateTotal() {
+      // Pastikan jumlah orang valid
+      if (this.jumlah <= 0 || this.availableSlots === null || this.jumlah > this.availableSlots) {
+        this.total = 0;
+        return;
+      }
+
       // Parse waktu awal dan akhir
       const awalTime = this.parseTime(this.awal);
       const akhirTime = this.parseTime(this.akhir);
+
+      // Pastikan waktu valid
+      if (!awalTime || !akhirTime || akhirTime <= awalTime) {
+        this.total = 0;
+        return;
+      }
 
       // Hitung perbedaan jam
       const hoursDifference = (akhirTime - awalTime) / (1000 * 60 * 60);
 
       // Hitung total biaya (15.000 per orang + 15.000 per jam)
-      if (hoursDifference > 0 && this.jumlah > 0) {
+      if (hoursDifference > 0) {
         this.total = (this.jumlah * 15000) + (hoursDifference * 15000);
       } else {
         this.total = 0;

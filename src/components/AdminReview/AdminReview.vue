@@ -93,9 +93,7 @@
             <label>NPWP</label>
             <input class="popup-input" type="text" :value="selectedAccount.npwp" disabled />
             <label>Foto NPWP</label>
-            <div class="download-container">
-              <button class="popup-download-button" @click="downloadFile(selectedAccount.npwp_photo)">Download</button>
-            </div>
+            <input class="popup-input" type="text" :value="selectedAccount.npwp_photo" disabled />
           </div>
           
           <!-- Identitas Pemilik -->
@@ -114,9 +112,7 @@
             <label>Domisili</label>
             <input class="popup-input" type="text" :value="selectedAccount.domicile" disabled />
             <label>Foto KTP</label>
-            <div class="download-container">
-              <button class="popup-download-button" @click="downloadFile(selectedAccount.ktp_photo)">Download</button>
-            </div>
+            <input class="popup-input" type="text" :value="selectedAccount.ktp_photo" disabled />
           </div>
         </div>
 
@@ -329,7 +325,7 @@ export default {
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    margin-bottom: 40px;
+    margin-bottom: 550px;
   }
   
   .account-list {

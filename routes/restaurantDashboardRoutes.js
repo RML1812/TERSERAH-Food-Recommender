@@ -35,16 +35,42 @@ router.get('/restaurant-dashboard', async (req, res) => {
         const localNow = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
 
         // Reservasi sebelumnya (Previous)
+        // Query 1: Data untuk menampilkan respons (semua reservasi sebelumnya)
         const previousReservations = await Reservation.find({
             restaurant_id: restaurant._id,
             $or: [
-                { tanggalReservation: { $lt: localNow.toISOString().split('T')[0] } }, // Tanggal sudah berlalu
+                { tanggalReservation: { $lt: localNow.toISOString().split('T')[0] } },
                 {
-                    tanggalReservation: { $eq: localNow.toISOString().split('T')[0] }, // Tanggal hari ini
-                    waktuSelesai: { $lt: localNow.toISOString().split('T')[1] }, // Waktu selesai sudah lewat
+                    tanggalReservation: { $eq: localNow.toISOString().split('T')[0] },
+                    waktuSelesai: { $lt: localNow.toISOString().split('T')[1] },
                 }
             ]
         }).populate('user_id');
+
+        // Query 2: Data untuk pembaruan slot
+        const reservationsToUpdate = await Reservation.find({
+            restaurant_id: restaurant._id,
+            isSlotUpdated: false, // Hanya reservasi yang belum diperbarui
+            $or: [
+                { tanggalReservation: { $lt: localNow.toISOString().split('T')[0] } },
+                {
+                    tanggalReservation: { $eq: localNow.toISOString().split('T')[0] },
+                    waktuSelesai: { $lt: localNow.toISOString().split('T')[1] },
+                }
+            ]
+        });
+
+        // Proses pembaruan slot
+        for (const reservation of reservationsToUpdate) {
+            const restaurantToUpdate = await Restaurant.findById(reservation.restaurant_id);
+
+            if (restaurantToUpdate) {
+                restaurantToUpdate.slot += reservation.jumlahOrang;
+                reservation.isSlotUpdated = true;
+
+                await Promise.all([restaurantToUpdate.save(), reservation.save()]);
+            }
+        }
 
         // Reservasi sedang berlangsung (Ongoing)
         const ongoingReservations = await Reservation.find({
